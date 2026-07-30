@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.ipynb_checkpoints/
+
+# personal scratch notes, not part of the benchmarking tool
+Untitled.ipynb
+Untitled1.ipynb
+previous-discussions
+untitled.txt

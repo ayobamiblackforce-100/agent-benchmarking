@@ -1,0 +1,1167 @@
+[
+  {
+    "id": "sales_1_01",
+    "schema": "sales",
+    "tier": 1,
+    "prompt": "List all products in the 'Electronics' category.",
+    "gold_sql": "SELECT * FROM PRODUCTS WHERE CATEGORY = 'Electronics' ORDER BY PRODUCT_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "PRODUCT_ID",
+      "PRODUCT_NAME",
+      "CATEGORY",
+      "UNIT_PRICE",
+      "STOCK_QTY"
+    ],
+    "result_row_count": 59,
+    "result_hash": "625008f0cdaa522ec326fee478d2aed9d9ce12596a63881279ef12fcb4d02b3d"
+  },
+  {
+    "id": "sales_1_02",
+    "schema": "sales",
+    "tier": 1,
+    "prompt": "Show all customers in the 'GOLD' tier.",
+    "gold_sql": "SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'GOLD' ORDER BY CUSTOMER_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "CUSTOMER_ID",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "EMAIL",
+      "REGION_ID",
+      "SIGNUP_DATE",
+      "CUSTOMER_TIER"
+    ],
+    "result_row_count": 7235,
+    "result_hash": "b5842ee276b573472bf1024f4079fb208c9e38c53527a05c2bdead3ed9275ea1"
+  },
+  {
+    "id": "sales_1_03",
+    "schema": "sales",
+    "tier": 1,
+    "prompt": "Find products with a unit price greater than 500.",
+    "gold_sql": "SELECT * FROM PRODUCTS WHERE UNIT_PRICE > 500 ORDER BY PRODUCT_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "PRODUCT_ID",
+      "PRODUCT_NAME",
+      "CATEGORY",
+      "UNIT_PRICE",
+      "STOCK_QTY"
+    ],
+    "result_row_count": 362,
+    "result_hash": "1052de0dadd64de61c27ce98a318f383c662f1e82aca5f3719b7c47235377178"
+  },
+  {
+    "id": "sales_1_04",
+    "schema": "sales",
+    "tier": 1,
+    "prompt": "List the top 10 most expensive products.",
+    "gold_sql": "SELECT * FROM PRODUCTS ORDER BY UNIT_PRICE DESC, PRODUCT_ID FETCH FIRST 10 ROWS ONLY",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "PRODUCT_ID",
+      "PRODUCT_NAME",
+      "CATEGORY",
+      "UNIT_PRICE",
+      "STOCK_QTY"
+    ],
+    "result_row_count": 10,
+    "result_hash": "da4bc5e23fee919860f35a9eb9633bbe6792de6add51229ba6ec57eed4babdbb"
+  },
+  {
+    "id": "sales_1_05",
+    "schema": "sales",
+    "tier": 1,
+    "prompt": "Show all orders with status 'CANCELLED'.",
+    "gold_sql": "SELECT * FROM ORDERS WHERE STATUS = 'CANCELLED' ORDER BY ORDER_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "ORDER_ID",
+      "CUSTOMER_ID",
+      "ORDER_DATE",
+      "STATUS",
+      "REGION_ID"
+    ],
+    "result_row_count": 45291,
+    "result_hash": "45c69e4b2f972c105601dd9d410d07608621025ee05c26f6f7cd58e710eb0fb7"
+  },
+  {
+    "id": "sales_1_06",
+    "schema": "sales",
+    "tier": 1,
+    "prompt": "List customers who signed up in 2024.",
+    "gold_sql": "SELECT * FROM CUSTOMERS WHERE SIGNUP_DATE BETWEEN DATE '2024-01-01' AND DATE '2024-12-31' ORDER BY CUSTOMER_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "CUSTOMER_ID",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "EMAIL",
+      "REGION_ID",
+      "SIGNUP_DATE",
+      "CUSTOMER_TIER"
+    ],
+    "result_row_count": 9151,
+    "result_hash": "3bf16b89a3f1fd6b4d70066e141a618d17a0dda48ea0f3ad509c7b4a719f47b6"
+  },
+  {
+    "id": "sales_1_07",
+    "schema": "sales",
+    "tier": 1,
+    "prompt": "Find all regions in 'Europe'.",
+    "gold_sql": "SELECT * FROM REGIONS WHERE REGION_NAME = 'Europe' ORDER BY REGION_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "REGION_ID",
+      "REGION_NAME",
+      "COUNTRY"
+    ],
+    "result_row_count": 3,
+    "result_hash": "21ad6d90eb839c4dfa207e8805277fba0bc5a9f5d210c7c313778dcfea7ea5e5"
+  },
+  {
+    "id": "sales_1_08",
+    "schema": "sales",
+    "tier": 1,
+    "prompt": "List products with stock quantity less than 50, ordered by stock ascending.",
+    "gold_sql": "SELECT * FROM PRODUCTS WHERE STOCK_QTY < 50 ORDER BY STOCK_QTY, PRODUCT_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "PRODUCT_ID",
+      "PRODUCT_NAME",
+      "CATEGORY",
+      "UNIT_PRICE",
+      "STOCK_QTY"
+    ],
+    "result_row_count": 6,
+    "result_hash": "fc19da2a1765cb3429b74530cdbdc87cbd8fb6a6e911f2adb2df20d7e3ae8f5a"
+  },
+  {
+    "id": "sales_1_09",
+    "schema": "sales",
+    "tier": 1,
+    "prompt": "Show customers whose last name starts with 'A'.",
+    "gold_sql": "SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%' ORDER BY CUSTOMER_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "CUSTOMER_ID",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "EMAIL",
+      "REGION_ID",
+      "SIGNUP_DATE",
+      "CUSTOMER_TIER"
+    ],
+    "result_row_count": 1620,
+    "result_hash": "47f5255e70979bb367ddb1358ca9cdf2a64709d8600c1260b5267233e7336a29"
+  },
+  {
+    "id": "sales_1_10",
+    "schema": "sales",
+    "tier": 1,
+    "prompt": "List the 5 most recent orders.",
+    "gold_sql": "SELECT * FROM ORDERS ORDER BY ORDER_DATE DESC, ORDER_ID DESC FETCH FIRST 5 ROWS ONLY",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "ORDER_ID",
+      "CUSTOMER_ID",
+      "ORDER_DATE",
+      "STATUS",
+      "REGION_ID"
+    ],
+    "result_row_count": 5,
+    "result_hash": "404f0627d1c26a3c9c4e0317a868296d6bf22fdf50a50a56fa01533244f202ab"
+  },
+  {
+    "id": "sales_1_11",
+    "schema": "sales",
+    "tier": 1,
+    "prompt": "Find all PLATINUM tier customers, ordered by signup date.",
+    "gold_sql": "SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'PLATINUM' ORDER BY SIGNUP_DATE, CUSTOMER_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "CUSTOMER_ID",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "EMAIL",
+      "REGION_ID",
+      "SIGNUP_DATE",
+      "CUSTOMER_TIER"
+    ],
+    "result_row_count": 7075,
+    "result_hash": "8ec175cfe5c8878b90aa85774a2d14d06bcbc5d5b842b0bf72a7fbb90668a172"
+  },
+  {
+    "id": "sales_1_12",
+    "schema": "sales",
+    "tier": 1,
+    "prompt": "List products in the 'Books' category with price under 20.",
+    "gold_sql": "SELECT * FROM PRODUCTS WHERE CATEGORY = 'Books' AND UNIT_PRICE < 20 ORDER BY PRODUCT_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "PRODUCT_ID",
+      "PRODUCT_NAME",
+      "CATEGORY",
+      "UNIT_PRICE",
+      "STOCK_QTY"
+    ],
+    "result_row_count": 0,
+    "result_hash": "449fb16981d05e47d94f5a022ce5e1ae58c5b2c1ffe07b20cccbee70998d59d4"
+  },
+  {
+    "id": "sales_2_01",
+    "schema": "sales",
+    "tier": 2,
+    "prompt": "For each region, show the total number of customers.",
+    "gold_sql": "SELECT r.REGION_NAME, COUNT(c.CUSTOMER_ID) AS customer_count\n       FROM REGIONS r LEFT JOIN CUSTOMERS c ON c.REGION_ID = r.REGION_ID\n       GROUP BY r.REGION_NAME ORDER BY r.REGION_NAME",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "REGION_NAME",
+      "CUSTOMER_COUNT"
+    ],
+    "result_row_count": 4,
+    "result_hash": "6fac42e1fd7726b5f4f7ac944d27718b3b57ac090c261caec9f49b551cea5318"
+  },
+  {
+    "id": "sales_2_02",
+    "schema": "sales",
+    "tier": 2,
+    "prompt": "Show total revenue (quantity times unit price) per product category.",
+    "gold_sql": "SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS total_revenue\n       FROM ORDER_ITEMS oi JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID\n       GROUP BY p.CATEGORY ORDER BY p.CATEGORY",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "CATEGORY",
+      "TOTAL_REVENUE"
+    ],
+    "result_row_count": 10,
+    "result_hash": "c87ebb894ba7a019cc86795290fbf896d43507b19f5764b2060d97aff94a74b2"
+  },
+  {
+    "id": "sales_2_03",
+    "schema": "sales",
+    "tier": 2,
+    "prompt": "List the top 5 customers by total number of orders.",
+    "gold_sql": "SELECT c.CUSTOMER_ID, c.LAST_NAME, COUNT(o.ORDER_ID) AS order_count\n       FROM CUSTOMERS c JOIN ORDERS o ON o.CUSTOMER_ID = c.CUSTOMER_ID\n       GROUP BY c.CUSTOMER_ID, c.LAST_NAME\n       ORDER BY order_count DESC, c.CUSTOMER_ID FETCH FIRST 5 ROWS ONLY",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "CUSTOMER_ID",
+      "LAST_NAME",
+      "ORDER_COUNT"
+    ],
+    "result_row_count": 5,
+    "result_hash": "9aae434e082abda510cbf3f133945842d1edd6c7e44e50caebf4f747c525dfb2"
+  },
+  {
+    "id": "sales_2_04",
+    "schema": "sales",
+    "tier": 2,
+    "prompt": "For each order status, show the count of orders.",
+    "gold_sql": "SELECT STATUS, COUNT(*) AS order_count FROM ORDERS GROUP BY STATUS ORDER BY STATUS",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "STATUS",
+      "ORDER_COUNT"
+    ],
+    "result_row_count": 4,
+    "result_hash": "35a843a57045a4b69be7fe67df30cd6159ec49c63fcbb4f82e7f7a0a3ecccd2e"
+  },
+  {
+    "id": "sales_2_05",
+    "schema": "sales",
+    "tier": 2,
+    "prompt": "Show the number of orders placed by customers in each customer tier.",
+    "gold_sql": "SELECT c.CUSTOMER_TIER, COUNT(o.ORDER_ID) AS order_count\n       FROM CUSTOMERS c JOIN ORDERS o ON o.CUSTOMER_ID = c.CUSTOMER_ID\n       GROUP BY c.CUSTOMER_TIER ORDER BY c.CUSTOMER_TIER",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "CUSTOMER_TIER",
+      "ORDER_COUNT"
+    ],
+    "result_row_count": 4,
+    "result_hash": "5597cd21407eb012b7a021e597844a941ab52d3c01605fa1c8b89500781fd419"
+  },
+  {
+    "id": "sales_2_06",
+    "schema": "sales",
+    "tier": 2,
+    "prompt": "List products that have never been ordered.",
+    "gold_sql": "SELECT p.PRODUCT_ID, p.PRODUCT_NAME\n       FROM PRODUCTS p LEFT JOIN ORDER_ITEMS oi ON oi.PRODUCT_ID = p.PRODUCT_ID\n       WHERE oi.ORDER_ITEM_ID IS NULL ORDER BY p.PRODUCT_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "PRODUCT_ID",
+      "PRODUCT_NAME"
+    ],
+    "result_row_count": 0,
+    "result_hash": "c77248800e3df54472f1b90fde6fb7ab4c43378fe7a764bb728dff48b5633e5d"
+  },
+  {
+    "id": "sales_2_07",
+    "schema": "sales",
+    "tier": 2,
+    "prompt": "Show total quantity sold per product, only for products with total quantity greater than 1000.",
+    "gold_sql": "SELECT p.PRODUCT_ID, p.PRODUCT_NAME, SUM(oi.QUANTITY) AS total_qty\n       FROM PRODUCTS p JOIN ORDER_ITEMS oi ON oi.PRODUCT_ID = p.PRODUCT_ID\n       GROUP BY p.PRODUCT_ID, p.PRODUCT_NAME\n       HAVING SUM(oi.QUANTITY) > 1000 ORDER BY p.PRODUCT_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "PRODUCT_ID",
+      "PRODUCT_NAME",
+      "TOTAL_QTY"
+    ],
+    "result_row_count": 500,
+    "result_hash": "e2bc1d14d1c6e41fd79a638170e6b5185d44538d1a938b058f7d3bf9f0cb2038"
+  },
+  {
+    "id": "sales_2_08",
+    "schema": "sales",
+    "tier": 2,
+    "prompt": "For each region, calculate total order revenue in that region.",
+    "gold_sql": "SELECT r.REGION_NAME, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS total_revenue\n       FROM REGIONS r JOIN ORDERS o ON o.REGION_ID = r.REGION_ID\n       JOIN ORDER_ITEMS oi ON oi.ORDER_ID = o.ORDER_ID\n       GROUP BY r.REGION_NAME ORDER BY r.REGION_NAME",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "REGION_NAME",
+      "TOTAL_REVENUE"
+    ],
+    "result_row_count": 4,
+    "result_hash": "a033b7224d119f3144fb030701a2bdb9765901e6abf51068e7509d774df1846c"
+  },
+  {
+    "id": "sales_2_09",
+    "schema": "sales",
+    "tier": 2,
+    "prompt": "List the number of orders per month for the year 2025.",
+    "gold_sql": "SELECT EXTRACT(MONTH FROM ORDER_DATE) AS order_month, COUNT(*) AS order_count\n       FROM ORDERS WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025\n       GROUP BY EXTRACT(MONTH FROM ORDER_DATE) ORDER BY order_month",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "ORDER_MONTH",
+      "ORDER_COUNT"
+    ],
+    "result_row_count": 12,
+    "result_hash": "c39e5637a0146a21392dbb4d2864065e25692107407a82fc8fb6d8e822d97177"
+  },
+  {
+    "id": "sales_2_10",
+    "schema": "sales",
+    "tier": 2,
+    "prompt": "Show each customer's total spend, only for customers who spent more than 5000.",
+    "gold_sql": "SELECT c.CUSTOMER_ID, c.LAST_NAME, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS total_spend\n       FROM CUSTOMERS c JOIN ORDERS o ON o.CUSTOMER_ID = c.CUSTOMER_ID\n       JOIN ORDER_ITEMS oi ON oi.ORDER_ID = o.ORDER_ID\n       GROUP BY c.CUSTOMER_ID, c.LAST_NAME\n       HAVING SUM(oi.QUANTITY * oi.UNIT_PRICE) > 5000 ORDER BY c.CUSTOMER_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "CUSTOMER_ID",
+      "LAST_NAME",
+      "TOTAL_SPEND"
+    ],
+    "result_row_count": 49989,
+    "result_hash": "29eb96091f843d868a68094c7bd810613d78d5d770dfe331ec12988316afeca5"
+  },
+  {
+    "id": "sales_2_11",
+    "schema": "sales",
+    "tier": 2,
+    "prompt": "List the average unit price of products per category, ordered descending by average price.",
+    "gold_sql": "SELECT CATEGORY, AVG(UNIT_PRICE) AS avg_price\n       FROM PRODUCTS GROUP BY CATEGORY ORDER BY avg_price DESC, CATEGORY",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "CATEGORY",
+      "AVG_PRICE"
+    ],
+    "result_row_count": 10,
+    "result_hash": "44300c380fdc818687e1ca216fb729b2143cdf1d9dc9556054ed03c9fa9cc015"
+  },
+  {
+    "id": "sales_2_12",
+    "schema": "sales",
+    "tier": 2,
+    "prompt": "For each product, show how many distinct customers have purchased it.",
+    "gold_sql": "SELECT p.PRODUCT_ID, p.PRODUCT_NAME, COUNT(DISTINCT o.CUSTOMER_ID) AS distinct_customers\n       FROM PRODUCTS p JOIN ORDER_ITEMS oi ON oi.PRODUCT_ID = p.PRODUCT_ID\n       JOIN ORDERS o ON o.ORDER_ID = oi.ORDER_ID\n       GROUP BY p.PRODUCT_ID, p.PRODUCT_NAME ORDER BY p.PRODUCT_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "PRODUCT_ID",
+      "PRODUCT_NAME",
+      "DISTINCT_CUSTOMERS"
+    ],
+    "result_row_count": 500,
+    "result_hash": "00a2be80bbb9b664ff8c9066476fd68c5cc4c12bb9b81f6969459ba059c15276"
+  },
+  {
+    "id": "sales_3_01",
+    "schema": "sales",
+    "tier": 3,
+    "prompt": "Rank customers by total spend within each region using a window function.",
+    "gold_sql": "SELECT * FROM (\n         SELECT c.CUSTOMER_ID, c.LAST_NAME, r.REGION_NAME,\n                SUM(oi.QUANTITY * oi.UNIT_PRICE) AS total_spend,\n                RANK() OVER (PARTITION BY r.REGION_NAME ORDER BY SUM(oi.QUANTITY * oi.UNIT_PRICE) DESC) AS spend_rank\n         FROM CUSTOMERS c JOIN REGIONS r ON c.REGION_ID = r.REGION_ID\n         JOIN ORDERS o ON o.CUSTOMER_ID = c.CUSTOMER_ID\n         JOIN ORDER_ITEMS oi ON oi.ORDER_ID = o.ORDER_ID\n         GROUP BY c.CUSTOMER_ID, c.LAST_NAME, r.REGION_NAME\n       ) WHERE spend_rank <= 3 ORDER BY REGION_NAME, spend_rank",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "CUSTOMER_ID",
+      "LAST_NAME",
+      "REGION_NAME",
+      "TOTAL_SPEND",
+      "SPEND_RANK"
+    ],
+    "result_row_count": 12,
+    "result_hash": "942c605dcd251cf0089ccc0d82ea74136acbc6891f692e4ed3c2460c7c16953d"
+  },
+  {
+    "id": "sales_3_02",
+    "schema": "sales",
+    "tier": 3,
+    "prompt": "Show products whose price is above the average price of their own category.",
+    "gold_sql": "SELECT p.PRODUCT_ID, p.PRODUCT_NAME, p.CATEGORY, p.UNIT_PRICE\n       FROM PRODUCTS p\n       WHERE p.UNIT_PRICE > (SELECT AVG(p2.UNIT_PRICE) FROM PRODUCTS p2 WHERE p2.CATEGORY = p.CATEGORY)\n       ORDER BY p.PRODUCT_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "PRODUCT_ID",
+      "PRODUCT_NAME",
+      "CATEGORY",
+      "UNIT_PRICE"
+    ],
+    "result_row_count": 247,
+    "result_hash": "01fd51adaf8f0904b783bfda833e418ba9e52840a07c682719b6a09023b85bbf"
+  },
+  {
+    "id": "sales_3_03",
+    "schema": "sales",
+    "tier": 3,
+    "prompt": "List the top 3 highest-priced products per category using a window function.",
+    "gold_sql": "SELECT * FROM (\n         SELECT PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE,\n                ROW_NUMBER() OVER (PARTITION BY CATEGORY ORDER BY UNIT_PRICE DESC, PRODUCT_ID) AS rn\n         FROM PRODUCTS\n       ) WHERE rn <= 3 ORDER BY CATEGORY, rn",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "PRODUCT_ID",
+      "PRODUCT_NAME",
+      "CATEGORY",
+      "UNIT_PRICE",
+      "RN"
+    ],
+    "result_row_count": 30,
+    "result_hash": "4425b49b1142a901ef694e3f35366812df9abd6778fa827e9f88bc914484c1e9"
+  },
+  {
+    "id": "sales_3_04",
+    "schema": "sales",
+    "tier": 3,
+    "prompt": "For each customer, show their most recent order date and a running total of their order count over time.",
+    "gold_sql": "SELECT CUSTOMER_ID, ORDER_ID, ORDER_DATE,\n              COUNT(*) OVER (PARTITION BY CUSTOMER_ID ORDER BY ORDER_DATE, ORDER_ID\n                             ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_order_count\n       FROM ORDERS WHERE CUSTOMER_ID <= 10\n       ORDER BY CUSTOMER_ID, ORDER_DATE, ORDER_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "CUSTOMER_ID",
+      "ORDER_ID",
+      "ORDER_DATE",
+      "RUNNING_ORDER_COUNT"
+    ],
+    "result_row_count": 117,
+    "result_hash": "cbbc16bb282918d866f5808ca789ad132bd99d35789236a26bc09892eb287d84"
+  },
+  {
+    "id": "sales_3_05",
+    "schema": "sales",
+    "tier": 3,
+    "prompt": "List customers who have placed more orders than the average number of orders per customer.",
+    "gold_sql": "SELECT c.CUSTOMER_ID, c.LAST_NAME, COUNT(o.ORDER_ID) AS order_count\n       FROM CUSTOMERS c JOIN ORDERS o ON o.CUSTOMER_ID = c.CUSTOMER_ID\n       GROUP BY c.CUSTOMER_ID, c.LAST_NAME\n       HAVING COUNT(o.ORDER_ID) > (\n         SELECT AVG(cnt) FROM (SELECT COUNT(*) AS cnt FROM ORDERS GROUP BY CUSTOMER_ID)\n       )\n       ORDER BY c.CUSTOMER_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "CUSTOMER_ID",
+      "LAST_NAME",
+      "ORDER_COUNT"
+    ],
+    "result_row_count": 20854,
+    "result_hash": "3062e78fd43f343d98291dcc3928b84fce28c53ea32cd7cdf3843bfeeac85af9"
+  },
+  {
+    "id": "sales_3_06",
+    "schema": "sales",
+    "tier": 3,
+    "prompt": "Increase stock quantity by 10 for all products in the 'Toys' category using a MERGE statement, then show the affected products.",
+    "gold_sql": "MERGE INTO PRODUCTS p\n       USING (SELECT PRODUCT_ID FROM PRODUCTS WHERE CATEGORY = 'Toys') src\n       ON (p.PRODUCT_ID = src.PRODUCT_ID)\n       WHEN MATCHED THEN UPDATE SET p.STOCK_QTY = p.STOCK_QTY + 10",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "rows_affected"
+    ],
+    "result_row_count": 1,
+    "result_hash": "e84f94308152cc4f092c933e54c5acb6941aa4fddebe34e945df6202a1459051"
+  },
+  {
+    "id": "sales_3_07",
+    "schema": "sales",
+    "tier": 3,
+    "prompt": "Find the second highest-priced product in each category using a window function.",
+    "gold_sql": "SELECT * FROM (\n         SELECT PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE,\n                DENSE_RANK() OVER (PARTITION BY CATEGORY ORDER BY UNIT_PRICE DESC) AS rnk\n         FROM PRODUCTS\n       ) WHERE rnk = 2 ORDER BY CATEGORY",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "PRODUCT_ID",
+      "PRODUCT_NAME",
+      "CATEGORY",
+      "UNIT_PRICE",
+      "RNK"
+    ],
+    "result_row_count": 10,
+    "result_hash": "89e19031986d9f5eb8aac75e06688e64d0b00f952e84aac9e2dc570d1cfcde05"
+  },
+  {
+    "id": "sales_3_08",
+    "schema": "sales",
+    "tier": 3,
+    "prompt": "Show month-over-month revenue and the percentage change from the previous month for 2025, using LAG().",
+    "gold_sql": "SELECT order_month, monthly_revenue,\n              ROUND((monthly_revenue - LAG(monthly_revenue) OVER (ORDER BY order_month))\n                    / LAG(monthly_revenue) OVER (ORDER BY order_month) * 100, 2) AS pct_change\n       FROM (\n         SELECT EXTRACT(MONTH FROM o.ORDER_DATE) AS order_month,\n                SUM(oi.QUANTITY * oi.UNIT_PRICE) AS monthly_revenue\n         FROM ORDERS o JOIN ORDER_ITEMS oi ON oi.ORDER_ID = o.ORDER_ID\n         WHERE EXTRACT(YEAR FROM o.ORDER_DATE) = 2025\n         GROUP BY EXTRACT(MONTH FROM o.ORDER_DATE)\n       ) ORDER BY order_month",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "ORDER_MONTH",
+      "MONTHLY_REVENUE",
+      "PCT_CHANGE"
+    ],
+    "result_row_count": 12,
+    "result_hash": "764126a28573468936d23848cbc18a31cb4e8acc9b7ed57330a809400ecf4ce6"
+  },
+  {
+    "id": "sales_3_09",
+    "schema": "sales",
+    "tier": 3,
+    "prompt": "Compute a 3-month moving average of order counts using a window function.",
+    "gold_sql": "SELECT order_month, order_count,\n              ROUND(AVG(order_count) OVER (ORDER BY order_month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW), 2) AS moving_avg\n       FROM (\n         SELECT TRUNC(ORDER_DATE, 'MM') AS order_month, COUNT(*) AS order_count\n         FROM ORDERS GROUP BY TRUNC(ORDER_DATE, 'MM')\n       ) ORDER BY order_month",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "ORDER_MONTH",
+      "ORDER_COUNT",
+      "MOVING_AVG"
+    ],
+    "result_row_count": 43,
+    "result_hash": "ed8816fe77d077b6ce97f17e7932856a5186461181af1f177445d45ee9819ed2"
+  },
+  {
+    "id": "sales_3_10",
+    "schema": "sales",
+    "tier": 3,
+    "prompt": "List the top 3 customers by total spend in each region using a window function.",
+    "gold_sql": "SELECT * FROM (\n         SELECT c.CUSTOMER_ID, c.LAST_NAME, r.REGION_NAME,\n                SUM(oi.QUANTITY * oi.UNIT_PRICE) AS total_spend,\n                ROW_NUMBER() OVER (PARTITION BY r.REGION_NAME ORDER BY SUM(oi.QUANTITY * oi.UNIT_PRICE) DESC) AS rn\n         FROM CUSTOMERS c JOIN REGIONS r ON c.REGION_ID = r.REGION_ID\n         JOIN ORDERS o ON o.CUSTOMER_ID = c.CUSTOMER_ID\n         JOIN ORDER_ITEMS oi ON oi.ORDER_ID = o.ORDER_ID\n         GROUP BY c.CUSTOMER_ID, c.LAST_NAME, r.REGION_NAME\n       ) WHERE rn <= 3 ORDER BY REGION_NAME, rn",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "CUSTOMER_ID",
+      "LAST_NAME",
+      "REGION_NAME",
+      "TOTAL_SPEND",
+      "RN"
+    ],
+    "result_row_count": 12,
+    "result_hash": "3032f474bf7ba96d342e2fabf1a6ac15e3a9d614a2d1273e64b6b13bde3ee678"
+  },
+  {
+    "id": "sales_3_11",
+    "schema": "sales",
+    "tier": 3,
+    "prompt": "Find products that are priced higher than all products in the 'Garden' category.",
+    "gold_sql": "SELECT PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE\n       FROM PRODUCTS\n       WHERE UNIT_PRICE > ALL (SELECT UNIT_PRICE FROM PRODUCTS WHERE CATEGORY = 'Garden')\n       ORDER BY PRODUCT_ID",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "PRODUCT_ID",
+      "PRODUCT_NAME",
+      "CATEGORY",
+      "UNIT_PRICE"
+    ],
+    "result_row_count": 9,
+    "result_hash": "045fce3289548c802ae1afe47bdae3ced2b49f0a253602a112fa8fd837d26741"
+  },
+  {
+    "id": "sales_3_12",
+    "schema": "sales",
+    "tier": 3,
+    "prompt": "Show cumulative revenue per day for January 2025, ordered by date, using a running total.",
+    "gold_sql": "SELECT order_day, daily_revenue,\n              SUM(daily_revenue) OVER (ORDER BY order_day ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cumulative_revenue\n       FROM (\n         SELECT TRUNC(o.ORDER_DATE) AS order_day, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS daily_revenue\n         FROM ORDERS o JOIN ORDER_ITEMS oi ON oi.ORDER_ID = o.ORDER_ID\n         WHERE o.ORDER_DATE >= DATE '2025-01-01' AND o.ORDER_DATE < DATE '2025-02-01'\n         GROUP BY TRUNC(o.ORDER_DATE)\n       ) ORDER BY order_day",
+    "schema_context": "Sales schema: REGIONS(REGION_ID, REGION_NAME, COUNTRY), CUSTOMERS(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, REGION_ID, SIGNUP_DATE, CUSTOMER_TIER), PRODUCTS(PRODUCT_ID, PRODUCT_NAME, CATEGORY, UNIT_PRICE, STOCK_QTY), ORDERS(ORDER_ID, CUSTOMER_ID, ORDER_DATE, STATUS, REGION_ID), ORDER_ITEMS(ORDER_ITEM_ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE)",
+    "result_columns": [
+      "ORDER_DAY",
+      "DAILY_REVENUE",
+      "CUMULATIVE_REVENUE"
+    ],
+    "result_row_count": 31,
+    "result_hash": "0ca4a43960be93bb67c16a2107f23ea86566f35a838d3cc5a195bf62ab285418"
+  },
+  {
+    "id": "hr_1_01",
+    "schema": "hr",
+    "tier": 1,
+    "prompt": "List employees hired after January 1, 2023.",
+    "gold_sql": "SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > DATE '2023-01-01' ORDER BY EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "EMAIL",
+      "HIRE_DATE",
+      "JOB_ID",
+      "SALARY",
+      "DEPARTMENT_ID",
+      "MANAGER_ID"
+    ],
+    "result_row_count": 3071,
+    "result_hash": "88e2a3a4fdd6b994ceea7d5490dc221cc5001de7acbe17c1c14e1b3f365bb328"
+  },
+  {
+    "id": "hr_1_02",
+    "schema": "hr",
+    "tier": 1,
+    "prompt": "Show employees with salary greater than 150000.",
+    "gold_sql": "SELECT * FROM HR_EMPLOYEES WHERE SALARY > 150000 ORDER BY EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "EMAIL",
+      "HIRE_DATE",
+      "JOB_ID",
+      "SALARY",
+      "DEPARTMENT_ID",
+      "MANAGER_ID"
+    ],
+    "result_row_count": 2419,
+    "result_hash": "f37eca1096cc0cf1af383a25048b7fe31a9185fef8490f68c4493ea5ca1acdd8"
+  },
+  {
+    "id": "hr_1_03",
+    "schema": "hr",
+    "tier": 1,
+    "prompt": "List all job titles with a max salary above 200000.",
+    "gold_sql": "SELECT * FROM HR_JOBS WHERE MAX_SALARY > 200000 ORDER BY JOB_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "JOB_ID",
+      "JOB_TITLE",
+      "MIN_SALARY",
+      "MAX_SALARY"
+    ],
+    "result_row_count": 3,
+    "result_hash": "0ed749a48d666d1bda24122b518fea48441fe6d49f2bcb0097ab2b08a3e45aef"
+  },
+  {
+    "id": "hr_1_04",
+    "schema": "hr",
+    "tier": 1,
+    "prompt": "Show the top 10 highest paid employees.",
+    "gold_sql": "SELECT * FROM HR_EMPLOYEES ORDER BY SALARY DESC, EMPLOYEE_ID FETCH FIRST 10 ROWS ONLY",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "EMAIL",
+      "HIRE_DATE",
+      "JOB_ID",
+      "SALARY",
+      "DEPARTMENT_ID",
+      "MANAGER_ID"
+    ],
+    "result_row_count": 10,
+    "result_hash": "30910d39bd247650cbed8cd29186433a8766c23ca53bd325d5fdcf3e8dab9a5e"
+  },
+  {
+    "id": "hr_1_05",
+    "schema": "hr",
+    "tier": 1,
+    "prompt": "List all locations in the USA.",
+    "gold_sql": "SELECT * FROM HR_LOCATIONS WHERE COUNTRY = 'USA' ORDER BY LOCATION_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "LOCATION_ID",
+      "CITY",
+      "COUNTRY"
+    ],
+    "result_row_count": 8,
+    "result_hash": "ece601593bd1026dee7731562a942b1bda301791e52070d452dd1907f510f3be"
+  },
+  {
+    "id": "hr_1_06",
+    "schema": "hr",
+    "tier": 1,
+    "prompt": "Find employees whose last name contains 'son'.",
+    "gold_sql": "SELECT * FROM HR_EMPLOYEES WHERE LAST_NAME LIKE '%son%' ORDER BY EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "EMAIL",
+      "HIRE_DATE",
+      "JOB_ID",
+      "SALARY",
+      "DEPARTMENT_ID",
+      "MANAGER_ID"
+    ],
+    "result_row_count": 980,
+    "result_hash": "553d5e2b674d75c7b9f7f5df389ba40a8fde475349b72de0aad58ca59f6f1e0c"
+  },
+  {
+    "id": "hr_1_07",
+    "schema": "hr",
+    "tier": 1,
+    "prompt": "List all department names.",
+    "gold_sql": "SELECT DEPARTMENT_NAME FROM HR_DEPARTMENTS ORDER BY DEPARTMENT_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "DEPARTMENT_NAME"
+    ],
+    "result_row_count": 15,
+    "result_hash": "0fefdd9f398cdfcf9a957ba07f369099c9c2cb5004d194e75b514eba734e3906"
+  },
+  {
+    "id": "hr_1_08",
+    "schema": "hr",
+    "tier": 1,
+    "prompt": "Show employees hired in 2020, ordered by hire date.",
+    "gold_sql": "SELECT * FROM HR_EMPLOYEES WHERE EXTRACT(YEAR FROM HIRE_DATE) = 2020 ORDER BY HIRE_DATE, EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "EMAIL",
+      "HIRE_DATE",
+      "JOB_ID",
+      "SALARY",
+      "DEPARTMENT_ID",
+      "MANAGER_ID"
+    ],
+    "result_row_count": 906,
+    "result_hash": "efe81de72fb390eb1fb7dca513a8120b4cacc4c3e60e3fc07fafa28e56c585ec"
+  },
+  {
+    "id": "hr_1_09",
+    "schema": "hr",
+    "tier": 1,
+    "prompt": "List the 5 most recently hired employees.",
+    "gold_sql": "SELECT * FROM HR_EMPLOYEES ORDER BY HIRE_DATE DESC, EMPLOYEE_ID DESC FETCH FIRST 5 ROWS ONLY",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "EMAIL",
+      "HIRE_DATE",
+      "JOB_ID",
+      "SALARY",
+      "DEPARTMENT_ID",
+      "MANAGER_ID"
+    ],
+    "result_row_count": 5,
+    "result_hash": "cf74231fd28ae586fddfcebc4a6a539ac379ad6b5940d8aed9d4418bfdf5036a"
+  },
+  {
+    "id": "hr_1_10",
+    "schema": "hr",
+    "tier": 1,
+    "prompt": "Find all job titles containing 'Manager'.",
+    "gold_sql": "SELECT * FROM HR_JOBS WHERE JOB_TITLE LIKE '%Manager%' ORDER BY JOB_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "JOB_ID",
+      "JOB_TITLE",
+      "MIN_SALARY",
+      "MAX_SALARY"
+    ],
+    "result_row_count": 4,
+    "result_hash": "71ff1e6d114b36b71afc8ff3bbc882f2590ba410b10af97cc9e9ad241afc8082"
+  },
+  {
+    "id": "hr_1_11",
+    "schema": "hr",
+    "tier": 1,
+    "prompt": "Show employees with no manager assigned (top-level employees).",
+    "gold_sql": "SELECT * FROM HR_EMPLOYEES WHERE MANAGER_ID IS NULL ORDER BY EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "EMAIL",
+      "HIRE_DATE",
+      "JOB_ID",
+      "SALARY",
+      "DEPARTMENT_ID",
+      "MANAGER_ID"
+    ],
+    "result_row_count": 500,
+    "result_hash": "f34fe825964cd5090a70514c7058720b61dcbe8a20b43efc980d672843ef8c73"
+  },
+  {
+    "id": "hr_1_12",
+    "schema": "hr",
+    "tier": 1,
+    "prompt": "List employees with salary between 80000 and 120000, ordered by salary.",
+    "gold_sql": "SELECT * FROM HR_EMPLOYEES WHERE SALARY BETWEEN 80000 AND 120000 ORDER BY SALARY, EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "EMAIL",
+      "HIRE_DATE",
+      "JOB_ID",
+      "SALARY",
+      "DEPARTMENT_ID",
+      "MANAGER_ID"
+    ],
+    "result_row_count": 3208,
+    "result_hash": "75f1eec6ac3bac34561ec0213ab55c298958a01b3eac9c8c8cf3c857adae7738"
+  },
+  {
+    "id": "hr_2_01",
+    "schema": "hr",
+    "tier": 2,
+    "prompt": "For each department, show the number of employees.",
+    "gold_sql": "SELECT d.DEPARTMENT_NAME, COUNT(e.EMPLOYEE_ID) AS emp_count\n       FROM HR_DEPARTMENTS d LEFT JOIN HR_EMPLOYEES e ON e.DEPARTMENT_ID = d.DEPARTMENT_ID\n       GROUP BY d.DEPARTMENT_NAME ORDER BY d.DEPARTMENT_NAME",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "DEPARTMENT_NAME",
+      "EMP_COUNT"
+    ],
+    "result_row_count": 15,
+    "result_hash": "fddebde0eec0b291e9ab2f3932998fb1d5c3c2477e39a3767ec59887c5bd92b7"
+  },
+  {
+    "id": "hr_2_02",
+    "schema": "hr",
+    "tier": 2,
+    "prompt": "Show average salary per job title, ordered descending by average salary.",
+    "gold_sql": "SELECT j.JOB_TITLE, AVG(e.SALARY) AS avg_salary\n       FROM HR_JOBS j JOIN HR_EMPLOYEES e ON e.JOB_ID = j.JOB_ID\n       GROUP BY j.JOB_TITLE ORDER BY avg_salary DESC, j.JOB_TITLE",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "JOB_TITLE",
+      "AVG_SALARY"
+    ],
+    "result_row_count": 21,
+    "result_hash": "3a5697ba4c3d4b68b146d6d7eb7b6afb9465d00082880b8231541c6d42205aa1"
+  },
+  {
+    "id": "hr_2_03",
+    "schema": "hr",
+    "tier": 2,
+    "prompt": "List departments with more than 600 employees.",
+    "gold_sql": "SELECT d.DEPARTMENT_NAME, COUNT(e.EMPLOYEE_ID) AS emp_count\n       FROM HR_DEPARTMENTS d JOIN HR_EMPLOYEES e ON e.DEPARTMENT_ID = d.DEPARTMENT_ID\n       GROUP BY d.DEPARTMENT_NAME\n       HAVING COUNT(e.EMPLOYEE_ID) > 600 ORDER BY d.DEPARTMENT_NAME",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "DEPARTMENT_NAME",
+      "EMP_COUNT"
+    ],
+    "result_row_count": 15,
+    "result_hash": "fddebde0eec0b291e9ab2f3932998fb1d5c3c2477e39a3767ec59887c5bd92b7"
+  },
+  {
+    "id": "hr_2_04",
+    "schema": "hr",
+    "tier": 2,
+    "prompt": "For each location, show the total number of departments.",
+    "gold_sql": "SELECT l.CITY, l.COUNTRY, COUNT(d.DEPARTMENT_ID) AS dept_count\n       FROM HR_LOCATIONS l LEFT JOIN HR_DEPARTMENTS d ON d.LOCATION_ID = l.LOCATION_ID\n       GROUP BY l.CITY, l.COUNTRY ORDER BY l.CITY",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "CITY",
+      "COUNTRY",
+      "DEPT_COUNT"
+    ],
+    "result_row_count": 20,
+    "result_hash": "6bde922e4ab9b29286901154800788860d31b425df7f87a55d53d8fbbb69b82b"
+  },
+  {
+    "id": "hr_2_05",
+    "schema": "hr",
+    "tier": 2,
+    "prompt": "Show the count of direct reports per manager, for the top 10 managers by team size.",
+    "gold_sql": "SELECT m.EMPLOYEE_ID, m.LAST_NAME, COUNT(e.EMPLOYEE_ID) AS report_count\n       FROM HR_EMPLOYEES m JOIN HR_EMPLOYEES e ON e.MANAGER_ID = m.EMPLOYEE_ID\n       GROUP BY m.EMPLOYEE_ID, m.LAST_NAME\n       ORDER BY report_count DESC, m.EMPLOYEE_ID FETCH FIRST 10 ROWS ONLY",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "LAST_NAME",
+      "REPORT_COUNT"
+    ],
+    "result_row_count": 10,
+    "result_hash": "1cb3041fd428e0ffbfedb0057a85300e07344aab770f2f6b5612aed561142ccd"
+  },
+  {
+    "id": "hr_2_06",
+    "schema": "hr",
+    "tier": 2,
+    "prompt": "List the total salary cost per department, ordered descending.",
+    "gold_sql": "SELECT d.DEPARTMENT_NAME, SUM(e.SALARY) AS total_salary\n       FROM HR_DEPARTMENTS d JOIN HR_EMPLOYEES e ON e.DEPARTMENT_ID = d.DEPARTMENT_ID\n       GROUP BY d.DEPARTMENT_NAME ORDER BY total_salary DESC, d.DEPARTMENT_NAME",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "DEPARTMENT_NAME",
+      "TOTAL_SALARY"
+    ],
+    "result_row_count": 15,
+    "result_hash": "63e5aa1360b7033488c329ab4841a5885f3fc1587b5a17a219a25979bc4c0148"
+  },
+  {
+    "id": "hr_2_07",
+    "schema": "hr",
+    "tier": 2,
+    "prompt": "For each job title, show the minimum, maximum, and average employee salary.",
+    "gold_sql": "SELECT j.JOB_TITLE, MIN(e.SALARY) AS min_sal, MAX(e.SALARY) AS max_sal, AVG(e.SALARY) AS avg_sal\n       FROM HR_JOBS j JOIN HR_EMPLOYEES e ON e.JOB_ID = j.JOB_ID\n       GROUP BY j.JOB_TITLE ORDER BY j.JOB_TITLE",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "JOB_TITLE",
+      "MIN_SAL",
+      "MAX_SAL",
+      "AVG_SAL"
+    ],
+    "result_row_count": 21,
+    "result_hash": "9a2053536c9d827a99da901e55b48303b2e76c20f4a667b136a3d24e6a90e6ba"
+  },
+  {
+    "id": "hr_2_08",
+    "schema": "hr",
+    "tier": 2,
+    "prompt": "Show departments where the average salary exceeds 120000.",
+    "gold_sql": "SELECT d.DEPARTMENT_NAME, AVG(e.SALARY) AS avg_salary\n       FROM HR_DEPARTMENTS d JOIN HR_EMPLOYEES e ON e.DEPARTMENT_ID = d.DEPARTMENT_ID\n       GROUP BY d.DEPARTMENT_NAME\n       HAVING AVG(e.SALARY) > 120000 ORDER BY d.DEPARTMENT_NAME",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "DEPARTMENT_NAME",
+      "AVG_SALARY"
+    ],
+    "result_row_count": 15,
+    "result_hash": "c7bd843c543a939a4ea9ef980971bafb1279d425400ff85955ef934225557f51"
+  },
+  {
+    "id": "hr_2_09",
+    "schema": "hr",
+    "tier": 2,
+    "prompt": "List the number of employees hired each year, ordered by year.",
+    "gold_sql": "SELECT EXTRACT(YEAR FROM HIRE_DATE) AS hire_year, COUNT(*) AS emp_count\n       FROM HR_EMPLOYEES GROUP BY EXTRACT(YEAR FROM HIRE_DATE) ORDER BY hire_year",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "HIRE_YEAR",
+      "EMP_COUNT"
+    ],
+    "result_row_count": 12,
+    "result_hash": "30e0a970ed3e5200fce1c932ca56ace43c1b56402222a5e82b4cfea356d570ae"
+  },
+  {
+    "id": "hr_2_10",
+    "schema": "hr",
+    "tier": 2,
+    "prompt": "For each country, show the total number of employees working there.",
+    "gold_sql": "SELECT l.COUNTRY, COUNT(e.EMPLOYEE_ID) AS emp_count\n       FROM HR_LOCATIONS l JOIN HR_DEPARTMENTS d ON d.LOCATION_ID = l.LOCATION_ID\n       JOIN HR_EMPLOYEES e ON e.DEPARTMENT_ID = d.DEPARTMENT_ID\n       GROUP BY l.COUNTRY ORDER BY l.COUNTRY",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "COUNTRY",
+      "EMP_COUNT"
+    ],
+    "result_row_count": 6,
+    "result_hash": "cc373e9cf50b76ba5d805484bc01a598f9164cdfffea9aacfbb26514a7e0190f"
+  },
+  {
+    "id": "hr_2_11",
+    "schema": "hr",
+    "tier": 2,
+    "prompt": "Show employees along with their department name and job title, limited to the 'Sales' department.",
+    "gold_sql": "SELECT e.EMPLOYEE_ID, e.FIRST_NAME, e.LAST_NAME, d.DEPARTMENT_NAME, j.JOB_TITLE\n       FROM HR_EMPLOYEES e JOIN HR_DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID\n       JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID\n       WHERE d.DEPARTMENT_NAME = 'Sales' ORDER BY e.EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "FIRST_NAME",
+      "LAST_NAME",
+      "DEPARTMENT_NAME",
+      "JOB_TITLE"
+    ],
+    "result_row_count": 663,
+    "result_hash": "bc1ae82a310008132115943a01380ec53bd2f66dd00a3f360df68d3e2583e9b5"
+  },
+  {
+    "id": "hr_2_12",
+    "schema": "hr",
+    "tier": 2,
+    "prompt": "List employees who have more than 1 job history record, along with their history count.",
+    "gold_sql": "SELECT e.EMPLOYEE_ID, e.LAST_NAME, COUNT(jh.START_DATE) AS history_count\n       FROM HR_EMPLOYEES e JOIN HR_JOB_HISTORY jh ON jh.EMPLOYEE_ID = e.EMPLOYEE_ID\n       GROUP BY e.EMPLOYEE_ID, e.LAST_NAME\n       HAVING COUNT(jh.START_DATE) > 1 ORDER BY e.EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "LAST_NAME",
+      "HISTORY_COUNT"
+    ],
+    "result_row_count": 3557,
+    "result_hash": "a73e9c8d134ca18ef550616aa93db74301686166b3415295ef03bb1075093359"
+  },
+  {
+    "id": "hr_3_01",
+    "schema": "hr",
+    "tier": 3,
+    "prompt": "Show the organizational hierarchy starting from the top (employees with no manager) using CONNECT BY, including hierarchy level, limited to 3 levels.",
+    "gold_sql": "SELECT EMPLOYEE_ID, LAST_NAME, MANAGER_ID, LEVEL AS hier_level\n       FROM HR_EMPLOYEES\n       START WITH MANAGER_ID IS NULL\n       CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID\n       AND LEVEL <= 3\n       ORDER BY hier_level, EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "LAST_NAME",
+      "MANAGER_ID",
+      "HIER_LEVEL"
+    ],
+    "result_row_count": 10000,
+    "result_hash": "fa573038159eccaa5d752472a3cf0ada99dcdb13ffc01e7f2e3a069a81e2bab8"
+  },
+  {
+    "id": "hr_3_02",
+    "schema": "hr",
+    "tier": 3,
+    "prompt": "Rank employees by salary within each department using RANK().",
+    "gold_sql": "SELECT DEPARTMENT_ID, EMPLOYEE_ID, LAST_NAME, SALARY,\n              RANK() OVER (PARTITION BY DEPARTMENT_ID ORDER BY SALARY DESC) AS salary_rank\n       FROM HR_EMPLOYEES ORDER BY DEPARTMENT_ID, salary_rank",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "DEPARTMENT_ID",
+      "EMPLOYEE_ID",
+      "LAST_NAME",
+      "SALARY",
+      "SALARY_RANK"
+    ],
+    "result_row_count": 10000,
+    "result_hash": "84d2af0da3ee4b4f5e2c6d27b02d30a7135805213282f1fb1b41da436f324fa3"
+  },
+  {
+    "id": "hr_3_03",
+    "schema": "hr",
+    "tier": 3,
+    "prompt": "Find employees who earn more than their manager.",
+    "gold_sql": "SELECT e.EMPLOYEE_ID, e.LAST_NAME, e.SALARY, m.EMPLOYEE_ID AS manager_id, m.SALARY AS manager_salary\n       FROM HR_EMPLOYEES e JOIN HR_EMPLOYEES m ON e.MANAGER_ID = m.EMPLOYEE_ID\n       WHERE e.SALARY > m.SALARY ORDER BY e.EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "LAST_NAME",
+      "SALARY",
+      "MANAGER_ID",
+      "MANAGER_SALARY"
+    ],
+    "result_row_count": 4855,
+    "result_hash": "3c6d995874bf16f686d8f4e8bec994417d9afbe632c28880e5377634714c36f2"
+  },
+  {
+    "id": "hr_3_04",
+    "schema": "hr",
+    "tier": 3,
+    "prompt": "Show the top 3 highest paid employees per department using a window function.",
+    "gold_sql": "SELECT * FROM (\n         SELECT DEPARTMENT_ID, EMPLOYEE_ID, LAST_NAME, SALARY,\n                ROW_NUMBER() OVER (PARTITION BY DEPARTMENT_ID ORDER BY SALARY DESC, EMPLOYEE_ID) AS rn\n         FROM HR_EMPLOYEES\n       ) WHERE rn <= 3 ORDER BY DEPARTMENT_ID, rn",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "DEPARTMENT_ID",
+      "EMPLOYEE_ID",
+      "LAST_NAME",
+      "SALARY",
+      "RN"
+    ],
+    "result_row_count": 45,
+    "result_hash": "fbf312b1b08c136d8d23c4a096124a654154a1eb02e894c2e53896cfcb42ca93"
+  },
+  {
+    "id": "hr_3_05",
+    "schema": "hr",
+    "tier": 3,
+    "prompt": "List employees whose salary is above the average salary of their own department.",
+    "gold_sql": "SELECT e.EMPLOYEE_ID, e.LAST_NAME, e.DEPARTMENT_ID, e.SALARY\n       FROM HR_EMPLOYEES e\n       WHERE e.SALARY > (SELECT AVG(e2.SALARY) FROM HR_EMPLOYEES e2 WHERE e2.DEPARTMENT_ID = e.DEPARTMENT_ID)\n       ORDER BY e.EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "LAST_NAME",
+      "DEPARTMENT_ID",
+      "SALARY"
+    ],
+    "result_row_count": 3964,
+    "result_hash": "d882a97e8c16bb1e898dd583eabac589999bf4ea66457d8bc57b35eb138a6656"
+  },
+  {
+    "id": "hr_3_06",
+    "schema": "hr",
+    "tier": 3,
+    "prompt": "Compute each employee's salary rank company-wide using DENSE_RANK(), showing the top 10.",
+    "gold_sql": "SELECT * FROM (\n         SELECT EMPLOYEE_ID, LAST_NAME, SALARY, DENSE_RANK() OVER (ORDER BY SALARY DESC) AS rnk\n         FROM HR_EMPLOYEES\n       ) WHERE rnk <= 10 ORDER BY rnk, EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "LAST_NAME",
+      "SALARY",
+      "RNK"
+    ],
+    "result_row_count": 10,
+    "result_hash": "d4cf11c6a8c150565beeaed9dd92c4c465df60de2318839d136440d29d5b53c6"
+  },
+  {
+    "id": "hr_3_07",
+    "schema": "hr",
+    "tier": 3,
+    "prompt": "Show a running total of salary cost ordered by hire date, for employees hired in 2015.",
+    "gold_sql": "SELECT EMPLOYEE_ID, HIRE_DATE, SALARY,\n              SUM(SALARY) OVER (ORDER BY HIRE_DATE, EMPLOYEE_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total\n       FROM HR_EMPLOYEES\n       WHERE EXTRACT(YEAR FROM HIRE_DATE) = 2015\n       ORDER BY HIRE_DATE, EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "HIRE_DATE",
+      "SALARY",
+      "RUNNING_TOTAL"
+    ],
+    "result_row_count": 823,
+    "result_hash": "7aa3346b39debdcb334825fe12dbbf45a57f7a6dcb3a7024dbfe1e003cddbe91"
+  },
+  {
+    "id": "hr_3_08",
+    "schema": "hr",
+    "tier": 3,
+    "prompt": "Give a 5 percent raise to all employees in the 'Engineering' department using a MERGE statement.",
+    "gold_sql": "MERGE INTO HR_EMPLOYEES e\n       USING (SELECT emp.EMPLOYEE_ID FROM HR_EMPLOYEES emp\n              JOIN HR_DEPARTMENTS d ON emp.DEPARTMENT_ID = d.DEPARTMENT_ID\n              WHERE d.DEPARTMENT_NAME = 'Engineering') src\n       ON (e.EMPLOYEE_ID = src.EMPLOYEE_ID)\n       WHEN MATCHED THEN UPDATE SET e.SALARY = e.SALARY * 1.05",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "rows_affected"
+    ],
+    "result_row_count": 1,
+    "result_hash": "e5a82193b6c40a9711fa7580d98c265536e408e0400180ad012cf7ac61f6c5c1"
+  },
+  {
+    "id": "hr_3_09",
+    "schema": "hr",
+    "tier": 3,
+    "prompt": "Find the department with the highest average salary.",
+    "gold_sql": "SELECT DEPARTMENT_ID, AVG(SALARY) AS avg_salary\n       FROM HR_EMPLOYEES GROUP BY DEPARTMENT_ID\n       HAVING AVG(SALARY) >= ALL (SELECT AVG(SALARY) FROM HR_EMPLOYEES GROUP BY DEPARTMENT_ID)",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "DEPARTMENT_ID",
+      "AVG_SALARY"
+    ],
+    "result_row_count": 1,
+    "result_hash": "9a59d39389eb08e36d51c9042a59e41d870b32df5b27a5ec038c0d4870aff64a"
+  },
+  {
+    "id": "hr_3_10",
+    "schema": "hr",
+    "tier": 3,
+    "prompt": "Using CONNECT BY, list all employees who report directly or indirectly to employee 3600, with their hierarchy level.",
+    "gold_sql": "SELECT EMPLOYEE_ID, LAST_NAME, MANAGER_ID, LEVEL AS hier_level\n       FROM HR_EMPLOYEES\n       START WITH EMPLOYEE_ID = 3600\n       CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID\n       ORDER BY hier_level, EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "LAST_NAME",
+      "MANAGER_ID",
+      "HIER_LEVEL"
+    ],
+    "result_row_count": 36,
+    "result_hash": "d5a27d3b94c2dace4ec68770c9a005379541db853ce6d0ccd431cd20c698fc49"
+  },
+  {
+    "id": "hr_3_11",
+    "schema": "hr",
+    "tier": 3,
+    "prompt": "Show the salary difference between each employee and the previously hired employee, ordered by hire date, using LAG().",
+    "gold_sql": "SELECT EMPLOYEE_ID, HIRE_DATE, SALARY,\n              SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE, EMPLOYEE_ID) AS salary_diff_from_prev\n       FROM HR_EMPLOYEES WHERE EMPLOYEE_ID <= 50\n       ORDER BY HIRE_DATE, EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "HIRE_DATE",
+      "SALARY",
+      "SALARY_DIFF_FROM_PREV"
+    ],
+    "result_row_count": 50,
+    "result_hash": "f027f59d8fb09fd1b8769a15575ce54dead1817a905e8c36404d5dec6e91493c"
+  },
+  {
+    "id": "hr_3_12",
+    "schema": "hr",
+    "tier": 3,
+    "prompt": "For employees with more than one job history record, show their most recent job title using an analytic function.",
+    "gold_sql": "SELECT * FROM (\n         SELECT jh.EMPLOYEE_ID, j.JOB_TITLE,\n                ROW_NUMBER() OVER (PARTITION BY jh.EMPLOYEE_ID ORDER BY jh.START_DATE DESC) AS rn,\n                COUNT(*) OVER (PARTITION BY jh.EMPLOYEE_ID) AS history_count\n         FROM HR_JOB_HISTORY jh JOIN HR_JOBS j ON jh.JOB_ID = j.JOB_ID\n       ) WHERE rn = 1 AND history_count > 1 ORDER BY EMPLOYEE_ID",
+    "schema_context": "HR schema: HR_LOCATIONS(LOCATION_ID, CITY, COUNTRY), HR_DEPARTMENTS(DEPARTMENT_ID, DEPARTMENT_NAME, LOCATION_ID), HR_JOBS(JOB_ID, JOB_TITLE, MIN_SALARY, MAX_SALARY), HR_EMPLOYEES(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, HIRE_DATE, JOB_ID, SALARY, DEPARTMENT_ID, MANAGER_ID), HR_JOB_HISTORY(EMPLOYEE_ID, START_DATE, END_DATE, JOB_ID, DEPARTMENT_ID)",
+    "result_columns": [
+      "EMPLOYEE_ID",
+      "JOB_TITLE",
+      "RN",
+      "HISTORY_COUNT"
+    ],
+    "result_row_count": 3557,
+    "result_hash": "fa833aa1fb727a28e865d80eb9e9fa4a1253aaa9c526e5bdb12481ab10622c72"
+  }
+]
