@@ -248,20 +248,74 @@ Runs are resumable — re-running the same command skips `(test_case_id, model,
 context_strategy)` combos already completed, so an interrupted run can just
 be re-launched.
 
+## Concurrency Benchmark
+
+Companion to the main benchmark above. That one sweeps models/strategies one
+request at a time; `run_concurrency_benchmark.sh` holds the model and context
+strategy **fixed** and instead sweeps **concurrency** - firing an increasing
+number of simultaneous NL->SQL requests at the agent under test (and Oracle)
+to answer: does correctness hold up, and how does response time degrade, as
+concurrent load grows? It also writes a bottleneck-analysis report computed
+from the measured numbers - not a static template.
+
+```
+./run_concurrency_benchmark.sh --agent-url URL --model MODEL_ID [options]
+```
+
+Run `./run_concurrency_benchmark.sh --help` for the full option list. Key ones:
+
+| Flag | Default | Purpose |
+|---|---|---|
+| `--agent-url URL` | *(required)* | Base URL of the agent under test |
+| `--agent-type TYPE` | `openai` | `openai` (vLLM/router/hosted APIs) or `ollama` |
+| `--model MODEL` | auto-detected | Single model id/tag - concurrency is the only variable under test, so the model is held fixed |
+| `--levels LIST` | `1,2,4,8,16,32` | Comma-separated concurrency levels to sweep |
+| `--rounds N` | `3` | Requests per worker at each level - total requests at level L = `L * N` |
+| `--context-strategy S` | `static` | `static` or `rag`, held fixed across the whole sweep |
+| `--db-dsn` / `--db-user` / `--db-pwd` | same as above | Oracle connection |
+
+At each level, `L` worker threads run in parallel and together fire `L * N`
+total requests (mirrors how load tools like k6/Locust scale virtual users).
+Each request times the agent call and the DB execution **separately**, so the
+report can tell agent-bound slowdowns apart from DB-bound ones, and each
+request is scored against gold SQL with the same scoring logic as the main
+benchmark - correctness isn't assumed to hold under load, it's checked.
+
+### Output
+
+- `testcases/concurrency_results.{json,csv}` — one row per request
+- `testcases/concurrency_summary.{json,csv}` — one row per concurrency level:
+  throughput (req/s), latency percentiles (p50/p95/p99, total + agent-only +
+  DB-only), error rate, correctness (avg score, exact-match rate)
+- `testcases/concurrency_report.md` — findings + recommendations, generated
+  from the measured summary data: throughput scaling efficiency vs. ideal
+  linear scaling, which stage (agent vs. DB) dominates and grows fastest with
+  concurrency, whether errors rise under load, and whether correctness holds
+  up. Recommendations are conditioned on what was actually observed - e.g. an
+  agent-bound bottleneck points at model-serving concurrency (multiple
+  backend replicas behind [`multi-user-vLLM`](https://github.com/ayobamiblackforce-100/multi-user-vllm)'s
+  router, or vLLM continuous-batching settings), while a DB-bound one points
+  at connection pool sizing or missing indexes.
+
 ## What's in this directory
 
 ```
-run_benchmark.sh       one-touch CLI (this is the thing you run)
+run_benchmark.sh              one-touch CLI: correctness/latency sweep across models x strategies
+run_concurrency_benchmark.sh   one-touch CLI: concurrency sweep at a fixed model + strategy
 scripts/
-  benchmark.py          harness — runs test cases, scores generated SQL
-  rag_pipeline.py        builds/queries the RAG corpus
-  agents/                 pluggable agent adapters (ollama, openai-compatible)
+  benchmark.py                 harness — runs test cases, scores generated SQL
+  concurrency_benchmark.py      harness — concurrency sweep + bottleneck analysis
+  rag_pipeline.py                builds/queries the RAG corpus
+  agents/                         pluggable agent adapters (ollama, openai-compatible)
 testcases/
-  test_cases.json          70-question gold test set (sales + HR schemas)
-  rag_corpus.json           pre-built RAG corpus (table + example embeddings)
-  benchmark_results.*        written by each run
-docs/AGENTS.md          full interface/config contract for scripts/agents/
-SDD-PLAN.md             design doc for the pluggable-agent + router initiative
+  test_cases.json                  70-question gold test set (sales + HR schemas)
+  rag_corpus.json                   pre-built RAG corpus (table + example embeddings)
+  benchmark_results.*                written by each run_benchmark.sh run
+  concurrency_results.*              written by each run_concurrency_benchmark.sh run (per-request)
+  concurrency_summary.*              written by each run_concurrency_benchmark.sh run (per-level)
+  concurrency_report.md              bottleneck findings + recommendations
+docs/AGENTS.md                  full interface/config contract for scripts/agents/
+SDD-PLAN.md                     design doc for the pluggable-agent + router initiative
 ```
 
 Source project: [`ollama-rag`](https://github.com/ayobamiblackforce-100/ollama-oracle-rag)
