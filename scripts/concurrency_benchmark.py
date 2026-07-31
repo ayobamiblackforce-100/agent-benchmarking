@@ -369,15 +369,23 @@ def analyze_bottlenecks(summaries):
         + (f", {db_growth}x growth." if db_growth else ".")
     )
 
-    # Growth bar is a flat 3x-6x floor, NOT scaled up toward the fully-linear
-    # "ideal" ratio (that was tried and undercalled real bottlenecks - e.g. a
-    # 1->32 sweep with genuine 7.67x agent-p95 growth and agent p95 ~31x DB p95
-    # still failed an 11.6x bar). A stage that both dominates total latency AND
-    # grows a modest few x with load is already a real, actionable bottleneck;
-    # requiring near-perfect linear degradation just produces false negatives
-    # on wide sweeps.
-    growth_bar = min(6.0, max(3.0, ideal_ratio * 0.25))
-    agent_dominant = agent_p95_top >= db_p95_top * 2 if db_p95_top else agent_p95_top > 0
+    # Dominance is decided by which stage's p95 is actually larger at peak
+    # concurrency (with a 1.2x margin so a near-tie doesn't get force-assigned
+    # to either side) - NOT by an arbitrary growth-ratio race. Growth is only
+    # used afterward as confirmation that the dominant stage is a real,
+    # load-driven problem (rising with concurrency) rather than a flat,
+    # inherent cost (e.g. a slow-but-constant model). A flat 1.5x growth bar
+    # is enough to confirm "rising with load" without requiring near-linear
+    # degradation, which produced false negatives on wide sweeps in earlier
+    # versions (e.g. a 1->32 sweep with genuine 7.67x agent-p95 growth and
+    # agent p95 ~31x DB p95 still failed an 11.6x-scaled bar; separately, a
+    # run where DB p95 overtook agent p95 as the larger component - 4.26s vs
+    # 3.17s, 5.92x growth - still failed a flat 6.0x bar because dominance and
+    # growth were incorrectly coupled into one threshold).
+    growth_bar = 1.5
+    dominance_margin = 1.2
+    agent_dominant = agent_p95_top >= db_p95_top * dominance_margin if db_p95_top else agent_p95_top > 0
+    db_dominant = db_p95_top >= agent_p95_top * dominance_margin if agent_p95_top else db_p95_top > 0
 
     # --- GPU utilization, if we have it: distinguishes "genuinely compute-
     # bound" from "server isn't parallelizing despite an idle GPU" - these
@@ -433,7 +441,7 @@ def analyze_bottlenecks(summaries):
                 "switching to vLLM's batching) over adding GPU hardware - the current GPU isn't "
                 "the limiting resource yet."
             )
-    elif db_growth and db_growth >= growth_bar and not agent_dominant:
+    elif db_growth and db_growth >= growth_bar and db_dominant:
         findings.append(
             "DB execution time is growing roughly in step with concurrency and is a "
             "comparable-or-larger share of total latency than agent generation time - the "

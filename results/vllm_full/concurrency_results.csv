@@ -1,0 +1,2967 @@
+concurrency_level,round,request_idx,test_case_id,schema,tier,model,context_strategy,req_start_offset_s,prompt_chars,status,score,generated_sql,sql_error,agent_wall_time_s,db_exec_time_s,total_time_s,tokens_per_sec,error
+1,0,0,sales_2_03,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.0,1290,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, COUNT(o.ORDER_ID) AS TOTAL_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+ORDER BY TOTAL_ORDERS DESC
+FETCH FIRST 5 ROWS ONLY",,1.975,0.126,2.102,41.52,
+1,1,1,sales_1_04,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1279,mismatch,0.0,"SELECT PRODUCT_NAME, UNIT_PRICE FROM PRODUCTS ORDER BY UNIT_PRICE DESC FETCH FIRST 10 ROWS ONLY",,0.53,0.003,0.533,41.5,
+1,2,2,hr_1_01,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1261,exact_match,1.0,"SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,0.822,0.01,0.855,40.13,
+1,3,3,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.689,0.069,1.761,42.04,
+1,4,4,sales_3_05,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1329,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+FROM CUSTOMERS c
+JOIN (
+    SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+    FROM ORDERS
+    GROUP BY CUSTOMER_ID
+    HAVING COUNT(*) > (
+        SELECT AVG(ORDER_COUNT) 
+        FROM (
+            SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+            FROM ORDERS
+            GROUP BY CUSTOMER_ID
+        )
+    )
+) o ON c.CUSTOMER_ID = o.CUSTOMER_ID",,2.589,0.187,2.854,42.11,
+1,5,5,sales_2_06,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1282,exact_match,1.0,"SELECT PRODUCT_ID, PRODUCT_NAME FROM PRODUCTS WHERE PRODUCT_ID NOT IN (SELECT PRODUCT_ID FROM ORDER_ITEMS)",,0.53,0.009,0.54,41.49,
+1,6,6,sales_2_02,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1307,exact_match,1.0,"SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_REVENUE
+FROM ORDER_ITEMS oi
+JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID
+GROUP BY p.CATEGORY",,1.153,1.155,2.308,41.63,
+1,7,7,hr_3_12,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1331,mismatch,0.0,"SELECT jh.employee_id, j.job_title
+FROM (
+    SELECT jh.employee_id, jh.job_id, 
+           ROW_NUMBER() OVER (PARTITION BY jh.employee_id ORDER BY jh.end_date DESC NULLS LAST) as rn
+    FROM hr_job_history jh
+) jh
+JOIN hr_jobs j ON jh.job_id = j.job_id
+WHERE jh.rn = 1",,2.07,0.022,2.108,42.02,
+1,8,8,sales_1_12,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1297,exact_match,1.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Books' AND UNIT_PRICE < 20,,0.459,0.003,0.463,41.38,
+1,9,9,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.112,0.01,1.123,41.36,
+2,0,1,sales_1_04,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1279,mismatch,0.0,"SELECT PRODUCT_NAME, UNIT_PRICE FROM PRODUCTS ORDER BY UNIT_PRICE DESC FETCH FIRST 10 ROWS ONLY",,0.546,0.031,0.588,40.29,
+2,0,0,sales_1_05,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.0,1279,exact_match,1.0,SELECT * FROM ORDERS WHERE STATUS = 'CANCELLED',,0.324,0.077,0.639,40.07,
+2,1,2,sales_1_12,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1297,exact_match,1.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Books' AND UNIT_PRICE < 20,,0.49,0.001,0.491,38.77,
+2,2,4,sales_3_07,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1319,mismatch,0.0,"SELECT DISTINCT category, product_name, unit_price
+FROM (
+    SELECT category, product_name, unit_price,
+           DENSE_RANK() OVER (PARTITION BY category ORDER BY unit_price DESC) as rank
+    FROM products
+)
+WHERE rank = 2",,1.308,0.004,1.312,40.53,
+2,2,5,hr_3_06,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1306,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, DENSE_RANK() OVER (ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES
+ORDER BY SALARY_RANK
+FETCH FIRST 10 ROWS ONLY",,1.304,0.008,1.313,40.64,
+2,3,6,sales_1_04,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1279,mismatch,0.0,"SELECT PRODUCT_NAME, UNIT_PRICE FROM PRODUCTS ORDER BY UNIT_PRICE DESC FETCH FIRST 10 ROWS ONLY",,0.539,0.001,0.54,40.84,
+2,3,7,sales_3_02,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1314,exact_match,1.0,"SELECT p.PRODUCT_ID, p.PRODUCT_NAME, p.CATEGORY, p.UNIT_PRICE
+FROM PRODUCTS p
+WHERE p.UNIT_PRICE > (
+    SELECT AVG(p2.UNIT_PRICE)
+    FROM PRODUCTS p2
+    WHERE p2.CATEGORY = p.CATEGORY
+)",,1.432,0.047,1.49,41.2,
+2,1,3,sales_3_04,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1343,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    o.ORDER_DATE, 
+    COUNT(o.ORDER_ID) OVER (PARTITION BY c.CUSTOMER_ID ORDER BY o.ORDER_DATE) AS RUNNING_ORDER_COUNT,
+    MAX(o.ORDER_DATE) OVER (PARTITION BY c.CUSTOMER_ID) AS MOST_RECENT_ORDER_DATE
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+ORDER BY 
+    c.CUSTOMER_ID, 
+    o.ORDER_DATE",,2.985,1.6,6.443,41.54,
+2,4,8,hr_3_12,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1331,mismatch,0.0,"SELECT jh.employee_id, j.job_title
+FROM (
+    SELECT jh.employee_id, jh.job_id, 
+           ROW_NUMBER() OVER (PARTITION BY jh.employee_id ORDER BY jh.end_date DESC NULLS LAST) as rn
+    FROM hr_job_history jh
+) jh
+JOIN hr_jobs j ON jh.job_id = j.job_id
+WHERE jh.rn = 1",,2.097,0.014,2.127,41.48,
+2,4,9,hr_2_07,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1293,exact_match,1.0,"SELECT j.JOB_TITLE, MIN(e.SALARY) AS MIN_SALARY, MAX(e.SALARY) AS MAX_SALARY, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_JOBS j
+JOIN HR_EMPLOYEES e ON j.JOB_ID = e.JOB_ID
+GROUP BY j.JOB_TITLE",,1.779,0.009,1.789,41.03,
+2,5,10,sales_3_05,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1329,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+FROM CUSTOMERS c
+JOIN (
+    SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+    FROM ORDERS
+    GROUP BY CUSTOMER_ID
+    HAVING COUNT(*) > (
+        SELECT AVG(ORDER_COUNT) 
+        FROM (
+            SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+            FROM ORDERS
+            GROUP BY CUSTOMER_ID
+        )
+    )
+) o ON c.CUSTOMER_ID = o.CUSTOMER_ID",,2.635,0.171,2.868,41.37,
+2,5,11,hr_2_11,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1315,mismatch,0.0,"SELECT e.FIRST_NAME, e.LAST_NAME, d.DEPARTMENT_NAME, j.JOB_TITLE
+FROM HR_EMPLOYEES e
+JOIN HR_DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+WHERE d.DEPARTMENT_NAME = 'Sales'",,1.94,0.012,1.955,41.23,
+2,6,13,sales_1_01,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1287,mismatch,0.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Electronics',,0.343,0.003,0.347,37.89,
+2,6,12,hr_1_01,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1261,exact_match,1.0,"SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,0.837,0.006,0.865,39.41,
+2,7,15,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.137,0.009,1.146,40.47,
+2,7,14,sales_2_09,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1293,mismatch,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS ORDER_MONTH, COUNT(*) AS NUMBER_OF_ORDERS
+FROM ORDERS
+WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY ORDER_MONTH",,1.496,0.085,1.581,40.77,
+2,8,16,hr_1_09,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1259,exact_match,1.0,SELECT * FROM HR_EMPLOYEES ORDER BY HIRE_DATE DESC FETCH FIRST 5 ROWS ONLY,,0.542,0.006,0.548,40.57,
+2,8,17,hr_1_01,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1261,exact_match,1.0,"SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,0.823,0.009,0.854,40.09,
+2,9,18,sales_2_08,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1301,exact_match,1.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM REGIONS R
+JOIN ORDERS O ON R.REGION_ID = O.REGION_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+GROUP BY R.REGION_NAME",,1.636,0.913,2.549,40.96,
+2,9,19,sales_3_04,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1343,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    o.ORDER_DATE, 
+    COUNT(o.ORDER_ID) OVER (PARTITION BY c.CUSTOMER_ID ORDER BY o.ORDER_DATE) AS RUNNING_ORDER_COUNT,
+    MAX(o.ORDER_DATE) OVER (PARTITION BY c.CUSTOMER_ID) AS MOST_RECENT_ORDER_DATE
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+ORDER BY 
+    c.CUSTOMER_ID, 
+    o.ORDER_DATE",,2.982,1.666,6.478,41.59,
+4,0,2,sales_1_12,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1297,exact_match,1.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Books' AND UNIT_PRICE < 20,,0.49,0.003,0.493,38.8,
+4,0,0,hr_1_09,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.0,1259,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, HIRE_DATE FROM HR_EMPLOYEES ORDER BY HIRE_DATE DESC FETCH FIRST 5 ROWS ONLY",,0.732,0.003,0.735,40.97,
+4,1,5,hr_1_11,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1280,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE MANAGER_ID IS NULL,,0.403,0.003,0.41,37.22,
+4,0,3,hr_2_02,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.003,1290,exact_match,1.0,"SELECT j.JOB_TITLE, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_EMPLOYEES e
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+GROUP BY j.JOB_TITLE
+ORDER BY AVG_SALARY DESC",,1.399,0.009,1.409,40.73,
+4,1,6,hr_1_10,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1259,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE JOB_TITLE LIKE '%Manager%',,0.401,0.003,0.404,37.42,
+4,1,4,sales_2_01,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1291,exact_match,1.0,"SELECT R.REGION_NAME, COUNT(C.CUSTOMER_ID) AS TOTAL_CUSTOMERS
+FROM REGIONS R
+LEFT JOIN CUSTOMERS C ON R.REGION_ID = C.REGION_ID
+GROUP BY R.REGION_NAME",,1.173,0.022,1.194,40.09,
+4,1,7,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.638,0.004,0.643,39.16,
+4,2,8,sales_1_06,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1276,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE EXTRACT(YEAR FROM SIGNUP_DATE) = 2024,,0.573,0.023,0.643,38.37,
+4,0,1,sales_2_02,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1307,exact_match,1.0,"SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_REVENUE
+FROM ORDER_ITEMS oi
+JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID
+GROUP BY p.CATEGORY",,1.185,1.106,2.292,40.5,
+4,2,11,sales_2_04,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1287,exact_match,1.0,"SELECT STATUS, COUNT(*) FROM ORDERS GROUP BY STATUS",,0.337,0.02,0.357,35.63,
+4,3,13,sales_1_11,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1296,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'PLATINUM' ORDER BY SIGNUP_DATE,,0.602,0.016,0.673,38.22,
+4,2,10,hr_3_11,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1336,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, 
+       SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE) AS SALARY_DIFFERENCE
+FROM HR_EMPLOYEES
+ORDER BY HIRE_DATE",,1.313,0.022,1.368,40.36,
+4,2,9,hr_2_12,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1305,mismatch,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(jh.job_id) AS job_history_count
+FROM hr_employees e
+JOIN hr_job_history jh ON e.employee_id = jh.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(jh.job_id) > 1",,1.775,0.059,1.845,40.57,
+4,3,12,hr_2_02,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1290,exact_match,1.0,"SELECT j.JOB_TITLE, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_EMPLOYEES e
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+GROUP BY j.JOB_TITLE
+ORDER BY AVG_SALARY DESC",,1.412,0.004,1.416,40.37,
+4,3,14,hr_1_03,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1269,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE MAX_SALARY > 200000,,0.553,0.003,0.556,37.94,
+4,4,17,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.355,0.01,0.374,36.62,
+4,3,15,hr_1_12,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1289,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE SALARY BETWEEN 80000 AND 120000 ORDER BY SALARY,,0.784,0.01,0.822,39.52,
+4,4,18,sales_1_06,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1276,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE EXTRACT(YEAR FROM SIGNUP_DATE) = 2024,,0.571,0.016,0.636,38.51,
+4,5,20,hr_1_03,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1269,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE MAX_SALARY > 200000,,0.536,0.001,0.537,39.15,
+4,5,21,sales_1_11,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1296,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'PLATINUM' ORDER BY SIGNUP_DATE,,0.58,0.02,0.648,39.64,
+4,4,19,sales_3_07,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1319,mismatch,0.0,"SELECT DISTINCT category, product_name, unit_price
+FROM (
+    SELECT category, product_name, unit_price,
+           DENSE_RANK() OVER (PARTITION BY category ORDER BY unit_price DESC) as rank
+    FROM products
+)
+WHERE rank = 2",,1.32,0.003,1.323,40.16,
+4,5,22,sales_3_07,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1319,mismatch,0.0,"SELECT DISTINCT category, product_name, unit_price
+FROM (
+    SELECT category, product_name, unit_price,
+           DENSE_RANK() OVER (PARTITION BY category ORDER BY unit_price DESC) as rank
+    FROM products
+)
+WHERE rank = 2",,1.314,0.001,1.315,40.34,
+4,5,23,sales_2_01,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1291,exact_match,1.0,"SELECT R.REGION_NAME, COUNT(C.CUSTOMER_ID) AS TOTAL_CUSTOMERS
+FROM REGIONS R
+LEFT JOIN CUSTOMERS C ON R.REGION_ID = C.REGION_ID
+GROUP BY R.REGION_NAME",,1.174,0.015,1.19,40.03,
+4,6,24,hr_2_02,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1290,exact_match,1.0,"SELECT j.JOB_TITLE, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_EMPLOYEES e
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+GROUP BY j.JOB_TITLE
+ORDER BY AVG_SALARY DESC",,1.407,0.005,1.412,40.52,
+4,6,25,hr_1_01,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1261,exact_match,1.0,"SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,0.835,0.006,0.864,39.5,
+4,6,27,hr_1_12,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1289,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE SALARY BETWEEN 80000 AND 120000 ORDER BY SALARY,,0.784,0.007,0.819,39.53,
+4,6,26,hr_2_12,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1305,mismatch,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(jh.job_id) AS job_history_count
+FROM hr_employees e
+JOIN hr_job_history jh ON e.employee_id = jh.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(jh.job_id) > 1",,1.755,0.013,1.779,41.03,
+4,7,30,hr_1_11,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1280,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE MANAGER_ID IS NULL,,0.406,0.002,0.412,36.97,
+4,7,28,sales_2_09,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1293,mismatch,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS ORDER_MONTH, COUNT(*) AS NUMBER_OF_ORDERS
+FROM ORDERS
+WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY ORDER_MONTH",,1.502,0.068,1.57,40.61,
+4,7,29,hr_2_01,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1268,exact_match,1.0,"SELECT d.department_name, COUNT(e.employee_id) AS number_of_employees
+FROM hr_departments d
+LEFT JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name",,1.092,0.008,1.1,40.29,
+4,8,33,sales_1_10,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1269,mismatch,0.2,SELECT * FROM ORDERS ORDER BY ORDER_DATE DESC FETCH FIRST 5 ROWS ONLY,,0.47,0.003,0.473,38.32,
+4,7,31,sales_3_03,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1315,mismatch,0.0,"SELECT product_id, product_name, category, unit_price
+FROM (
+    SELECT product_id, product_name, category, unit_price,
+           ROW_NUMBER() OVER (PARTITION BY category ORDER BY unit_price DESC) as rn
+    FROM products
+)
+WHERE rn <= 3",,1.407,0.003,1.41,40.51,
+4,4,16,sales_3_01,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1312,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    r.REGION_NAME, 
+    SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND,
+    RANK() OVER (PARTITION BY r.REGION_NAME ORDER BY SUM(oi.QUANTITY * oi.UNIT_PRICE) DESC) AS SPEND_RANK
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN 
+    ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+JOIN 
+    REGIONS r ON c.REGION_ID = r.REGION_ID
+GROUP BY 
+    c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, r.REGION_NAME
+ORDER BY 
+    r.REGION_NAME, SPEND_RANK",,4.356,2.485,7.052,41.32,
+4,8,35,hr_3_11,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1336,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, 
+       SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE) AS SALARY_DIFFERENCE
+FROM HR_EMPLOYEES
+ORDER BY HIRE_DATE",,1.311,0.022,1.367,40.44,
+4,8,32,sales_3_12,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1328,exact_match,1.0,"SELECT 
+    O.ORDER_DATE, 
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS DAILY_REVENUE,
+    SUM(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY O.ORDER_DATE) AS CUMULATIVE_REVENUE
+FROM 
+    ORDERS O
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+WHERE 
+    O.ORDER_DATE BETWEEN TO_DATE('2025-01-01', 'YYYY-MM-DD') AND TO_DATE('2025-01-31', 'YYYY-MM-DD')
+GROUP BY 
+    O.ORDER_DATE
+ORDER BY 
+    O.ORDER_DATE",,3.59,0.085,3.676,41.5,
+4,9,36,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.75,0.063,1.816,40.58,
+4,9,37,sales_2_09,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1293,mismatch,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS ORDER_MONTH, COUNT(*) AS NUMBER_OF_ORDERS
+FROM ORDERS
+WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY ORDER_MONTH",,1.497,0.061,1.558,40.76,
+4,9,38,hr_3_01,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1367,mismatch,0.0,"SELECT LEVEL AS HIERARCHY_LEVEL, EMPLOYEE_ID, FIRST_NAME, LAST_NAME, MANAGER_ID
+FROM HR_EMPLOYEES
+START WITH MANAGER_ID IS NULL
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID
+AND LEVEL <= 3",,1.369,0.026,1.439,40.92,
+4,9,39,hr_2_02,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1290,exact_match,1.0,"SELECT j.JOB_TITLE, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_EMPLOYEES e
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+GROUP BY j.JOB_TITLE
+ORDER BY AVG_SALARY DESC",,1.385,0.005,1.39,41.16,
+4,8,34,sales_2_10,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1317,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+HAVING SUM(oi.QUANTITY * oi.UNIT_PRICE) > 5000",,2.626,2.351,5.194,41.12,
+8,0,2,hr_1_07,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1244,exact_match,1.0,SELECT DISTINCT department_name FROM hr_departments,,0.265,0.003,0.268,34.0,
+8,0,6,hr_1_06,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.005,1264,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE LAST_NAME LIKE '%son%',,0.464,0.113,0.599,34.52,
+8,0,5,sales_1_05,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1279,exact_match,1.0,SELECT * FROM ORDERS WHERE STATUS = 'CANCELLED',,0.358,0.068,0.656,36.34,
+8,0,3,sales_1_08,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.003,1314,mismatch,0.0,"SELECT PRODUCT_NAME, STOCK_QTY FROM PRODUCTS WHERE STOCK_QTY < 50 ORDER BY STOCK_QTY ASC",,0.633,0.027,0.661,37.89,
+8,1,9,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.387,0.006,0.404,33.58,
+8,1,11,hr_1_06,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1264,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE LAST_NAME LIKE '%son%',,0.426,0.003,0.436,37.6,
+8,0,7,hr_2_05,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.006,1301,mismatch,0.0,"SELECT manager_id, COUNT(employee_id) AS direct_reports_count
+FROM HR_EMPLOYEES
+WHERE manager_id IS NOT NULL
+GROUP BY manager_id
+ORDER BY direct_reports_count DESC
+FETCH FIRST 10 ROWS ONLY",,1.229,0.012,1.241,39.06,
+8,0,4,sales_3_07,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.003,1319,mismatch,0.0,"SELECT DISTINCT category, product_name, unit_price
+FROM (
+    SELECT category, product_name, unit_price,
+           DENSE_RANK() OVER (PARTITION BY category ORDER BY unit_price DESC) as rank
+    FROM products
+)
+WHERE rank = 2",,1.353,0.003,1.357,39.16,
+8,1,14,hr_2_04,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1274,mismatch,0.0,"SELECT hl.CITY, COUNT(hd.DEPARTMENT_ID) AS TOTAL_DEPARTMENTS
+FROM HR_LOCATIONS hl
+JOIN HR_DEPARTMENTS hd ON hl.LOCATION_ID = hd.LOCATION_ID
+GROUP BY hl.CITY",,1.221,0.01,1.231,40.13,
+8,0,1,sales_3_05,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1329,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+FROM CUSTOMERS c
+JOIN (
+    SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+    FROM ORDERS
+    GROUP BY CUSTOMER_ID
+    HAVING COUNT(*) > (
+        SELECT AVG(ORDER_COUNT) 
+        FROM (
+            SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+            FROM ORDERS
+            GROUP BY CUSTOMER_ID
+        )
+    )
+) o ON c.CUSTOMER_ID = o.CUSTOMER_ID",,2.685,0.19,2.938,40.59,
+8,1,13,hr_3_05,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1298,mismatch,0.0,"SELECT e.FIRST_NAME, e.LAST_NAME, e.SALARY, e.DEPARTMENT_ID
+FROM HR_EMPLOYEES e
+WHERE e.SALARY > (
+    SELECT AVG(e2.SALARY)
+    FROM HR_EMPLOYEES e2
+    WHERE e2.DEPARTMENT_ID = e.DEPARTMENT_ID
+)",,1.876,0.035,1.929,40.5,
+8,1,15,hr_2_12,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1305,mismatch,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(jh.job_id) AS job_history_count
+FROM hr_employees e
+JOIN hr_job_history jh ON e.employee_id = jh.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(jh.job_id) > 1",,1.786,0.013,1.815,40.32,
+8,1,8,sales_3_12,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1328,exact_match,1.0,"SELECT 
+    ORDER_DATE, 
+    SUM(QUANTITY * UNIT_PRICE) AS DAILY_REVENUE,
+    SUM(SUM(QUANTITY * UNIT_PRICE)) OVER (ORDER BY ORDER_DATE) AS CUMULATIVE_REVENUE
+FROM 
+    ORDER_ITEMS
+JOIN 
+    ORDERS ON ORDER_ITEMS.ORDER_ID = ORDERS.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM ORDERS.ORDER_DATE) = 2025 AND EXTRACT(MONTH FROM ORDERS.ORDER_DATE) = 1
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,2.998,0.096,3.095,40.69,
+8,2,16,sales_2_07,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1333,mismatch,0.0,"SELECT PRODUCT_ID, SUM(QUANTITY) AS TOTAL_QUANTITY_SOLD
+FROM ORDER_ITEMS
+GROUP BY PRODUCT_ID
+HAVING SUM(QUANTITY) > 1000",,0.984,0.102,1.088,39.64,
+8,2,17,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.643,0.003,0.646,38.89,
+8,2,18,sales_2_06,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1282,exact_match,1.0,"SELECT PRODUCT_ID, PRODUCT_NAME FROM PRODUCTS WHERE PRODUCT_ID NOT IN (SELECT PRODUCT_ID FROM ORDER_ITEMS)",,0.578,0.005,0.584,38.04,
+8,0,0,sales_3_12,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.0,1328,exact_match,1.0,"SELECT 
+    O.ORDER_DATE, 
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS DAILY_REVENUE,
+    SUM(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY O.ORDER_DATE) AS CUMULATIVE_REVENUE
+FROM 
+    ORDERS O
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+WHERE 
+    O.ORDER_DATE BETWEEN TO_DATE('2025-01-01', 'YYYY-MM-DD') AND TO_DATE('2025-01-31', 'YYYY-MM-DD')
+GROUP BY 
+    O.ORDER_DATE
+ORDER BY 
+    O.ORDER_DATE",,3.632,0.065,3.698,41.02,
+8,2,21,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.647,0.066,0.713,38.65,
+8,3,24,hr_1_12,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1289,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE SALARY BETWEEN 80000 AND 120000 ORDER BY SALARY,,0.781,0.018,0.826,39.69,
+8,2,20,hr_3_11,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1336,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, 
+       SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE) AS SALARY_DIFFERENCE
+FROM HR_EMPLOYEES
+ORDER BY HIRE_DATE",,1.332,0.032,1.397,39.8,
+8,2,22,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.177,0.015,1.192,39.09,
+8,2,23,hr_2_05,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1301,mismatch,0.0,"SELECT manager_id, COUNT(employee_id) AS direct_reports_count
+FROM HR_EMPLOYEES
+WHERE manager_id IS NOT NULL
+GROUP BY manager_id
+ORDER BY direct_reports_count DESC
+FETCH FIRST 10 ROWS ONLY",,1.205,0.004,1.209,39.83,
+8,2,19,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.766,0.078,1.848,40.2,
+8,3,26,sales_2_06,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1282,exact_match,1.0,"SELECT PRODUCT_ID, PRODUCT_NAME FROM PRODUCTS WHERE PRODUCT_ID NOT IN (SELECT PRODUCT_ID FROM ORDER_ITEMS)",,0.585,0.008,0.593,37.64,
+8,3,29,sales_1_12,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1297,exact_match,1.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Books' AND UNIT_PRICE < 20,,0.511,0.003,0.515,37.15,
+8,3,30,sales_1_07,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1268,mismatch,0.0,SELECT * FROM REGIONS WHERE COUNTRY = 'Europe',,0.351,0.003,0.355,37.04,
+8,4,33,sales_2_09,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1293,mismatch,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS ORDER_MONTH, COUNT(*) AS NUMBER_OF_ORDERS
+FROM ORDERS
+WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY ORDER_MONTH",,1.551,0.1,1.658,39.32,
+8,3,27,hr_3_07,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1304,mismatch,0.0,"SELECT 
+    EMPLOYEE_ID, 
+    FIRST_NAME, 
+    LAST_NAME, 
+    HIRE_DATE, 
+    SALARY, 
+    SUM(SALARY) OVER (ORDER BY HIRE_DATE) AS RUNNING_TOTAL_SALARY_COST
+FROM 
+    HR_EMPLOYEES
+WHERE 
+    EXTRACT(YEAR FROM HIRE_DATE) = 2015
+ORDER BY 
+    HIRE_DATE",,2.167,0.153,2.361,40.61,
+8,1,10,sales_3_04,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1343,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    o.ORDER_DATE, 
+    COUNT(o.ORDER_ID) OVER (PARTITION BY c.CUSTOMER_ID ORDER BY o.ORDER_DATE) AS RUNNING_ORDER_COUNT,
+    MAX(o.ORDER_DATE) OVER (PARTITION BY c.CUSTOMER_ID) AS MOST_RECENT_ORDER_DATE
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+ORDER BY 
+    c.CUSTOMER_ID, 
+    o.ORDER_DATE",,3.043,1.801,6.766,40.75,
+8,3,31,sales_2_03,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1290,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, COUNT(o.ORDER_ID) AS TOTAL_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+ORDER BY TOTAL_ORDERS DESC
+FETCH FIRST 5 ROWS ONLY",,2.018,0.142,2.337,40.64,
+8,3,28,hr_3_05,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1298,mismatch,0.0,"SELECT e.FIRST_NAME, e.LAST_NAME, e.SALARY, e.DEPARTMENT_ID
+FROM HR_EMPLOYEES e
+WHERE e.SALARY > (
+    SELECT AVG(e2.SALARY)
+    FROM HR_EMPLOYEES e2
+    WHERE e2.DEPARTMENT_ID = e.DEPARTMENT_ID
+)",,1.883,0.761,2.691,40.37,
+8,3,25,sales_3_05,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1329,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+FROM CUSTOMERS c
+JOIN (
+    SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+    FROM ORDERS
+    GROUP BY CUSTOMER_ID
+    HAVING COUNT(*) > (
+        SELECT AVG(ORDER_COUNT) 
+        FROM (
+            SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+            FROM ORDERS
+            GROUP BY CUSTOMER_ID
+        )
+    )
+) o ON c.CUSTOMER_ID = o.CUSTOMER_ID",,2.681,0.536,3.308,40.66,
+8,4,35,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.691,0.155,0.87,18.81,
+8,4,32,sales_2_08,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1301,exact_match,1.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM REGIONS R
+JOIN ORDERS O ON R.REGION_ID = O.REGION_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+GROUP BY R.REGION_NAME",,1.661,1.011,2.693,40.33,
+8,4,34,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.165,0.021,1.196,39.49,
+8,4,36,hr_2_03,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1264,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING COUNT(e.employee_id) > 600",,1.167,0.026,1.204,38.56,
+8,4,39,hr_3_10,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1334,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, LEVEL AS HIERARCHY_LEVEL
+FROM HR_EMPLOYEES
+START WITH EMPLOYEE_ID = 3600
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID",,1.284,0.041,1.341,38.96,
+8,4,37,hr_2_02,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1290,exact_match,1.0,"SELECT j.JOB_TITLE, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_EMPLOYEES e
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+GROUP BY j.JOB_TITLE
+ORDER BY AVG_SALARY DESC",,1.459,0.036,1.521,39.07,
+8,1,12,sales_3_04,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1343,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    o.ORDER_DATE, 
+    COUNT(o.ORDER_ID) OVER (PARTITION BY c.CUSTOMER_ID ORDER BY o.ORDER_DATE) AS RUNNING_ORDER_COUNT,
+    MAX(o.ORDER_DATE) OVER (PARTITION BY c.CUSTOMER_ID) AS MOST_RECENT_ORDER_DATE
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+ORDER BY 
+    c.CUSTOMER_ID, 
+    o.ORDER_DATE",,3.036,3.733,8.543,40.84,
+8,5,45,hr_1_09,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1259,exact_match,1.0,SELECT * FROM HR_EMPLOYEES ORDER BY HIRE_DATE DESC FETCH FIRST 5 ROWS ONLY,,0.606,0.026,0.637,36.33,
+8,5,41,sales_1_02,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1277,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'GOLD',,0.455,1.091,1.592,35.15,
+8,4,38,hr_3_01,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1367,mismatch,0.0,"SELECT LEVEL AS HIERARCHY_LEVEL, EMPLOYEE_ID, FIRST_NAME, LAST_NAME, MANAGER_ID
+FROM HR_EMPLOYEES
+START WITH MANAGER_ID IS NULL
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID
+AND LEVEL <= 3",,1.402,0.762,2.207,39.94,
+8,5,43,hr_3_11,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1336,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, 
+       SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE) AS SALARY_DIFFERENCE
+FROM HR_EMPLOYEES
+ORDER BY HIRE_DATE",,1.345,0.022,1.4,39.4,
+8,5,47,hr_1_03,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1269,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE MAX_SALARY > 200000,,0.558,0.004,0.562,37.62,
+8,5,42,sales_2_03,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1290,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, COUNT(o.ORDER_ID) AS TOTAL_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+ORDER BY TOTAL_ORDERS DESC
+FETCH FIRST 5 ROWS ONLY",,2.037,0.101,2.138,40.26,
+8,6,51,sales_1_01,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1287,mismatch,0.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Electronics',,0.36,0.002,0.362,36.15,
+8,6,48,hr_2_09,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1280,exact_match,1.0,"SELECT EXTRACT(YEAR FROM HIRE_DATE) AS YEAR_HIRED, COUNT(*) AS NUMBER_OF_EMPLOYEES
+FROM HR_EMPLOYEES
+GROUP BY EXTRACT(YEAR FROM HIRE_DATE)
+ORDER BY YEAR_HIRED",,1.297,0.003,1.301,40.08,
+8,6,52,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.65,0.001,0.65,38.48,
+8,6,49,sales_2_09,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1293,mismatch,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS ORDER_MONTH, COUNT(*) AS NUMBER_OF_ORDERS
+FROM ORDERS
+WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY ORDER_MONTH",,1.511,0.06,1.572,40.37,
+8,6,54,sales_2_11,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1329,exact_match,1.0,"SELECT CATEGORY, AVG(UNIT_PRICE) AS AVERAGE_UNIT_PRICE
+FROM PRODUCTS
+GROUP BY CATEGORY
+ORDER BY AVERAGE_UNIT_PRICE DESC",,0.748,0.002,0.75,38.79,
+8,5,46,sales_2_03,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1290,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, COUNT(o.ORDER_ID) AS TOTAL_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+ORDER BY TOTAL_ORDERS DESC
+FETCH FIRST 5 ROWS ONLY",,2.02,0.103,2.123,40.59,
+8,6,50,hr_2_12,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1305,mismatch,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(jh.job_id) AS job_history_count
+FROM hr_employees e
+JOIN hr_job_history jh ON e.employee_id = jh.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(jh.job_id) > 1",,1.784,0.012,1.816,40.35,
+8,6,53,hr_3_06,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1306,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, DENSE_RANK() OVER (ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES
+ORDER BY SALARY_RANK
+FETCH FIRST 10 ROWS ONLY",,1.339,0.007,1.347,39.57,
+8,5,44,sales_3_12,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1328,exact_match,1.0,"SELECT 
+    ORDER_DATE, 
+    SUM(QUANTITY * UNIT_PRICE) AS DAILY_REVENUE,
+    SUM(SUM(QUANTITY * UNIT_PRICE)) OVER (ORDER BY ORDER_DATE) AS CUMULATIVE_REVENUE
+FROM 
+    ORDER_ITEMS
+JOIN 
+    ORDERS ON ORDER_ITEMS.ORDER_ID = ORDERS.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM ORDERS.ORDER_DATE) = 2025 AND EXTRACT(MONTH FROM ORDERS.ORDER_DATE) = 1
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,3.011,0.11,3.121,40.52,
+8,6,55,hr_3_06,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1306,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, DENSE_RANK() OVER (ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES
+ORDER BY SALARY_RANK
+FETCH FIRST 10 ROWS ONLY",,1.331,0.005,1.336,39.81,
+8,7,57,hr_1_04,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1257,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, SALARY FROM HR_EMPLOYEES ORDER BY SALARY DESC FETCH FIRST 10 ROWS ONLY",,0.749,0.003,0.753,38.7,
+8,7,58,hr_3_06,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1306,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, DENSE_RANK() OVER (ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES
+ORDER BY SALARY_RANK
+FETCH FIRST 10 ROWS ONLY",,1.326,0.005,1.331,39.98,
+8,7,61,hr_2_01,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1268,exact_match,1.0,"SELECT d.department_name, COUNT(e.employee_id) AS number_of_employees
+FROM hr_departments d
+LEFT JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name",,1.1,0.007,1.107,40.01,
+8,7,59,sales_3_02,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1314,exact_match,1.0,"SELECT p.PRODUCT_ID, p.PRODUCT_NAME, p.CATEGORY, p.UNIT_PRICE
+FROM PRODUCTS p
+WHERE p.UNIT_PRICE > (
+    SELECT AVG(p2.UNIT_PRICE)
+    FROM PRODUCTS p2
+    WHERE p2.CATEGORY = p.CATEGORY
+)",,1.469,0.005,1.475,40.17,
+8,8,65,sales_1_01,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1287,mismatch,0.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Electronics',,0.355,0.001,0.356,36.61,
+8,8,66,hr_1_07,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1244,exact_match,1.0,SELECT DISTINCT department_name FROM hr_departments,,0.261,0.003,0.264,34.54,
+8,7,56,sales_2_02,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1307,exact_match,1.0,"SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_REVENUE
+FROM ORDER_ITEMS oi
+JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID
+GROUP BY p.CATEGORY",,1.2,1.166,2.366,40.0,
+8,5,40,sales_3_10,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1318,mismatch,0.0,"SELECT customer_id, first_name, last_name, region_id, total_spend
+FROM (
+    SELECT c.customer_id, c.first_name, c.last_name, c.region_id, 
+           SUM(oi.quantity * oi.unit_price) AS total_spend,
+           RANK() OVER (PARTITION BY c.region_id ORDER BY SUM(oi.quantity * oi.unit_price) DESC) as rank
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    JOIN order_items oi ON o.order_id = oi.order_id
+    GROUP BY c.customer_id, c.first_name, c.last_name, c.region_id
+)
+WHERE rank <= 3",,3.438,2.37,5.808,40.43,
+8,7,62,sales_2_09,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1293,mismatch,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS ORDER_MONTH, COUNT(*) AS NUMBER_OF_ORDERS
+FROM ORDERS
+WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY ORDER_MONTH",,1.521,0.06,1.582,40.1,
+8,8,68,sales_1_03,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1288,exact_match,1.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > 500,,0.36,0.004,0.366,36.1,
+8,8,64,hr_3_10,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1334,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, LEVEL AS HIERARCHY_LEVEL
+FROM HR_EMPLOYEES
+START WITH EMPLOYEE_ID = 3600
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID",,1.256,0.001,1.258,39.8,
+8,8,71,hr_1_05,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1248,exact_match,1.0,SELECT * FROM HR_LOCATIONS WHERE COUNTRY = 'USA',,0.376,0.004,0.38,37.24,
+8,7,60,sales_2_08,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1301,exact_match,1.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM REGIONS R
+JOIN ORDERS O ON R.REGION_ID = O.REGION_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+GROUP BY R.REGION_NAME",,1.653,0.879,2.533,40.53,
+8,7,63,hr_3_12,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1331,mismatch,0.0,"SELECT jh.employee_id, j.job_title
+FROM (
+    SELECT jh.employee_id, jh.job_id, 
+           ROW_NUMBER() OVER (PARTITION BY jh.employee_id ORDER BY jh.end_date DESC NULLS LAST) as rn
+    FROM hr_job_history jh
+) jh
+JOIN hr_jobs j ON jh.job_id = j.job_id
+WHERE jh.rn = 1",,2.152,0.019,2.189,40.42,
+8,8,70,hr_1_12,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1289,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE SALARY BETWEEN 80000 AND 120000 ORDER BY SALARY,,0.809,0.007,0.85,38.3,
+8,9,73,sales_1_08,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1314,mismatch,0.0,"SELECT PRODUCT_NAME, STOCK_QTY FROM PRODUCTS WHERE STOCK_QTY < 50 ORDER BY STOCK_QTY ASC",,0.628,0.003,0.631,38.23,
+8,8,67,hr_3_04,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1295,mismatch,0.0,"SELECT department_id, first_name, last_name, salary
+FROM (
+    SELECT department_id, first_name, last_name, salary,
+           DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) as rank
+    FROM hr_employees
+)
+WHERE rank <= 3",,1.503,0.005,1.508,39.93,
+8,9,75,sales_1_11,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1296,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'PLATINUM' ORDER BY SIGNUP_DATE,,0.6,0.016,0.665,38.34,
+8,9,76,sales_1_11,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1296,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'PLATINUM' ORDER BY SIGNUP_DATE,,0.593,0.013,0.655,38.8,
+8,9,78,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.36,0.005,0.375,36.09,
+8,8,69,sales_2_03,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1290,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, COUNT(o.ORDER_ID) AS TOTAL_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+ORDER BY TOTAL_ORDERS DESC
+FETCH FIRST 5 ROWS ONLY",,2.029,0.104,2.133,40.41,
+8,9,77,hr_3_04,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1295,mismatch,0.0,"SELECT department_id, first_name, last_name, salary
+FROM (
+    SELECT department_id, first_name, last_name, salary,
+           DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) as rank
+    FROM hr_employees
+)
+WHERE rank <= 3",,1.496,0.003,1.5,40.1,
+8,9,79,hr_3_11,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1336,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, 
+       SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE) AS SALARY_DIFFERENCE
+FROM HR_EMPLOYEES
+ORDER BY HIRE_DATE",,1.315,0.027,1.376,40.29,
+8,9,72,sales_3_08,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1341,mismatch,0.0,"SELECT 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM') AS MONTH,
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS REVENUE,
+    ROUND(((SUM(OI.QUANTITY * OI.UNIT_PRICE) - LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) / LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) * 100, 2) AS PERCENTAGE_CHANGE
+FROM 
+    ORDERS O
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM O.ORDER_DATE) = 2025
+GROUP BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')
+ORDER BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')",,4.832,0.306,5.138,41.39,
+8,9,74,sales_3_08,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1341,mismatch,0.0,"SELECT 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM') AS MONTH,
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS REVENUE,
+    ROUND(((SUM(OI.QUANTITY * OI.UNIT_PRICE) - LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) / LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) * 100, 2) AS PERCENTAGE_CHANGE
+FROM 
+    ORDERS O
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM O.ORDER_DATE) = 2025
+GROUP BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')
+ORDER BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')",,4.823,0.293,5.117,41.47,
+16,0,10,hr_1_05,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.009,1248,exact_match,1.0,SELECT * FROM HR_LOCATIONS WHERE COUNTRY = 'USA',,0.414,0.001,0.415,33.8,
+16,0,4,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.004,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.662,0.001,0.663,37.76,
+16,1,16,sales_2_04,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1287,exact_match,1.0,"SELECT STATUS, COUNT(*) FROM ORDERS GROUP BY STATUS",,0.338,0.02,0.359,35.45,
+16,0,12,hr_2_01,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.011,1268,exact_match,1.0,"SELECT d.department_name, COUNT(e.employee_id) AS number_of_employees
+FROM hr_departments d
+LEFT JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name",,1.14,0.004,1.144,38.6,
+16,0,6,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.006,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.169,0.004,1.173,39.35,
+16,0,2,hr_3_02,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1279,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, DEPARTMENT_ID, SALARY, RANK() OVER (PARTITION BY DEPARTMENT_ID ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES",,1.197,0.018,1.278,39.27,
+16,0,14,hr_3_09,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1270,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY AVG(e.salary) DESC
+FETCH FIRST 1 ROW ONLY",,1.216,0.024,1.27,38.65,
+16,0,5,hr_3_10,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.005,1334,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, LEVEL AS HIERARCHY_LEVEL
+FROM HR_EMPLOYEES
+START WITH EMPLOYEE_ID = 3600
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID",,1.278,0.001,1.281,39.13,
+16,0,11,hr_2_05,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.01,1301,mismatch,0.0,"SELECT manager_id, COUNT(employee_id) AS direct_reports_count
+FROM HR_EMPLOYEES
+WHERE manager_id IS NOT NULL
+GROUP BY manager_id
+ORDER BY direct_reports_count DESC
+FETCH FIRST 10 ROWS ONLY",,1.264,0.003,1.277,37.97,
+16,0,0,sales_2_05,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.0,1307,exact_match,1.0,"SELECT c.CUSTOMER_TIER, COUNT(o.ORDER_ID) AS NUMBER_OF_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_TIER",,1.274,0.077,1.359,39.24,
+16,0,1,sales_2_05,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1307,exact_match,1.0,"SELECT c.CUSTOMER_TIER, COUNT(o.ORDER_ID) AS NUMBER_OF_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_TIER",,1.282,0.076,1.359,39.01,
+16,0,9,sales_3_02,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.008,1314,exact_match,1.0,"SELECT p.PRODUCT_ID, p.PRODUCT_NAME, p.CATEGORY, p.UNIT_PRICE
+FROM PRODUCTS p
+WHERE p.UNIT_PRICE > (
+    SELECT AVG(p2.UNIT_PRICE)
+    FROM PRODUCTS p2
+    WHERE p2.CATEGORY = p.CATEGORY
+)",,1.51,0.002,1.513,39.07,
+16,1,19,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.363,0.007,0.38,35.78,
+16,1,24,sales_1_01,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1287,mismatch,0.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Electronics',,0.353,0.0,0.354,36.8,
+16,1,21,sales_1_03,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1288,exact_match,1.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > 500,,0.358,0.002,0.362,36.31,
+16,0,13,hr_2_10,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.011,1285,exact_match,1.0,"SELECT hl.COUNTRY, COUNT(he.EMPLOYEE_ID) AS TOTAL_EMPLOYEES
+FROM HR_EMPLOYEES he
+JOIN HR_DEPARTMENTS hd ON he.DEPARTMENT_ID = hd.DEPARTMENT_ID
+JOIN HR_LOCATIONS hl ON hd.LOCATION_ID = hl.LOCATION_ID
+GROUP BY hl.COUNTRY",,1.798,0.022,1.821,39.48,
+16,1,25,sales_1_10,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1269,mismatch,0.2,SELECT * FROM ORDERS ORDER BY ORDER_DATE DESC FETCH FIRST 5 ROWS ONLY,,0.475,0.002,0.477,37.91,
+16,1,28,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.347,0.005,0.361,37.45,
+16,1,20,hr_1_09,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1259,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, HIRE_DATE FROM HR_EMPLOYEES ORDER BY HIRE_DATE DESC FETCH FIRST 5 ROWS ONLY",,0.778,0.003,0.781,38.56,
+16,1,26,sales_1_08,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1314,mismatch,0.0,"SELECT PRODUCT_NAME, STOCK_QTY FROM PRODUCTS WHERE STOCK_QTY < 50 ORDER BY STOCK_QTY ASC",,0.621,0.003,0.624,38.65,
+16,0,15,hr_2_11,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.014,1315,mismatch,0.0,"SELECT e.FIRST_NAME, e.LAST_NAME, d.DEPARTMENT_NAME, j.JOB_TITLE
+FROM HR_EMPLOYEES e
+JOIN HR_DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+WHERE d.DEPARTMENT_NAME = 'Sales'",,2.016,0.022,2.043,39.67,
+16,1,29,sales_1_05,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1279,exact_match,1.0,SELECT * FROM ORDERS WHERE STATUS = 'CANCELLED',,0.364,0.093,0.671,35.69,
+16,1,31,sales_1_10,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1269,mismatch,0.2,SELECT * FROM ORDERS ORDER BY ORDER_DATE DESC FETCH FIRST 5 ROWS ONLY,,0.49,0.001,0.491,36.71,
+16,0,8,hr_3_12,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1331,mismatch,0.0,"SELECT jh.employee_id, j.job_title
+FROM (
+    SELECT jh.employee_id, jh.job_id, 
+           ROW_NUMBER() OVER (PARTITION BY jh.employee_id ORDER BY jh.end_date DESC NULLS LAST) as rn
+    FROM hr_job_history jh
+) jh
+JOIN hr_jobs j ON jh.job_id = j.job_id
+WHERE jh.rn = 1",,2.178,0.129,2.335,39.94,
+16,1,30,hr_1_08,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1269,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE EXTRACT(YEAR FROM HIRE_DATE) = 2020 ORDER BY HIRE_DATE,,0.778,0.008,0.801,38.55,
+16,1,17,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.779,0.067,1.85,39.9,
+16,1,22,sales_3_07,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1319,mismatch,0.0,"SELECT DISTINCT category, product_name, unit_price
+FROM (
+    SELECT category, product_name, unit_price,
+           DENSE_RANK() OVER (PARTITION BY category ORDER BY unit_price DESC) as rank
+    FROM products
+)
+WHERE rank = 2",,1.333,0.003,1.336,39.77,
+16,2,34,hr_1_01,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1261,exact_match,1.0,"SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,0.85,0.009,0.888,38.83,
+16,1,27,sales_3_07,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1319,mismatch,0.0,"SELECT DISTINCT category, product_name, unit_price
+FROM (
+    SELECT category, product_name, unit_price,
+           DENSE_RANK() OVER (PARTITION BY category ORDER BY unit_price DESC) as rank
+    FROM products
+)
+WHERE rank = 2",,1.337,0.001,1.338,39.63,
+16,2,35,hr_3_04,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1295,mismatch,0.0,"SELECT department_id, first_name, last_name, salary
+FROM (
+    SELECT department_id, first_name, last_name, salary,
+           DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) as rank
+    FROM hr_employees
+)
+WHERE rank <= 3",,1.507,0.003,1.511,39.81,
+16,2,39,hr_3_02,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1279,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, DEPARTMENT_ID, SALARY, RANK() OVER (PARTITION BY DEPARTMENT_ID ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES",,1.196,0.017,1.275,39.29,
+16,2,38,sales_2_05,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1307,exact_match,1.0,"SELECT c.CUSTOMER_TIER, COUNT(o.ORDER_ID) AS NUMBER_OF_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_TIER",,1.27,0.113,1.394,39.37,
+16,1,18,sales_3_05,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1329,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+FROM CUSTOMERS c
+JOIN (
+    SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+    FROM ORDERS
+    GROUP BY CUSTOMER_ID
+    HAVING COUNT(*) > (
+        SELECT AVG(ORDER_COUNT) 
+        FROM (
+            SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+            FROM ORDERS
+            GROUP BY CUSTOMER_ID
+        )
+    )
+) o ON c.CUSTOMER_ID = o.CUSTOMER_ID",,2.707,0.186,2.977,40.27,
+16,2,41,hr_3_02,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1279,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, DEPARTMENT_ID, SALARY, RANK() OVER (PARTITION BY DEPARTMENT_ID ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES",,1.235,0.026,1.327,38.07,
+16,2,42,hr_2_06,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1280,exact_match,1.0,"SELECT d.department_name, SUM(e.salary) AS total_salary_cost
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY total_salary_cost DESC",,1.226,0.007,1.234,39.14,
+16,2,32,hr_3_07,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1304,mismatch,0.0,"SELECT 
+    EMPLOYEE_ID, 
+    FIRST_NAME, 
+    LAST_NAME, 
+    HIRE_DATE, 
+    SALARY, 
+    SUM(SALARY) OVER (ORDER BY HIRE_DATE) AS RUNNING_TOTAL_SALARY_COST
+FROM 
+    HR_EMPLOYEES
+WHERE 
+    EXTRACT(YEAR FROM HIRE_DATE) = 2015
+ORDER BY 
+    HIRE_DATE",,2.194,0.005,2.205,40.1,
+16,2,44,sales_2_01,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1291,exact_match,1.0,"SELECT R.REGION_NAME, COUNT(C.CUSTOMER_ID) AS TOTAL_CUSTOMERS
+FROM REGIONS R
+LEFT JOIN CUSTOMERS C ON R.REGION_ID = C.REGION_ID
+GROUP BY R.REGION_NAME",,1.194,0.02,1.215,39.35,
+16,1,23,sales_3_05,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1329,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+FROM CUSTOMERS c
+JOIN (
+    SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+    FROM ORDERS
+    GROUP BY CUSTOMER_ID
+    HAVING COUNT(*) > (
+        SELECT AVG(ORDER_COUNT) 
+        FROM (
+            SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+            FROM ORDERS
+            GROUP BY CUSTOMER_ID
+        )
+    )
+) o ON c.CUSTOMER_ID = o.CUSTOMER_ID",,2.696,0.194,2.957,40.44,
+16,2,47,hr_1_11,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1280,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE MANAGER_ID IS NULL,,0.469,0.053,0.531,32.0,
+16,2,40,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.794,0.067,1.865,39.57,
+16,3,51,sales_1_07,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1268,mismatch,0.0,SELECT * FROM REGIONS WHERE COUNTRY = 'Europe',,0.356,0.003,0.359,36.54,
+16,2,37,hr_3_12,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1331,mismatch,0.0,"SELECT jh.employee_id, j.job_title
+FROM (
+    SELECT jh.employee_id, jh.job_id, 
+           ROW_NUMBER() OVER (PARTITION BY jh.employee_id ORDER BY jh.end_date DESC NULLS LAST) as rn
+    FROM hr_job_history jh
+) jh
+JOIN hr_jobs j ON jh.job_id = j.job_id
+WHERE jh.rn = 1",,2.158,0.016,2.19,40.31,
+16,2,45,sales_2_01,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1291,exact_match,1.0,"SELECT R.REGION_NAME, COUNT(C.CUSTOMER_ID) AS TOTAL_CUSTOMERS
+FROM REGIONS R
+LEFT JOIN CUSTOMERS C ON R.REGION_ID = C.REGION_ID
+GROUP BY R.REGION_NAME",,1.206,0.015,1.221,38.99,
+16,3,53,sales_1_08,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1314,mismatch,0.0,"SELECT PRODUCT_NAME, STOCK_QTY FROM PRODUCTS WHERE STOCK_QTY < 50 ORDER BY STOCK_QTY ASC",,0.644,0.001,0.645,37.25,
+16,2,46,hr_2_09,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1280,exact_match,1.0,"SELECT EXTRACT(YEAR FROM HIRE_DATE) AS YEAR_HIRED, COUNT(*) AS NUMBER_OF_EMPLOYEES
+FROM HR_EMPLOYEES
+GROUP BY EXTRACT(YEAR FROM HIRE_DATE)
+ORDER BY YEAR_HIRED",,1.328,0.036,1.38,39.15,
+16,3,48,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.19,0.036,1.278,38.65,
+16,3,49,hr_2_06,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1280,exact_match,1.0,"SELECT d.department_name, SUM(e.salary) AS total_salary_cost
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY total_salary_cost DESC",,1.233,0.017,1.255,38.94,
+16,3,55,hr_1_09,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1259,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, HIRE_DATE FROM HR_EMPLOYEES ORDER BY HIRE_DATE DESC FETCH FIRST 5 ROWS ONLY",,0.773,0.017,0.805,38.81,
+16,3,52,sales_2_01,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1291,exact_match,1.0,"SELECT R.REGION_NAME, COUNT(C.CUSTOMER_ID) AS TOTAL_CUSTOMERS
+FROM REGIONS R
+LEFT JOIN CUSTOMERS C ON R.REGION_ID = C.REGION_ID
+GROUP BY R.REGION_NAME",,1.213,0.031,1.266,38.73,
+16,3,54,hr_2_05,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1301,mismatch,0.0,"SELECT manager_id, COUNT(employee_id) AS direct_reports_count
+FROM HR_EMPLOYEES
+WHERE manager_id IS NOT NULL
+GROUP BY manager_id
+ORDER BY direct_reports_count DESC
+FETCH FIRST 10 ROWS ONLY",,1.252,0.042,1.305,38.34,
+16,3,62,sales_2_06,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1282,exact_match,1.0,"SELECT PRODUCT_ID, PRODUCT_NAME FROM PRODUCTS WHERE PRODUCT_ID NOT IN (SELECT PRODUCT_ID FROM ORDER_ITEMS)",,0.596,0.045,0.646,36.93,
+16,3,50,hr_3_01,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1367,mismatch,0.0,"SELECT LEVEL AS HIERARCHY_LEVEL, EMPLOYEE_ID, FIRST_NAME, LAST_NAME, MANAGER_ID
+FROM HR_EMPLOYEES
+START WITH MANAGER_ID IS NULL
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID
+AND LEVEL <= 3",,1.414,0.924,2.465,39.61,
+16,3,63,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.203,0.056,1.266,38.22,
+16,3,57,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.789,0.147,1.975,39.68,
+16,0,7,sales_3_04,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.006,1343,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    o.ORDER_DATE, 
+    COUNT(o.ORDER_ID) OVER (PARTITION BY c.CUSTOMER_ID ORDER BY o.ORDER_DATE) AS RUNNING_ORDER_COUNT,
+    MAX(o.ORDER_DATE) OVER (PARTITION BY c.CUSTOMER_ID) AS MOST_RECENT_ORDER_DATE
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+ORDER BY 
+    c.CUSTOMER_ID, 
+    o.ORDER_DATE",,3.072,1.829,6.853,40.37,
+16,3,56,sales_2_02,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1307,exact_match,1.0,"SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_REVENUE
+FROM ORDER_ITEMS oi
+JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID
+GROUP BY p.CATEGORY",,1.232,1.24,2.477,38.98,
+16,4,68,sales_1_10,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1269,mismatch,0.2,SELECT * FROM ORDERS ORDER BY ORDER_DATE DESC FETCH FIRST 5 ROWS ONLY,,0.5,0.002,0.504,35.98,
+16,4,65,hr_1_01,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1261,exact_match,1.0,"SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,0.879,0.444,1.36,37.56,
+16,4,64,sales_2_12,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1308,error,0.0,"SELECT p.PRODUCT_ID, p.PRODUCT_NAME, COUNT(DISTINCT oi.CUSTOMER_ID) AS DISTINCT_CUSTOMERS
+FROM PRODUCTS p
+JOIN ORDER_ITEMS oi ON p.PRODUCT_ID = oi.PRODUCT_ID
+GROUP BY p.PRODUCT_ID, p.PRODUCT_NAME","ORA-00904: ""OI"".""CUSTOMER_ID"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",1.483,0.05,1.586,38.43,
+16,3,60,hr_3_11,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1336,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, 
+       SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE) AS SALARY_DIFFERENCE
+FROM HR_EMPLOYEES
+ORDER BY HIRE_DATE",,1.372,0.55,1.971,38.63,
+16,3,61,hr_2_11,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1315,mismatch,0.0,"SELECT e.FIRST_NAME, e.LAST_NAME, d.DEPARTMENT_NAME, j.JOB_TITLE
+FROM HR_EMPLOYEES e
+JOIN HR_DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+WHERE d.DEPARTMENT_NAME = 'Sales'",,2.029,0.136,2.184,39.43,
+16,0,3,sales_2_10,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.003,1317,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+HAVING SUM(oi.QUANTITY * oi.UNIT_PRICE) > 5000",,2.686,4.318,7.229,40.2,
+16,2,33,sales_3_08,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1341,mismatch,0.0,"SELECT 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM') AS MONTH,
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS REVENUE,
+    ROUND(((SUM(OI.QUANTITY * OI.UNIT_PRICE) - LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) / LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) * 100, 2) AS PERCENTAGE_CHANGE
+FROM 
+    ORDERS O
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM O.ORDER_DATE) = 2025
+GROUP BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')
+ORDER BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')",,4.964,0.361,5.34,40.29,
+16,4,71,sales_1_07,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1268,mismatch,0.0,SELECT * FROM REGIONS WHERE COUNTRY = 'Europe',,0.37,0.0,0.37,35.18,
+16,4,66,hr_3_01,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1367,mismatch,0.0,"SELECT LEVEL AS HIERARCHY_LEVEL, EMPLOYEE_ID, FIRST_NAME, LAST_NAME, MANAGER_ID
+FROM HR_EMPLOYEES
+START WITH MANAGER_ID IS NULL
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID
+AND LEVEL <= 3",,1.475,0.042,1.566,37.96,
+16,4,73,sales_1_02,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1277,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'GOLD',,0.431,0.015,0.496,37.08,
+16,4,74,sales_1_12,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1297,exact_match,1.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Books' AND UNIT_PRICE < 20,,0.517,0.003,0.52,36.77,
+16,5,82,sales_1_08,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1314,mismatch,0.0,"SELECT PRODUCT_NAME, STOCK_QTY FROM PRODUCTS WHERE STOCK_QTY < 50 ORDER BY STOCK_QTY ASC",,0.629,0.001,0.631,38.13,
+16,4,70,sales_2_01,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1291,exact_match,1.0,"SELECT R.REGION_NAME, COUNT(C.CUSTOMER_ID) AS TOTAL_CUSTOMERS
+FROM REGIONS R
+LEFT JOIN CUSTOMERS C ON R.REGION_ID = C.REGION_ID
+GROUP BY R.REGION_NAME",,1.202,0.027,1.229,39.12,
+16,4,69,hr_2_10,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1285,exact_match,1.0,"SELECT hl.COUNTRY, COUNT(he.EMPLOYEE_ID) AS TOTAL_EMPLOYEES
+FROM HR_EMPLOYEES he
+JOIN HR_DEPARTMENTS hd ON he.DEPARTMENT_ID = hd.DEPARTMENT_ID
+JOIN HR_LOCATIONS hl ON hd.LOCATION_ID = hl.LOCATION_ID
+GROUP BY hl.COUNTRY",,1.799,0.036,1.85,39.47,
+16,4,67,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.831,0.265,2.105,38.77,
+16,4,77,hr_2_06,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1280,exact_match,1.0,"SELECT d.department_name, SUM(e.salary) AS total_salary_cost
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY total_salary_cost DESC",,1.214,0.023,1.252,39.54,
+16,5,81,hr_2_05,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1301,mismatch,0.0,"SELECT manager_id, COUNT(employee_id) AS direct_reports_count
+FROM HR_EMPLOYEES
+WHERE manager_id IS NOT NULL
+GROUP BY manager_id
+ORDER BY direct_reports_count DESC
+FETCH FIRST 10 ROWS ONLY",,1.209,0.02,1.24,39.69,
+16,5,85,sales_1_01,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1287,mismatch,0.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Electronics',,0.398,0.016,0.42,32.64,
+16,4,78,hr_3_04,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1295,mismatch,0.0,"SELECT department_id, first_name, last_name, salary
+FROM (
+    SELECT department_id, first_name, last_name, salary,
+           DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) as rank
+    FROM hr_employees
+)
+WHERE rank <= 3",,1.508,0.021,1.546,39.79,
+16,4,79,hr_3_03,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1266,mismatch,0.0,"SELECT e.EMPLOYEE_ID, e.FIRST_NAME, e.LAST_NAME
+FROM HR_EMPLOYEES e
+JOIN HR_EMPLOYEES m ON e.MANAGER_ID = m.EMPLOYEE_ID
+WHERE e.SALARY > m.SALARY",,1.43,0.331,1.806,39.17,
+16,5,87,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.672,0.032,0.72,37.18,
+16,5,84,hr_2_02,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1290,exact_match,1.0,"SELECT j.JOB_TITLE, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_EMPLOYEES e
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+GROUP BY j.JOB_TITLE
+ORDER BY AVG_SALARY DESC",,1.466,0.017,1.489,38.88,
+16,5,86,hr_2_03,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1264,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING COUNT(e.employee_id) > 600",,1.153,0.022,1.21,39.03,
+16,5,89,hr_1_02,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1265,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE SALARY > 150000,,0.595,0.304,0.929,33.61,
+16,2,36,sales_3_04,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1343,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    o.ORDER_DATE, 
+    COUNT(o.ORDER_ID) OVER (PARTITION BY c.CUSTOMER_ID ORDER BY o.ORDER_DATE) AS RUNNING_ORDER_COUNT,
+    MAX(o.ORDER_DATE) OVER (PARTITION BY c.CUSTOMER_ID) AS MOST_RECENT_ORDER_DATE
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+ORDER BY 
+    c.CUSTOMER_ID, 
+    o.ORDER_DATE",,3.106,3.026,8.016,39.92,
+16,5,90,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.31,0.004,1.316,35.11,
+16,4,72,hr_3_12,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1331,mismatch,0.0,"SELECT jh.employee_id, j.job_title
+FROM (
+    SELECT jh.employee_id, jh.job_id, 
+           ROW_NUMBER() OVER (PARTITION BY jh.employee_id ORDER BY jh.end_date DESC NULLS LAST) as rn
+    FROM hr_job_history jh
+) jh
+JOIN hr_jobs j ON jh.job_id = j.job_id
+WHERE jh.rn = 1",,2.175,1.033,3.231,40.0,
+16,5,94,hr_1_03,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1269,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE MAX_SALARY > 200000,,0.58,0.031,0.637,36.23,
+16,2,43,sales_3_01,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1312,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    r.REGION_NAME, 
+    SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND,
+    RANK() OVER (PARTITION BY r.REGION_NAME ORDER BY SUM(oi.QUANTITY * oi.UNIT_PRICE) DESC) AS SPEND_RANK
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN 
+    ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+JOIN 
+    REGIONS r ON c.REGION_ID = r.REGION_ID
+GROUP BY 
+    c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, r.REGION_NAME
+ORDER BY 
+    r.REGION_NAME, SPEND_RANK",,4.428,2.918,7.549,40.65,
+16,5,88,hr_2_12,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1305,mismatch,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(jh.job_id) AS job_history_count
+FROM hr_employees e
+JOIN hr_job_history jh ON e.employee_id = jh.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(jh.job_id) > 1",,1.821,0.018,1.854,39.54,
+16,5,91,hr_3_04,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1295,mismatch,0.0,"SELECT department_id, first_name, last_name, salary
+FROM (
+    SELECT department_id, first_name, last_name, salary,
+           DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) as rank
+    FROM hr_employees
+)
+WHERE rank <= 3",,1.514,0.004,1.519,39.62,
+16,6,98,sales_1_08,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1314,mismatch,0.0,"SELECT PRODUCT_NAME, STOCK_QTY FROM PRODUCTS WHERE STOCK_QTY < 50 ORDER BY STOCK_QTY ASC",,0.619,0.001,0.62,38.78,
+16,6,96,sales_1_08,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1314,mismatch,0.0,"SELECT PRODUCT_NAME, STOCK_QTY FROM PRODUCTS WHERE STOCK_QTY < 50 ORDER BY STOCK_QTY ASC",,0.621,0.042,0.664,38.63,
+16,6,101,sales_1_07,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1268,mismatch,0.0,SELECT * FROM REGIONS WHERE COUNTRY = 'Europe',,0.355,0.001,0.356,36.63,
+16,6,99,hr_1_06,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1264,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE LAST_NAME LIKE '%son%',,0.445,0.148,0.62,35.99,
+16,6,100,sales_1_08,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1314,mismatch,0.0,"SELECT PRODUCT_NAME, STOCK_QTY FROM PRODUCTS WHERE STOCK_QTY < 50 ORDER BY STOCK_QTY ASC",,0.631,0.001,0.632,38.04,
+16,6,106,sales_1_08,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1314,mismatch,0.0,"SELECT PRODUCT_NAME, STOCK_QTY FROM PRODUCTS WHERE STOCK_QTY < 50 ORDER BY STOCK_QTY ASC",,0.626,0.639,1.265,38.35,
+16,6,103,hr_3_06,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1306,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, DENSE_RANK() OVER (ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES
+ORDER BY SALARY_RANK
+FETCH FIRST 10 ROWS ONLY",,1.332,0.089,1.421,39.8,
+16,6,102,hr_3_03,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1266,mismatch,0.0,"SELECT e.EMPLOYEE_ID, e.FIRST_NAME, e.LAST_NAME
+FROM HR_EMPLOYEES e
+JOIN HR_EMPLOYEES m ON e.MANAGER_ID = m.EMPLOYEE_ID
+WHERE e.SALARY > m.SALARY",,1.401,0.201,1.626,39.98,
+16,6,104,hr_3_10,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1334,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, LEVEL AS HIERARCHY_LEVEL
+FROM HR_EMPLOYEES
+START WITH EMPLOYEE_ID = 3600
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID",,1.243,0.256,1.5,40.22,
+16,6,97,hr_3_12,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1331,mismatch,0.0,"SELECT jh.employee_id, j.job_title
+FROM (
+    SELECT jh.employee_id, jh.job_id, 
+           ROW_NUMBER() OVER (PARTITION BY jh.employee_id ORDER BY jh.end_date DESC NULLS LAST) as rn
+    FROM hr_job_history jh
+) jh
+JOIN hr_jobs j ON jh.job_id = j.job_id
+WHERE jh.rn = 1",,2.143,0.215,2.375,40.6,
+16,6,105,sales_2_09,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1293,mismatch,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS ORDER_MONTH, COUNT(*) AS NUMBER_OF_ORDERS
+FROM ORDERS
+WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY ORDER_MONTH",,1.526,0.885,2.411,39.98,
+16,6,110,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.355,0.81,1.183,36.59,
+16,6,111,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.347,0.781,1.147,37.42,
+16,6,107,hr_3_07,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1304,mismatch,0.0,"SELECT 
+    EMPLOYEE_ID, 
+    FIRST_NAME, 
+    LAST_NAME, 
+    HIRE_DATE, 
+    SALARY, 
+    SUM(SALARY) OVER (ORDER BY HIRE_DATE) AS RUNNING_TOTAL_SALARY_COST
+FROM 
+    HR_EMPLOYEES
+WHERE 
+    EXTRACT(YEAR FROM HIRE_DATE) = 2015
+ORDER BY 
+    HIRE_DATE",,2.17,0.203,2.378,40.55,
+16,4,75,sales_3_08,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1341,mismatch,0.0,"SELECT 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM') AS MONTH,
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS REVENUE,
+    ROUND(((SUM(OI.QUANTITY * OI.UNIT_PRICE) - LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) / LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) * 100, 2) AS PERCENTAGE_CHANGE
+FROM 
+    ORDERS O
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM O.ORDER_DATE) = 2025
+GROUP BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')
+ORDER BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')",,4.907,1.576,6.484,40.76,
+16,6,109,sales_2_12,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1308,error,0.0,"SELECT p.PRODUCT_ID, p.PRODUCT_NAME, COUNT(DISTINCT oi.CUSTOMER_ID) AS DISTINCT_CUSTOMERS
+FROM PRODUCTS p
+JOIN ORDER_ITEMS oi ON p.PRODUCT_ID = oi.PRODUCT_ID
+GROUP BY p.PRODUCT_ID, p.PRODUCT_NAME","ORA-00904: ""OI"".""CUSTOMER_ID"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",1.405,0.001,1.406,40.58,
+16,7,114,sales_2_04,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1287,exact_match,1.0,"SELECT STATUS, COUNT(*) FROM ORDERS GROUP BY STATUS",,0.327,0.018,0.345,36.71,
+16,6,108,sales_1_11,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1296,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'PLATINUM' ORDER BY SIGNUP_DATE,,0.594,1.004,1.65,38.7,
+16,7,113,hr_2_05,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1301,mismatch,0.0,"SELECT manager_id, COUNT(employee_id) AS direct_reports_count
+FROM HR_EMPLOYEES
+WHERE manager_id IS NOT NULL
+GROUP BY manager_id
+ORDER BY direct_reports_count DESC
+FETCH FIRST 10 ROWS ONLY",,1.215,0.074,1.289,39.52,
+16,5,92,sales_2_08,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1301,exact_match,1.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM REGIONS R
+JOIN ORDERS O ON R.REGION_ID = O.REGION_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+GROUP BY R.REGION_NAME",,1.701,3.677,5.384,39.38,
+16,7,120,hr_1_06,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1264,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE LAST_NAME LIKE '%son%',,0.441,0.409,0.858,36.3,
+16,7,117,sales_1_11,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1296,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'PLATINUM' ORDER BY SIGNUP_DATE,,0.599,0.62,1.268,38.39,
+16,7,116,sales_1_06,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1276,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE EXTRACT(YEAR FROM SIGNUP_DATE) = 2024,,0.569,0.794,1.426,38.63,
+16,7,119,hr_3_09,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1270,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY AVG(e.salary) DESC
+FETCH FIRST 1 ROW ONLY",,1.182,0.031,1.224,39.75,
+16,3,59,sales_3_01,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1312,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    r.REGION_NAME, 
+    SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND,
+    RANK() OVER (PARTITION BY r.REGION_NAME ORDER BY SUM(oi.QUANTITY * oi.UNIT_PRICE) DESC) AS SPEND_RANK
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN 
+    ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+JOIN 
+    REGIONS r ON c.REGION_ID = r.REGION_ID
+GROUP BY 
+    c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, r.REGION_NAME
+ORDER BY 
+    r.REGION_NAME, SPEND_RANK",,4.456,5.551,10.222,40.4,
+16,7,123,hr_1_06,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1264,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE LAST_NAME LIKE '%son%',,0.452,0.004,0.464,35.42,
+16,7,121,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.656,0.654,1.321,38.1,
+16,8,128,hr_1_04,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1257,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, SALARY FROM HR_EMPLOYEES ORDER BY SALARY DESC FETCH FIRST 10 ROWS ONLY",,0.757,0.021,0.784,38.33,
+16,7,125,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.646,0.579,1.249,38.73,
+16,3,58,sales_3_01,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1312,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    r.REGION_NAME, 
+    SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND,
+    RANK() OVER (PARTITION BY r.REGION_NAME ORDER BY SUM(oi.QUANTITY * oi.UNIT_PRICE) DESC) AS SPEND_RANK
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN 
+    ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+JOIN 
+    REGIONS r ON c.REGION_ID = r.REGION_ID
+GROUP BY 
+    c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, r.REGION_NAME
+ORDER BY 
+    r.REGION_NAME, SPEND_RANK",,4.455,6.676,11.371,40.4,
+16,7,118,hr_2_07,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1293,exact_match,1.0,"SELECT j.JOB_TITLE, MIN(e.SALARY) AS MIN_SALARY, MAX(e.SALARY) AS MAX_SALARY, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_JOBS j
+JOIN HR_EMPLOYEES e ON j.JOB_ID = e.JOB_ID
+GROUP BY j.JOB_TITLE",,1.82,0.702,2.526,40.12,
+16,7,122,sales_3_03,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1315,mismatch,0.0,"SELECT product_id, product_name, category, unit_price
+FROM (
+    SELECT product_id, product_name, category, unit_price,
+           ROW_NUMBER() OVER (PARTITION BY category ORDER BY unit_price DESC) as rn
+    FROM products
+)
+WHERE rn <= 3",,1.496,0.007,1.504,38.09,
+16,7,115,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.764,0.93,2.698,40.25,
+16,7,126,hr_2_04,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1274,mismatch,0.0,"SELECT hl.CITY, COUNT(hd.DEPARTMENT_ID) AS TOTAL_DEPARTMENTS
+FROM HR_LOCATIONS hl
+JOIN HR_DEPARTMENTS hd ON hl.LOCATION_ID = hd.LOCATION_ID
+GROUP BY hl.CITY",,1.264,0.032,1.306,38.76,
+16,4,76,sales_2_10,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1317,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+HAVING SUM(oi.QUANTITY * oi.UNIT_PRICE) > 5000",,2.85,6.111,9.201,37.9,
+16,8,130,hr_1_06,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1264,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE LAST_NAME LIKE '%son%',,0.453,0.068,0.528,35.35,
+16,7,127,sales_2_05,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1307,exact_match,1.0,"SELECT c.CUSTOMER_TIER, COUNT(o.ORDER_ID) AS NUMBER_OF_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_TIER",,1.315,0.109,1.425,38.02,
+16,8,132,sales_1_02,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1277,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'GOLD',,0.434,0.015,0.491,36.85,
+16,8,131,sales_1_10,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1269,mismatch,0.2,SELECT * FROM ORDERS ORDER BY ORDER_DATE DESC FETCH FIRST 5 ROWS ONLY,,0.497,0.002,0.499,36.23,
+16,8,135,sales_1_10,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1269,mismatch,0.2,SELECT * FROM ORDERS ORDER BY ORDER_DATE DESC FETCH FIRST 5 ROWS ONLY,,0.483,0.002,0.485,37.25,
+16,8,141,hr_1_10,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1259,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE JOB_TITLE LIKE '%Manager%',,0.402,0.121,0.524,37.29,
+16,8,142,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.353,0.175,0.537,36.79,
+16,8,139,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.644,0.001,0.646,38.81,
+16,8,134,sales_2_01,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1291,exact_match,1.0,"SELECT R.REGION_NAME, COUNT(C.CUSTOMER_ID) AS TOTAL_CUSTOMERS
+FROM REGIONS R
+LEFT JOIN CUSTOMERS C ON R.REGION_ID = C.REGION_ID
+GROUP BY R.REGION_NAME",,1.198,0.058,1.285,39.24,
+16,5,83,sales_2_10,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1317,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+HAVING SUM(oi.QUANTITY * oi.UNIT_PRICE) > 5000",,2.686,6.425,9.365,40.21,
+16,7,112,sales_3_08,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1341,mismatch,0.0,"SELECT 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM') AS MONTH,
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS REVENUE,
+    ROUND(((SUM(OI.QUANTITY * OI.UNIT_PRICE) - LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) / LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) * 100, 2) AS PERCENTAGE_CHANGE
+FROM 
+    ORDERS O
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM O.ORDER_DATE) = 2025
+GROUP BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')
+ORDER BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')",,4.884,0.332,5.261,40.95,
+16,8,138,hr_3_06,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1306,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, DENSE_RANK() OVER (ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES
+ORDER BY SALARY_RANK
+FETCH FIRST 10 ROWS ONLY",,1.352,0.022,1.395,39.21,
+16,8,140,sales_2_05,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1307,exact_match,1.0,"SELECT c.CUSTOMER_TIER, COUNT(o.ORDER_ID) AS NUMBER_OF_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_TIER",,1.267,0.103,1.381,39.47,
+16,9,145,hr_1_02,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1265,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE SALARY > 150000,,0.55,0.255,0.865,36.37,
+16,8,129,hr_2_12,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1305,mismatch,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(jh.job_id) AS job_history_count
+FROM hr_employees e
+JOIN hr_job_history jh ON e.employee_id = jh.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(jh.job_id) > 1",,1.854,0.352,2.234,38.83,
+16,9,144,hr_2_01,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1268,exact_match,1.0,"SELECT d.department_name, COUNT(e.employee_id) AS number_of_employees
+FROM hr_departments d
+LEFT JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name",,1.111,0.053,1.187,39.6,
+16,8,133,hr_2_12,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1305,mismatch,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(jh.job_id) AS job_history_count
+FROM hr_employees e
+JOIN hr_job_history jh ON e.employee_id = jh.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(jh.job_id) > 1",,1.807,0.357,2.246,39.85,
+16,8,136,hr_3_11,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1336,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, 
+       SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE) AS SALARY_DIFFERENCE
+FROM HR_EMPLOYEES
+ORDER BY HIRE_DATE",,1.378,0.904,2.36,38.47,
+16,9,149,hr_1_04,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1257,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, SALARY FROM HR_EMPLOYEES ORDER BY SALARY DESC FETCH FIRST 10 ROWS ONLY",,0.797,0.021,0.839,36.39,
+16,9,152,hr_1_04,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1257,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, SALARY FROM HR_EMPLOYEES ORDER BY SALARY DESC FETCH FIRST 10 ROWS ONLY",,0.786,0.017,0.839,36.88,
+16,9,154,sales_2_06,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1282,exact_match,1.0,"SELECT PRODUCT_ID, PRODUCT_NAME FROM PRODUCTS WHERE PRODUCT_ID NOT IN (SELECT PRODUCT_ID FROM ORDER_ITEMS)",,0.629,0.006,0.64,34.98,
+16,8,143,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.793,0.187,1.998,39.6,
+16,9,146,sales_2_09,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1293,mismatch,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS ORDER_MONTH, COUNT(*) AS NUMBER_OF_ORDERS
+FROM ORDERS
+WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY ORDER_MONTH",,1.616,0.088,1.733,37.75,
+16,9,147,hr_2_10,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1285,exact_match,1.0,"SELECT hl.COUNTRY, COUNT(he.EMPLOYEE_ID) AS TOTAL_EMPLOYEES
+FROM HR_EMPLOYEES he
+JOIN HR_DEPARTMENTS hd ON he.DEPARTMENT_ID = hd.DEPARTMENT_ID
+JOIN HR_LOCATIONS hl ON hd.LOCATION_ID = hl.LOCATION_ID
+GROUP BY hl.COUNTRY",,1.803,0.033,1.852,39.38,
+16,5,80,sales_3_04,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1343,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    o.ORDER_DATE, 
+    COUNT(o.ORDER_ID) OVER (PARTITION BY c.CUSTOMER_ID ORDER BY o.ORDER_DATE) AS RUNNING_ORDER_COUNT,
+    MAX(o.ORDER_DATE) OVER (PARTITION BY c.CUSTOMER_ID) AS MOST_RECENT_ORDER_DATE
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+ORDER BY 
+    c.CUSTOMER_ID, 
+    o.ORDER_DATE",,3.079,7.152,12.349,40.28,
+16,9,151,sales_1_02,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1277,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'GOLD',,0.458,0.767,1.639,34.9,
+16,9,150,hr_3_10,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1334,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, LEVEL AS HIERARCHY_LEVEL
+FROM HR_EMPLOYEES
+START WITH EMPLOYEE_ID = 3600
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID",,1.3,0.409,1.726,38.47,
+16,9,155,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.688,0.348,1.071,36.34,
+16,5,93,sales_3_01,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1312,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    r.REGION_NAME, 
+    SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND,
+    RANK() OVER (PARTITION BY r.REGION_NAME ORDER BY SUM(oi.QUANTITY * oi.UNIT_PRICE) DESC) AS SPEND_RANK
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN 
+    ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+JOIN 
+    REGIONS r ON c.REGION_ID = r.REGION_ID
+GROUP BY 
+    c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, r.REGION_NAME
+ORDER BY 
+    r.REGION_NAME, SPEND_RANK",,4.461,5.727,10.405,40.35,
+16,7,124,sales_3_08,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1341,mismatch,0.0,"SELECT 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM') AS MONTH,
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS REVENUE,
+    ROUND(((SUM(OI.QUANTITY * OI.UNIT_PRICE) - LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) / LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) * 100, 2) AS PERCENTAGE_CHANGE
+FROM 
+    ORDERS O
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM O.ORDER_DATE) = 2025
+GROUP BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')
+ORDER BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')",,4.9,0.379,5.279,40.82,
+16,9,148,hr_3_12,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1331,mismatch,0.0,"SELECT jh.employee_id, j.job_title
+FROM (
+    SELECT jh.employee_id, jh.job_id, 
+           ROW_NUMBER() OVER (PARTITION BY jh.employee_id ORDER BY jh.end_date DESC NULLS LAST) as rn
+    FROM hr_job_history jh
+) jh
+JOIN hr_jobs j ON jh.job_id = j.job_id
+WHERE jh.rn = 1",,2.254,0.025,2.309,38.6,
+16,9,156,sales_2_03,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1290,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, COUNT(o.ORDER_ID) AS TOTAL_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+ORDER BY TOTAL_ORDERS DESC
+FETCH FIRST 5 ROWS ONLY",,2.029,0.114,2.149,40.41,
+16,9,153,sales_2_02,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1307,exact_match,1.0,"SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_REVENUE
+FROM ORDER_ITEMS oi
+JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID
+GROUP BY p.CATEGORY",,1.376,1.23,2.619,34.9,
+16,9,157,sales_2_02,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1307,exact_match,1.0,"SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_REVENUE
+FROM ORDER_ITEMS oi
+JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID
+GROUP BY p.CATEGORY",,1.216,1.264,2.486,39.48,
+16,9,158,sales_2_08,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1301,exact_match,1.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM REGIONS R
+JOIN ORDERS O ON R.REGION_ID = O.REGION_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+GROUP BY R.REGION_NAME",,1.681,0.986,2.683,39.85,
+16,5,95,sales_3_04,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1343,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    o.ORDER_DATE, 
+    COUNT(o.ORDER_ID) OVER (PARTITION BY c.CUSTOMER_ID ORDER BY o.ORDER_DATE) AS RUNNING_ORDER_COUNT,
+    MAX(o.ORDER_DATE) OVER (PARTITION BY c.CUSTOMER_ID) AS MOST_RECENT_ORDER_DATE
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+ORDER BY 
+    c.CUSTOMER_ID, 
+    o.ORDER_DATE",,3.094,7.764,12.636,40.08,
+16,9,159,sales_3_12,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1328,exact_match,1.0,"SELECT 
+    ORDER_DATE, 
+    SUM(QUANTITY * UNIT_PRICE) AS DAILY_REVENUE,
+    SUM(SUM(QUANTITY * UNIT_PRICE)) OVER (ORDER BY ORDER_DATE) AS CUMULATIVE_REVENUE
+FROM 
+    ORDER_ITEMS
+JOIN 
+    ORDERS ON ORDER_ITEMS.ORDER_ID = ORDERS.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM ORDERS.ORDER_DATE) = 2025 AND EXTRACT(MONTH FROM ORDERS.ORDER_DATE) = 1
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,3.23,0.092,3.323,37.77,
+16,8,137,sales_3_04,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1343,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    o.ORDER_DATE, 
+    COUNT(o.ORDER_ID) OVER (PARTITION BY c.CUSTOMER_ID ORDER BY o.ORDER_DATE) AS RUNNING_ORDER_COUNT,
+    MAX(o.ORDER_DATE) OVER (PARTITION BY c.CUSTOMER_ID) AS MOST_RECENT_ORDER_DATE
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+ORDER BY 
+    c.CUSTOMER_ID, 
+    o.ORDER_DATE",,3.19,3.361,8.341,38.87,
+32,0,8,sales_1_07,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.007,1268,mismatch,0.0,SELECT * FROM REGIONS WHERE COUNTRY = 'Europe',,0.39,0.001,0.392,33.31,
+32,0,13,sales_1_01,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.012,1287,mismatch,0.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Electronics',,0.385,0.001,0.388,33.73,
+32,0,31,hr_1_05,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.028,1248,exact_match,1.0,SELECT * FROM HR_LOCATIONS WHERE COUNTRY = 'USA',,0.418,0.001,0.419,33.49,
+32,0,22,sales_1_10,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.02,1269,mismatch,0.2,SELECT * FROM ORDERS ORDER BY ORDER_DATE DESC FETCH FIRST 5 ROWS ONLY,,0.529,0.023,0.569,34.0,
+32,0,9,sales_1_12,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.008,1297,exact_match,1.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Books' AND UNIT_PRICE < 20,,0.554,0.023,0.603,34.3,
+32,0,4,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.003,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.673,0.022,0.715,37.12,
+32,0,25,sales_1_05,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.022,1279,exact_match,1.0,SELECT * FROM ORDERS WHERE STATUS = 'CANCELLED',,0.399,0.064,0.695,32.58,
+32,0,16,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.014,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.696,0.006,0.711,35.92,
+32,0,0,hr_1_02,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.0,1265,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE SALARY > 150000,,0.538,0.184,0.755,37.16,
+32,0,20,sales_1_02,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.017,1277,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'GOLD',,0.485,0.261,0.793,33.0,
+32,0,2,hr_1_09,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.002,1259,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, HIRE_DATE FROM HR_EMPLOYEES ORDER BY HIRE_DATE DESC FETCH FIRST 5 ROWS ONLY",,0.809,0.002,0.813,37.09,
+32,0,12,sales_1_06,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.011,1276,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE EXTRACT(YEAR FROM SIGNUP_DATE) = 2024,,0.612,0.19,0.863,35.97,
+32,0,30,sales_1_06,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.027,1276,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE EXTRACT(YEAR FROM SIGNUP_DATE) = 2024,,0.633,0.2,0.9,34.74,
+32,0,14,hr_1_08,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.012,1269,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE EXTRACT(YEAR FROM HIRE_DATE) = 2020 ORDER BY HIRE_DATE,,0.832,0.069,0.924,36.07,
+32,1,34,hr_1_11,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE MANAGER_ID IS NULL,,0.429,0.056,0.494,34.97,
+32,0,11,hr_1_01,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.01,1261,exact_match,1.0,"SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,0.893,0.043,0.958,36.97,
+32,1,33,sales_1_06,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1276,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE EXTRACT(YEAR FROM SIGNUP_DATE) = 2024,,0.602,0.017,0.676,36.53,
+32,1,38,hr_1_11,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE MANAGER_ID IS NULL,,0.431,0.002,0.436,34.84,
+32,0,27,sales_2_07,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.024,1333,mismatch,0.0,"SELECT PRODUCT_ID, SUM(QUANTITY) AS TOTAL_QUANTITY_SOLD
+FROM ORDER_ITEMS
+GROUP BY PRODUCT_ID
+HAVING SUM(QUANTITY) > 1000",,1.053,0.098,1.152,37.05,
+32,0,26,hr_2_01,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.023,1268,exact_match,1.0,"SELECT d.department_name, COUNT(e.employee_id) AS number_of_employees
+FROM hr_departments d
+LEFT JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name",,1.179,0.004,1.183,37.31,
+32,0,10,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.009,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.22,0.004,1.225,37.71,
+32,1,32,hr_1_12,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1289,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE SALARY BETWEEN 80000 AND 120000 ORDER BY SALARY,,0.83,0.008,0.87,37.34,
+32,0,19,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.016,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.242,0.005,1.253,37.04,
+32,0,15,sales_2_05,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.013,1307,exact_match,1.0,"SELECT c.CUSTOMER_TIER, COUNT(o.ORDER_ID) AS NUMBER_OF_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_TIER",,1.316,0.072,1.388,37.99,
+32,0,28,hr_2_09,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.025,1280,exact_match,1.0,"SELECT EXTRACT(YEAR FROM HIRE_DATE) AS YEAR_HIRED, COUNT(*) AS NUMBER_OF_EMPLOYEES
+FROM HR_EMPLOYEES
+GROUP BY EXTRACT(YEAR FROM HIRE_DATE)
+ORDER BY YEAR_HIRED",,1.379,0.003,1.382,37.7,
+32,0,5,hr_3_06,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.005,1306,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, DENSE_RANK() OVER (ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES
+ORDER BY SALARY_RANK
+FETCH FIRST 10 ROWS ONLY",,1.4,0.004,1.404,37.87,
+32,0,29,sales_2_05,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.026,1307,exact_match,1.0,"SELECT c.CUSTOMER_TIER, COUNT(o.ORDER_ID) AS NUMBER_OF_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_TIER",,1.328,0.071,1.399,37.66,
+32,0,1,sales_3_03,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.001,1315,mismatch,0.0,"SELECT product_id, product_name, category, unit_price
+FROM (
+    SELECT product_id, product_name, category, unit_price,
+           ROW_NUMBER() OVER (PARTITION BY category ORDER BY unit_price DESC) as rn
+    FROM products
+)
+WHERE rn <= 3",,1.479,0.001,1.48,38.54,
+32,0,3,sales_3_03,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.003,1315,mismatch,0.0,"SELECT product_id, product_name, category, unit_price
+FROM (
+    SELECT product_id, product_name, category, unit_price,
+           ROW_NUMBER() OVER (PARTITION BY category ORDER BY unit_price DESC) as rn
+    FROM products
+)
+WHERE rn <= 3",,1.502,0.001,1.503,37.94,
+32,1,45,sales_1_04,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT PRODUCT_NAME, UNIT_PRICE FROM PRODUCTS ORDER BY UNIT_PRICE DESC FETCH FIRST 10 ROWS ONLY",,0.594,0.002,0.597,37.03,
+32,0,6,hr_3_04,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.005,1295,mismatch,0.0,"SELECT department_id, first_name, last_name, salary
+FROM (
+    SELECT department_id, first_name, last_name, salary,
+           DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) as rank
+    FROM hr_employees
+)
+WHERE rank <= 3",,1.576,0.003,1.579,38.07,
+32,1,43,sales_2_11,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1329,exact_match,1.0,"SELECT CATEGORY, AVG(UNIT_PRICE) AS AVERAGE_UNIT_PRICE
+FROM PRODUCTS
+GROUP BY CATEGORY
+ORDER BY AVERAGE_UNIT_PRICE DESC",,0.783,0.002,0.786,37.03,
+32,0,17,sales_2_09,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1293,mismatch,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS ORDER_MONTH, COUNT(*) AS NUMBER_OF_ORDERS
+FROM ORDERS
+WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY ORDER_MONTH",,1.593,0.061,1.654,38.3,
+32,1,46,sales_2_11,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1329,exact_match,1.0,"SELECT CATEGORY, AVG(UNIT_PRICE) AS AVERAGE_UNIT_PRICE
+FROM PRODUCTS
+GROUP BY CATEGORY
+ORDER BY AVERAGE_UNIT_PRICE DESC",,0.771,0.021,0.802,37.61,
+32,1,47,hr_1_08,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1269,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE EXTRACT(YEAR FROM HIRE_DATE) = 2020 ORDER BY HIRE_DATE,,0.802,0.102,0.921,37.41,
+32,1,54,sales_1_05,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,exact_match,1.0,SELECT * FROM ORDERS WHERE STATUS = 'CANCELLED',,0.362,0.063,0.659,35.89,
+32,0,18,hr_2_10,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.015,1285,exact_match,1.0,"SELECT hl.COUNTRY, COUNT(he.EMPLOYEE_ID) AS TOTAL_EMPLOYEES
+FROM HR_EMPLOYEES he
+JOIN HR_DEPARTMENTS hd ON he.DEPARTMENT_ID = hd.DEPARTMENT_ID
+JOIN HR_LOCATIONS hl ON hd.LOCATION_ID = hl.LOCATION_ID
+GROUP BY hl.COUNTRY",,1.85,0.057,1.916,38.37,
+32,1,60,hr_1_05,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1248,exact_match,1.0,SELECT * FROM HR_LOCATIONS WHERE COUNTRY = 'USA',,0.425,0.002,0.427,32.93,
+32,1,59,hr_1_10,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1259,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE JOB_TITLE LIKE '%Manager%',,0.452,0.001,0.454,33.18,
+32,1,39,hr_2_06,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT d.department_name, SUM(e.salary) AS total_salary_cost
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY total_salary_cost DESC",,1.258,0.004,1.263,38.14,
+32,1,35,sales_3_03,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1315,mismatch,0.0,"SELECT product_id, product_name, category, unit_price
+FROM (
+    SELECT product_id, product_name, category, unit_price,
+           ROW_NUMBER() OVER (PARTITION BY category ORDER BY unit_price DESC) as rn
+    FROM products
+)
+WHERE rn <= 3",,1.521,0.001,1.522,37.48,
+32,1,44,hr_2_06,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT d.department_name, SUM(e.salary) AS total_salary_cost
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY total_salary_cost DESC",,1.256,0.008,1.265,38.2,
+32,1,63,sales_1_04,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT PRODUCT_NAME, UNIT_PRICE FROM PRODUCTS ORDER BY UNIT_PRICE DESC FETCH FIRST 10 ROWS ONLY",,0.599,0.001,0.601,36.7,
+32,0,21,sales_2_03,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.018,1290,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, COUNT(o.ORDER_ID) AS TOTAL_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+ORDER BY TOTAL_ORDERS DESC
+FETCH FIRST 5 ROWS ONLY",,2.14,0.103,2.243,38.32,
+32,0,24,hr_3_12,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.021,1331,mismatch,0.0,"SELECT jh.employee_id, j.job_title
+FROM (
+    SELECT jh.employee_id, jh.job_id, 
+           ROW_NUMBER() OVER (PARTITION BY jh.employee_id ORDER BY jh.end_date DESC NULLS LAST) as rn
+    FROM hr_job_history jh
+) jh
+JOIN hr_jobs j ON jh.job_id = j.job_id
+WHERE jh.rn = 1",,2.263,0.018,2.31,38.44,
+32,2,68,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.383,0.018,0.415,33.95,
+32,1,48,hr_2_06,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT d.department_name, SUM(e.salary) AS total_salary_cost
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY total_salary_cost DESC",,1.26,0.011,1.271,38.1,
+32,2,70,hr_1_10,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1259,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE JOB_TITLE LIKE '%Manager%',,0.425,0.001,0.426,35.25,
+32,1,42,sales_2_09,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1293,mismatch,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS ORDER_MONTH, COUNT(*) AS NUMBER_OF_ORDERS
+FROM ORDERS
+WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY ORDER_MONTH",,1.57,0.06,1.631,38.85,
+32,1,55,hr_3_02,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, DEPARTMENT_ID, SALARY, RANK() OVER (PARTITION BY DEPARTMENT_ID ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES",,1.235,0.017,1.314,38.05,
+32,1,36,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.876,0.228,2.109,37.84,
+32,0,23,sales_2_08,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.02,1301,exact_match,1.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM REGIONS R
+JOIN ORDERS O ON R.REGION_ID = O.REGION_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+GROUP BY R.REGION_NAME",,1.766,0.925,2.701,37.94,
+32,2,66,hr_1_08,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1269,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE EXTRACT(YEAR FROM HIRE_DATE) = 2020 ORDER BY HIRE_DATE,,0.848,0.005,0.866,35.37,
+32,1,53,hr_2_02,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1290,exact_match,1.0,"SELECT j.JOB_TITLE, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_EMPLOYEES e
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+GROUP BY j.JOB_TITLE
+ORDER BY AVG_SALARY DESC",,1.468,0.017,1.488,38.83,
+32,2,69,hr_1_01,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1261,exact_match,1.0,"SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,0.878,0.011,0.918,37.59,
+32,2,67,hr_1_01,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1261,exact_match,1.0,"SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,0.882,0.021,0.941,37.41,
+32,1,51,sales_2_09,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1293,mismatch,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS ORDER_MONTH, COUNT(*) AS NUMBER_OF_ORDERS
+FROM ORDERS
+WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY ORDER_MONTH",,1.58,0.083,1.666,38.6,
+32,2,75,sales_1_04,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT PRODUCT_NAME, UNIT_PRICE FROM PRODUCTS ORDER BY UNIT_PRICE DESC FETCH FIRST 10 ROWS ONLY",,0.602,0.003,0.612,36.53,
+32,1,61,sales_3_07,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1319,mismatch,0.0,"SELECT DISTINCT category, product_name, unit_price
+FROM (
+    SELECT category, product_name, unit_price,
+           DENSE_RANK() OVER (PARTITION BY category ORDER BY unit_price DESC) as rank
+    FROM products
+)
+WHERE rank = 2",,1.381,0.002,1.383,38.39,
+32,1,57,sales_3_02,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1314,exact_match,1.0,"SELECT p.PRODUCT_ID, p.PRODUCT_NAME, p.CATEGORY, p.UNIT_PRICE
+FROM PRODUCTS p
+WHERE p.UNIT_PRICE > (
+    SELECT AVG(p2.UNIT_PRICE)
+    FROM PRODUCTS p2
+    WHERE p2.CATEGORY = p.CATEGORY
+)",,1.531,0.005,1.537,38.54,
+32,2,65,hr_2_05,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1301,mismatch,0.0,"SELECT manager_id, COUNT(employee_id) AS direct_reports_count
+FROM HR_EMPLOYEES
+WHERE manager_id IS NOT NULL
+GROUP BY manager_id
+ORDER BY direct_reports_count DESC
+FETCH FIRST 10 ROWS ONLY",,1.277,0.024,1.322,37.58,
+32,2,77,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.679,0.062,0.746,36.81,
+32,2,79,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.689,0.039,0.743,36.3,
+32,2,80,sales_1_05,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,exact_match,1.0,SELECT * FROM ORDERS WHERE STATUS = 'CANCELLED',,0.366,0.139,0.735,35.52,
+32,2,78,sales_2_11,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1329,exact_match,1.0,"SELECT CATEGORY, AVG(UNIT_PRICE) AS AVERAGE_UNIT_PRICE
+FROM PRODUCTS
+GROUP BY CATEGORY
+ORDER BY AVERAGE_UNIT_PRICE DESC",,0.769,0.049,0.837,37.71,
+32,1,49,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.837,0.191,2.036,38.66,
+32,2,74,hr_1_08,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1269,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE EXTRACT(YEAR FROM HIRE_DATE) = 2020 ORDER BY HIRE_DATE,,0.81,0.107,0.936,37.02,
+32,1,37,sales_2_02,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1307,exact_match,1.0,"SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_REVENUE
+FROM ORDER_ITEMS oi
+JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID
+GROUP BY p.CATEGORY",,1.264,1.207,2.48,37.97,
+32,2,83,hr_1_10,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1259,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE JOB_TITLE LIKE '%Manager%',,0.423,0.036,0.479,35.44,
+32,2,84,hr_1_06,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1264,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE LAST_NAME LIKE '%son%',,0.462,0.003,0.473,34.62,
+32,1,58,hr_2_12,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1305,mismatch,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(jh.job_id) AS job_history_count
+FROM hr_employees e
+JOIN hr_job_history jh ON e.employee_id = jh.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(jh.job_id) > 1",,1.871,0.012,1.894,38.49,
+32,2,72,hr_2_05,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1301,mismatch,0.0,"SELECT manager_id, COUNT(employee_id) AS direct_reports_count
+FROM HR_EMPLOYEES
+WHERE manager_id IS NOT NULL
+GROUP BY manager_id
+ORDER BY direct_reports_count DESC
+FETCH FIRST 10 ROWS ONLY",,1.26,0.002,1.262,38.09,
+32,1,40,sales_2_08,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1301,exact_match,1.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM REGIONS R
+JOIN ORDERS O ON R.REGION_ID = O.REGION_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+GROUP BY R.REGION_NAME",,1.731,0.962,2.694,38.7,
+32,2,93,sales_1_01,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1287,mismatch,0.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Electronics',,0.379,0.001,0.38,34.34,
+32,2,91,sales_1_06,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1276,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE EXTRACT(YEAR FROM SIGNUP_DATE) = 2024,,0.603,0.017,0.674,36.5,
+32,3,99,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.38,0.046,0.435,34.19,
+32,2,73,hr_3_11,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1336,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, 
+       SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE) AS SALARY_DIFFERENCE
+FROM HR_EMPLOYEES
+ORDER BY HIRE_DATE",,1.385,0.071,1.5,38.25,
+32,1,52,sales_2_02,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1307,exact_match,1.0,"SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_REVENUE
+FROM ORDER_ITEMS oi
+JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID
+GROUP BY p.CATEGORY",,1.254,1.207,2.462,38.27,
+32,3,101,hr_1_06,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1264,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE LAST_NAME LIKE '%son%',,0.461,0.004,0.484,34.72,
+32,3,102,sales_2_04,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1287,exact_match,1.0,"SELECT STATUS, COUNT(*) FROM ORDERS GROUP BY STATUS",,0.358,0.024,0.393,33.5,
+32,3,105,hr_1_05,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1248,exact_match,1.0,SELECT * FROM HR_LOCATIONS WHERE COUNTRY = 'USA',,0.401,0.001,0.402,34.91,
+32,3,107,hr_1_07,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1244,exact_match,1.0,SELECT DISTINCT department_name FROM hr_departments,,0.266,0.003,0.269,33.88,
+32,3,100,hr_1_08,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1269,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE EXTRACT(YEAR FROM HIRE_DATE) = 2020 ORDER BY HIRE_DATE,,0.8,0.004,0.818,37.52,
+32,3,97,hr_1_12,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1289,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE SALARY BETWEEN 80000 AND 120000 ORDER BY SALARY,,0.831,0.007,0.867,37.31,
+32,2,88,hr_2_03,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1264,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING COUNT(e.employee_id) > 600",,1.182,0.003,1.19,38.07,
+32,2,82,hr_2_09,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT EXTRACT(YEAR FROM HIRE_DATE) AS YEAR_HIRED, COUNT(*) AS NUMBER_OF_EMPLOYEES
+FROM HR_EMPLOYEES
+GROUP BY EXTRACT(YEAR FROM HIRE_DATE)
+ORDER BY YEAR_HIRED",,1.355,0.002,1.357,38.39,
+32,2,85,hr_2_09,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT EXTRACT(YEAR FROM HIRE_DATE) AS YEAR_HIRED, COUNT(*) AS NUMBER_OF_EMPLOYEES
+FROM HR_EMPLOYEES
+GROUP BY EXTRACT(YEAR FROM HIRE_DATE)
+ORDER BY YEAR_HIRED",,1.37,0.002,1.372,37.95,
+32,3,103,hr_1_04,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1257,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, SALARY FROM HR_EMPLOYEES ORDER BY SALARY DESC FETCH FIRST 10 ROWS ONLY",,0.78,0.002,0.781,37.2,
+32,2,71,hr_3_07,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1304,mismatch,0.0,"SELECT 
+    EMPLOYEE_ID, 
+    FIRST_NAME, 
+    LAST_NAME, 
+    HIRE_DATE, 
+    SALARY, 
+    SUM(SALARY) OVER (ORDER BY HIRE_DATE) AS RUNNING_TOTAL_SALARY_COST
+FROM 
+    HR_EMPLOYEES
+WHERE 
+    EXTRACT(YEAR FROM HIRE_DATE) = 2015
+ORDER BY 
+    HIRE_DATE",,2.265,0.004,2.275,38.86,
+32,3,109,hr_1_03,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1269,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE MAX_SALARY > 200000,,0.583,0.001,0.584,36.01,
+32,2,94,hr_3_09,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1270,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY AVG(e.salary) DESC
+FETCH FIRST 1 ROW ONLY",,1.25,0.004,1.254,37.61,
+32,1,50,sales_3_12,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1328,exact_match,1.0,"SELECT 
+    ORDER_DATE, 
+    SUM(QUANTITY * UNIT_PRICE) AS DAILY_REVENUE,
+    SUM(SUM(QUANTITY * UNIT_PRICE)) OVER (ORDER BY ORDER_DATE) AS CUMULATIVE_REVENUE
+FROM 
+    ORDER_ITEMS
+JOIN 
+    ORDERS ON ORDER_ITEMS.ORDER_ID = ORDERS.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM ORDERS.ORDER_DATE) = 2025 AND EXTRACT(MONTH FROM ORDERS.ORDER_DATE) = 1
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,3.127,0.098,3.232,39.02,
+32,1,56,sales_3_05,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1329,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+FROM CUSTOMERS c
+JOIN (
+    SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+    FROM ORDERS
+    GROUP BY CUSTOMER_ID
+    HAVING COUNT(*) > (
+        SELECT AVG(ORDER_COUNT) 
+        FROM (
+            SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+            FROM ORDERS
+            GROUP BY CUSTOMER_ID
+        )
+    )
+) o ON c.CUSTOMER_ID = o.CUSTOMER_ID",,2.795,0.18,3.046,39.0,
+32,3,117,sales_1_01,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1287,mismatch,0.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Electronics',,0.379,0.001,0.381,34.3,
+32,2,92,hr_2_09,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT EXTRACT(YEAR FROM HIRE_DATE) AS YEAR_HIRED, COUNT(*) AS NUMBER_OF_EMPLOYEES
+FROM HR_EMPLOYEES
+GROUP BY EXTRACT(YEAR FROM HIRE_DATE)
+ORDER BY YEAR_HIRED",,1.392,0.005,1.397,37.37,
+32,3,98,hr_2_09,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT EXTRACT(YEAR FROM HIRE_DATE) AS YEAR_HIRED, COUNT(*) AS NUMBER_OF_EMPLOYEES
+FROM HR_EMPLOYEES
+GROUP BY EXTRACT(YEAR FROM HIRE_DATE)
+ORDER BY YEAR_HIRED",,1.358,0.017,1.384,38.29,
+32,2,76,sales_2_03,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1290,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, COUNT(o.ORDER_ID) AS TOTAL_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+ORDER BY TOTAL_ORDERS DESC
+FETCH FIRST 5 ROWS ONLY",,2.123,0.126,2.271,38.62,
+32,1,62,sales_3_05,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1329,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+FROM CUSTOMERS c
+JOIN (
+    SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+    FROM ORDERS
+    GROUP BY CUSTOMER_ID
+    HAVING COUNT(*) > (
+        SELECT AVG(ORDER_COUNT) 
+        FROM (
+            SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+            FROM ORDERS
+            GROUP BY CUSTOMER_ID
+        )
+    )
+) o ON c.CUSTOMER_ID = o.CUSTOMER_ID",,2.794,0.177,3.043,39.01,
+32,3,122,hr_1_07,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1244,exact_match,1.0,SELECT DISTINCT department_name FROM hr_departments,,0.271,0.001,0.273,33.16,
+32,2,95,hr_3_11,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1336,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, 
+       SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE) AS SALARY_DIFFERENCE
+FROM HR_EMPLOYEES
+ORDER BY HIRE_DATE",,1.398,0.075,1.508,37.92,
+32,3,119,hr_1_02,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1265,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE SALARY > 150000,,0.553,0.006,0.577,36.15,
+32,3,96,sales_3_02,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1314,exact_match,1.0,"SELECT p.PRODUCT_ID, p.PRODUCT_NAME, p.CATEGORY, p.UNIT_PRICE
+FROM PRODUCTS p
+WHERE p.UNIT_PRICE > (
+    SELECT AVG(p2.UNIT_PRICE)
+    FROM PRODUCTS p2
+    WHERE p2.CATEGORY = p.CATEGORY
+)",,1.548,0.002,1.551,38.12,
+32,3,114,sales_2_11,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1329,exact_match,1.0,"SELECT CATEGORY, AVG(UNIT_PRICE) AS AVERAGE_UNIT_PRICE
+FROM PRODUCTS
+GROUP BY CATEGORY
+ORDER BY AVERAGE_UNIT_PRICE DESC",,0.789,0.001,0.791,36.76,
+32,3,115,hr_1_04,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1257,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, SALARY FROM HR_EMPLOYEES ORDER BY SALARY DESC FETCH FIRST 10 ROWS ONLY",,0.772,0.002,0.774,37.57,
+32,3,104,hr_3_06,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1306,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, DENSE_RANK() OVER (ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES
+ORDER BY SALARY_RANK
+FETCH FIRST 10 ROWS ONLY",,1.383,0.008,1.392,38.31,
+32,3,106,hr_2_06,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT d.department_name, SUM(e.salary) AS total_salary_cost
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY total_salary_cost DESC",,1.262,0.007,1.269,38.04,
+32,3,118,hr_1_04,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1257,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, SALARY FROM HR_EMPLOYEES ORDER BY SALARY DESC FETCH FIRST 10 ROWS ONLY",,0.782,0.002,0.784,37.09,
+32,3,108,hr_2_05,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1301,mismatch,0.0,"SELECT manager_id, COUNT(employee_id) AS direct_reports_count
+FROM HR_EMPLOYEES
+WHERE manager_id IS NOT NULL
+GROUP BY manager_id
+ORDER BY direct_reports_count DESC
+FETCH FIRST 10 ROWS ONLY",,1.266,0.003,1.269,37.93,
+32,3,110,sales_2_05,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1307,exact_match,1.0,"SELECT c.CUSTOMER_TIER, COUNT(o.ORDER_ID) AS NUMBER_OF_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_TIER",,1.297,0.073,1.37,38.55,
+32,2,87,sales_2_03,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1290,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, COUNT(o.ORDER_ID) AS TOTAL_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+ORDER BY TOTAL_ORDERS DESC
+FETCH FIRST 5 ROWS ONLY",,2.113,0.146,2.26,38.8,
+32,2,86,hr_3_07,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1304,mismatch,0.0,"SELECT 
+    EMPLOYEE_ID, 
+    FIRST_NAME, 
+    LAST_NAME, 
+    HIRE_DATE, 
+    SALARY, 
+    SUM(SALARY) OVER (ORDER BY HIRE_DATE) AS RUNNING_TOTAL_SALARY_COST
+FROM 
+    HR_EMPLOYEES
+WHERE 
+    EXTRACT(YEAR FROM HIRE_DATE) = 2015
+ORDER BY 
+    HIRE_DATE",,2.284,0.004,2.293,38.54,
+32,4,136,hr_1_05,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1248,exact_match,1.0,SELECT * FROM HR_LOCATIONS WHERE COUNTRY = 'USA',,0.395,0.001,0.397,35.41,
+32,4,131,hr_1_02,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1265,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE SALARY > 150000,,0.544,0.006,0.57,36.74,
+32,2,81,sales_2_02,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1307,exact_match,1.0,"SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_REVENUE
+FROM ORDER_ITEMS oi
+JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID
+GROUP BY p.CATEGORY",,1.259,1.289,2.548,38.13,
+32,4,130,sales_1_11,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1296,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'PLATINUM' ORDER BY SIGNUP_DATE,,0.632,0.015,0.706,36.37,
+32,3,116,hr_2_05,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1301,mismatch,0.0,"SELECT manager_id, COUNT(employee_id) AS direct_reports_count
+FROM HR_EMPLOYEES
+WHERE manager_id IS NOT NULL
+GROUP BY manager_id
+ORDER BY direct_reports_count DESC
+FETCH FIRST 10 ROWS ONLY",,1.254,0.018,1.277,38.28,
+32,4,134,sales_1_12,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1297,exact_match,1.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Books' AND UNIT_PRICE < 20,,0.529,0.001,0.531,35.89,
+32,3,113,hr_2_02,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1290,exact_match,1.0,"SELECT j.JOB_TITLE, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_EMPLOYEES e
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+GROUP BY j.JOB_TITLE
+ORDER BY AVG_SALARY DESC",,1.484,0.004,1.489,38.41,
+32,4,133,hr_1_08,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1269,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE EXTRACT(YEAR FROM HIRE_DATE) = 2020 ORDER BY HIRE_DATE,,0.803,0.003,0.814,37.37,
+32,3,121,hr_2_09,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT EXTRACT(YEAR FROM HIRE_DATE) AS YEAR_HIRED, COUNT(*) AS NUMBER_OF_EMPLOYEES
+FROM HR_EMPLOYEES
+GROUP BY EXTRACT(YEAR FROM HIRE_DATE)
+ORDER BY YEAR_HIRED",,1.36,0.002,1.362,38.24,
+32,4,140,sales_1_04,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT PRODUCT_NAME, UNIT_PRICE FROM PRODUCTS ORDER BY UNIT_PRICE DESC FETCH FIRST 10 ROWS ONLY",,0.606,0.001,0.607,36.28,
+32,3,120,sales_3_03,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1315,mismatch,0.0,"SELECT product_id, product_name, category, unit_price
+FROM (
+    SELECT product_id, product_name, category, unit_price,
+           ROW_NUMBER() OVER (PARTITION BY category ORDER BY unit_price DESC) as rn
+    FROM products
+)
+WHERE rn <= 3",,1.477,0.001,1.479,38.59,
+32,4,141,sales_1_06,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1276,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE EXTRACT(YEAR FROM SIGNUP_DATE) = 2024,,0.608,0.018,0.682,36.16,
+32,3,112,hr_2_07,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1293,exact_match,1.0,"SELECT j.JOB_TITLE, MIN(e.SALARY) AS MIN_SALARY, MAX(e.SALARY) AS MAX_SALARY, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_JOBS j
+JOIN HR_EMPLOYEES e ON j.JOB_ID = e.JOB_ID
+GROUP BY j.JOB_TITLE",,1.9,0.032,1.94,38.41,
+32,4,144,sales_1_10,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1269,mismatch,0.2,SELECT * FROM ORDERS ORDER BY ORDER_DATE DESC FETCH FIRST 5 ROWS ONLY,,0.524,0.028,0.554,34.34,
+32,4,128,hr_3_02,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, DEPARTMENT_ID, SALARY, RANK() OVER (PARTITION BY DEPARTMENT_ID ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES",,1.262,0.017,1.367,37.23,
+32,0,7,sales_3_10,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.006,1318,mismatch,0.0,"SELECT customer_id, first_name, last_name, region_id, total_spend
+FROM (
+    SELECT c.customer_id, c.first_name, c.last_name, c.region_id,
+           SUM(oi.quantity * oi.unit_price) AS total_spend,
+           RANK() OVER (PARTITION BY c.region_id ORDER BY SUM(oi.quantity * oi.unit_price) DESC) as rank
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    JOIN order_items oi ON o.order_id = oi.order_id
+    GROUP BY c.customer_id, c.first_name, c.last_name, c.region_id
+)
+WHERE rank <= 3",,3.542,2.418,5.966,38.96,
+32,3,123,hr_3_01,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1367,mismatch,0.0,"SELECT LEVEL AS HIERARCHY_LEVEL, EMPLOYEE_ID, FIRST_NAME, LAST_NAME, MANAGER_ID
+FROM HR_EMPLOYEES
+START WITH MANAGER_ID IS NULL
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID
+AND LEVEL <= 3",,1.489,0.085,1.635,37.61,
+32,4,139,sales_2_07,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1333,mismatch,0.0,"SELECT PRODUCT_ID, SUM(QUANTITY) AS TOTAL_QUANTITY_SOLD
+FROM ORDER_ITEMS
+GROUP BY PRODUCT_ID
+HAVING SUM(QUANTITY) > 1000",,1.04,0.074,1.12,37.52,
+32,4,153,sales_1_01,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1287,mismatch,0.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Electronics',,0.376,0.001,0.377,34.61,
+32,1,41,sales_3_08,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1341,mismatch,0.0,"SELECT 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM') AS MONTH,
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS REVENUE,
+    ROUND(((SUM(OI.QUANTITY * OI.UNIT_PRICE) - LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) / LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) * 100, 2) AS PERCENTAGE_CHANGE
+FROM 
+    ORDERS O
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM O.ORDER_DATE) = 2025
+GROUP BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')
+ORDER BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')",,5.105,0.323,5.433,39.18,
+32,3,125,hr_2_10,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1285,exact_match,1.0,"SELECT hl.COUNTRY, COUNT(he.EMPLOYEE_ID) AS TOTAL_EMPLOYEES
+FROM HR_EMPLOYEES he
+JOIN HR_DEPARTMENTS hd ON he.DEPARTMENT_ID = hd.DEPARTMENT_ID
+JOIN HR_LOCATIONS hl ON hd.LOCATION_ID = hl.LOCATION_ID
+GROUP BY hl.COUNTRY",,1.835,0.002,1.837,38.7,
+32,3,124,hr_2_10,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1285,exact_match,1.0,"SELECT hl.COUNTRY, COUNT(he.EMPLOYEE_ID) AS TOTAL_EMPLOYEES
+FROM HR_EMPLOYEES he
+JOIN HR_DEPARTMENTS hd ON he.DEPARTMENT_ID = hd.DEPARTMENT_ID
+JOIN HR_LOCATIONS hl ON hd.LOCATION_ID = hl.LOCATION_ID
+GROUP BY hl.COUNTRY",,1.839,0.003,1.842,38.61,
+32,5,160,sales_1_07,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1268,mismatch,0.0,SELECT * FROM REGIONS WHERE COUNTRY = 'Europe',,0.361,0.001,0.364,35.96,
+32,4,138,sales_3_02,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1314,exact_match,1.0,"SELECT p.PRODUCT_ID, p.PRODUCT_NAME, p.CATEGORY, p.UNIT_PRICE
+FROM PRODUCTS p
+WHERE p.UNIT_PRICE > (
+    SELECT AVG(p2.UNIT_PRICE)
+    FROM PRODUCTS p2
+    WHERE p2.CATEGORY = p.CATEGORY
+)",,1.532,0.002,1.536,38.52,
+32,4,143,hr_3_02,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, DEPARTMENT_ID, SALARY, RANK() OVER (PARTITION BY DEPARTMENT_ID ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES",,1.23,0.022,1.316,38.2,
+32,4,148,hr_2_03,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1264,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING COUNT(e.employee_id) > 600",,1.187,0.024,1.216,37.92,
+32,5,162,sales_2_04,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1287,exact_match,1.0,"SELECT STATUS, COUNT(*) FROM ORDERS GROUP BY STATUS",,0.35,0.018,0.368,34.33,
+32,4,157,sales_2_11,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1329,exact_match,1.0,"SELECT CATEGORY, AVG(UNIT_PRICE) AS AVERAGE_UNIT_PRICE
+FROM PRODUCTS
+GROUP BY CATEGORY
+ORDER BY AVERAGE_UNIT_PRICE DESC",,0.775,0.001,0.776,37.44,
+32,4,152,sales_2_07,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1333,mismatch,0.0,"SELECT PRODUCT_ID, SUM(QUANTITY) AS TOTAL_QUANTITY_SOLD
+FROM ORDER_ITEMS
+GROUP BY PRODUCT_ID
+HAVING SUM(QUANTITY) > 1000",,1.031,0.073,1.106,37.82,
+32,4,150,hr_2_05,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1301,mismatch,0.0,"SELECT manager_id, COUNT(employee_id) AS direct_reports_count
+FROM HR_EMPLOYEES
+WHERE manager_id IS NOT NULL
+GROUP BY manager_id
+ORDER BY direct_reports_count DESC
+FETCH FIRST 10 ROWS ONLY",,1.247,0.002,1.249,38.49,
+32,3,127,hr_3_07,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1304,mismatch,0.0,"SELECT 
+    EMPLOYEE_ID, 
+    FIRST_NAME, 
+    LAST_NAME, 
+    HIRE_DATE, 
+    SALARY, 
+    SUM(SALARY) OVER (ORDER BY HIRE_DATE) AS RUNNING_TOTAL_SALARY_COST
+FROM 
+    HR_EMPLOYEES
+WHERE 
+    EXTRACT(YEAR FROM HIRE_DATE) = 2015
+ORDER BY 
+    HIRE_DATE",,2.29,0.004,2.3,38.42,
+32,5,164,sales_2_06,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1282,exact_match,1.0,"SELECT PRODUCT_ID, PRODUCT_NAME FROM PRODUCTS WHERE PRODUCT_ID NOT IN (SELECT PRODUCT_ID FROM ORDER_ITEMS)",,0.6,0.003,0.603,36.65,
+32,5,167,hr_1_06,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1264,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE LAST_NAME LIKE '%son%',,0.441,0.004,0.453,36.24,
+32,4,132,hr_3_07,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1304,mismatch,0.0,"SELECT 
+    EMPLOYEE_ID, 
+    FIRST_NAME, 
+    LAST_NAME, 
+    HIRE_DATE, 
+    SALARY, 
+    SUM(SALARY) OVER (ORDER BY HIRE_DATE) AS RUNNING_TOTAL_SALARY_COST
+FROM 
+    HR_EMPLOYEES
+WHERE 
+    EXTRACT(YEAR FROM HIRE_DATE) = 2015
+ORDER BY 
+    HIRE_DATE",,2.266,0.012,2.285,38.84,
+32,4,155,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.207,0.004,1.211,38.11,
+32,4,142,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.826,0.068,1.897,38.88,
+32,4,145,hr_2_12,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1305,mismatch,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(jh.job_id) AS job_history_count
+FROM hr_employees e
+JOIN hr_job_history jh ON e.employee_id = jh.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(jh.job_id) > 1",,1.859,0.012,1.883,38.73,
+32,4,158,hr_3_09,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1270,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY AVG(e.salary) DESC
+FETCH FIRST 1 ROW ONLY",,1.227,0.004,1.231,38.31,
+32,4,146,hr_2_07,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1293,exact_match,1.0,"SELECT j.JOB_TITLE, MIN(e.SALARY) AS MIN_SALARY, MAX(e.SALARY) AS MAX_SALARY, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_JOBS j
+JOIN HR_EMPLOYEES e ON j.JOB_ID = e.JOB_ID
+GROUP BY j.JOB_TITLE",,1.886,0.005,1.891,38.7,
+32,4,149,hr_3_05,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1298,mismatch,0.0,"SELECT e.FIRST_NAME, e.LAST_NAME, e.SALARY, e.DEPARTMENT_ID
+FROM HR_EMPLOYEES e
+WHERE e.SALARY > (
+    SELECT AVG(e2.SALARY)
+    FROM HR_EMPLOYEES e2
+    WHERE e2.DEPARTMENT_ID = e.DEPARTMENT_ID
+)",,1.959,0.014,1.991,38.8,
+32,4,151,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.834,0.072,1.909,38.71,
+32,4,159,hr_3_01,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1367,mismatch,0.0,"SELECT LEVEL AS HIERARCHY_LEVEL, EMPLOYEE_ID, FIRST_NAME, LAST_NAME, MANAGER_ID
+FROM HR_EMPLOYEES
+START WITH MANAGER_ID IS NULL
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID
+AND LEVEL <= 3",,1.455,0.081,1.587,38.48,
+32,5,175,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.666,0.001,0.667,37.56,
+32,5,166,hr_3_10,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1334,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, LEVEL AS HIERARCHY_LEVEL
+FROM HR_EMPLOYEES
+START WITH EMPLOYEE_ID = 3600
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID",,1.302,0.002,1.305,38.39,
+32,4,137,sales_3_05,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1329,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+FROM CUSTOMERS c
+JOIN (
+    SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+    FROM ORDERS
+    GROUP BY CUSTOMER_ID
+    HAVING COUNT(*) > (
+        SELECT AVG(ORDER_COUNT) 
+        FROM (
+            SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+            FROM ORDERS
+            GROUP BY CUSTOMER_ID
+        )
+    )
+) o ON c.CUSTOMER_ID = o.CUSTOMER_ID",,2.785,0.184,3.038,39.14,
+32,5,170,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.205,0.012,1.22,38.19,
+32,5,177,hr_1_01,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1261,exact_match,1.0,"SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,0.88,0.046,0.966,37.48,
+32,5,169,hr_3_06,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1306,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, DENSE_RANK() OVER (ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES
+ORDER BY SALARY_RANK
+FETCH FIRST 10 ROWS ONLY",,1.373,0.006,1.385,38.61,
+32,5,165,hr_3_01,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1367,mismatch,0.0,"SELECT LEVEL AS HIERARCHY_LEVEL, EMPLOYEE_ID, FIRST_NAME, LAST_NAME, MANAGER_ID
+FROM HR_EMPLOYEES
+START WITH MANAGER_ID IS NULL
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID
+AND LEVEL <= 3",,1.46,0.1,1.615,38.36,
+32,5,183,sales_1_10,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1269,mismatch,0.2,SELECT * FROM ORDERS ORDER BY ORDER_DATE DESC FETCH FIRST 5 ROWS ONLY,,0.513,0.001,0.514,35.11,
+32,5,181,hr_1_01,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1261,exact_match,1.0,"SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,0.874,0.01,0.909,37.74,
+32,5,173,hr_3_02,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, DEPARTMENT_ID, SALARY, RANK() OVER (PARTITION BY DEPARTMENT_ID ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES",,1.223,0.045,1.331,38.45,
+32,5,161,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.834,0.309,2.146,38.72,
+32,5,184,hr_1_02,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1265,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE SALARY > 150000,,0.555,0.079,0.658,36.03,
+32,5,178,hr_3_09,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1270,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY AVG(e.salary) DESC
+FETCH FIRST 1 ROW ONLY",,1.249,0.004,1.254,37.63,
+32,5,163,hr_2_12,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1305,mismatch,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(jh.job_id) AS job_history_count
+FROM hr_employees e
+JOIN hr_job_history jh ON e.employee_id = jh.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(jh.job_id) > 1",,1.869,0.662,2.555,38.52,
+32,5,168,hr_2_10,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1285,exact_match,1.0,"SELECT hl.COUNTRY, COUNT(he.EMPLOYEE_ID) AS TOTAL_EMPLOYEES
+FROM HR_EMPLOYEES he
+JOIN HR_DEPARTMENTS hd ON he.DEPARTMENT_ID = hd.DEPARTMENT_ID
+JOIN HR_LOCATIONS hl ON hd.LOCATION_ID = hl.LOCATION_ID
+GROUP BY hl.COUNTRY",,1.827,0.482,2.309,38.86,
+32,5,191,sales_2_06,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1282,exact_match,1.0,"SELECT PRODUCT_ID, PRODUCT_NAME FROM PRODUCTS WHERE PRODUCT_ID NOT IN (SELECT PRODUCT_ID FROM ORDER_ITEMS)",,0.599,0.208,0.808,36.7,
+32,5,179,hr_3_04,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1295,mismatch,0.0,"SELECT department_id, first_name, last_name, salary
+FROM (
+    SELECT department_id, first_name, last_name, salary,
+           DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) as rank
+    FROM hr_employees
+)
+WHERE rank <= 3",,1.565,0.162,1.728,38.34,
+32,5,187,hr_1_08,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1269,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE EXTRACT(YEAR FROM HIRE_DATE) = 2020 ORDER BY HIRE_DATE,,0.808,0.141,0.957,37.13,
+32,5,176,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.818,0.116,1.938,39.04,
+32,5,171,hr_2_11,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1315,mismatch,0.0,"SELECT e.FIRST_NAME, e.LAST_NAME, d.DEPARTMENT_NAME, j.JOB_TITLE
+FROM HR_EMPLOYEES e
+JOIN HR_DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+WHERE d.DEPARTMENT_NAME = 'Sales'",,2.063,0.101,2.167,38.77,
+32,5,174,hr_2_11,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1315,mismatch,0.0,"SELECT e.FIRST_NAME, e.LAST_NAME, d.DEPARTMENT_NAME, j.JOB_TITLE
+FROM HR_EMPLOYEES e
+JOIN HR_DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+WHERE d.DEPARTMENT_NAME = 'Sales'",,2.06,0.008,2.071,38.83,
+32,6,197,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.366,0.312,0.689,35.56,
+32,5,172,sales_2_09,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1293,mismatch,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS ORDER_MONTH, COUNT(*) AS NUMBER_OF_ORDERS
+FROM ORDERS
+WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY ORDER_MONTH",,1.585,0.682,2.268,38.49,
+32,4,154,sales_2_02,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1307,exact_match,1.0,"SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_REVENUE
+FROM ORDER_ITEMS oi
+JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID
+GROUP BY p.CATEGORY",,1.259,1.994,3.254,38.14,
+32,5,190,sales_1_11,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1296,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'PLATINUM' ORDER BY SIGNUP_DATE,,0.639,0.452,1.16,35.99,
+32,5,188,hr_1_06,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1264,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE LAST_NAME LIKE '%son%',,0.442,0.766,1.216,36.19,
+32,5,182,hr_2_10,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1285,exact_match,1.0,"SELECT hl.COUNTRY, COUNT(he.EMPLOYEE_ID) AS TOTAL_EMPLOYEES
+FROM HR_EMPLOYEES he
+JOIN HR_DEPARTMENTS hd ON he.DEPARTMENT_ID = hd.DEPARTMENT_ID
+JOIN HR_LOCATIONS hl ON hd.LOCATION_ID = hl.LOCATION_ID
+GROUP BY hl.COUNTRY",,1.832,0.05,1.882,38.75,
+32,4,156,sales_3_05,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1329,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+FROM CUSTOMERS c
+JOIN (
+    SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+    FROM ORDERS
+    GROUP BY CUSTOMER_ID
+    HAVING COUNT(*) > (
+        SELECT AVG(ORDER_COUNT) 
+        FROM (
+            SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+            FROM ORDERS
+            GROUP BY CUSTOMER_ID
+        )
+    )
+) o ON c.CUSTOMER_ID = o.CUSTOMER_ID",,2.795,0.673,3.547,39.0,
+32,6,194,hr_2_03,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1264,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING COUNT(e.employee_id) > 600",,1.178,0.002,1.181,38.19,
+32,6,208,sales_1_03,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1288,exact_match,1.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > 500,,0.374,0.001,0.377,34.76,
+32,6,193,sales_3_07,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1319,mismatch,0.0,"SELECT DISTINCT category, product_name, unit_price
+FROM (
+    SELECT category, product_name, unit_price,
+           DENSE_RANK() OVER (PARTITION BY category ORDER BY unit_price DESC) as rank
+    FROM products
+)
+WHERE rank = 2",,1.38,0.001,1.382,38.39,
+32,6,204,sales_1_08,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1314,mismatch,0.0,"SELECT PRODUCT_NAME, STOCK_QTY FROM PRODUCTS WHERE STOCK_QTY < 50 ORDER BY STOCK_QTY ASC",,0.656,0.002,0.658,36.57,
+32,6,211,sales_1_01,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1287,mismatch,0.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Electronics',,0.379,0.391,0.77,34.32,
+32,6,212,hr_1_11,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE MANAGER_ID IS NULL,,0.43,0.242,0.682,34.86,
+32,2,90,sales_3_10,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1318,mismatch,0.0,"SELECT customer_id, first_name, last_name, region_id, total_spend
+FROM (
+    SELECT c.customer_id, c.first_name, c.last_name, c.region_id,
+           SUM(oi.quantity * oi.unit_price) AS total_spend,
+           RANK() OVER (PARTITION BY c.region_id ORDER BY SUM(oi.quantity * oi.unit_price) DESC) as rank
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    JOIN order_items oi ON o.order_id = oi.order_id
+    GROUP BY c.customer_id, c.first_name, c.last_name, c.region_id
+)
+WHERE rank <= 3",,3.53,3.619,7.15,39.1,
+32,6,200,hr_1_08,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1269,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE EXTRACT(YEAR FROM HIRE_DATE) = 2020 ORDER BY HIRE_DATE,,0.797,0.398,1.308,37.64,
+32,6,199,hr_2_06,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT d.department_name, SUM(e.salary) AS total_salary_cost
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY total_salary_cost DESC",,1.259,0.058,1.317,38.12,
+32,5,189,hr_3_12,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1331,mismatch,0.0,"SELECT jh.employee_id, j.job_title
+FROM (
+    SELECT jh.employee_id, jh.job_id, 
+           ROW_NUMBER() OVER (PARTITION BY jh.employee_id ORDER BY jh.end_date DESC NULLS LAST) as rn
+    FROM hr_job_history jh
+) jh
+JOIN hr_jobs j ON jh.job_id = j.job_id
+WHERE jh.rn = 1",,2.234,0.015,2.279,38.95,
+32,6,213,hr_1_04,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1257,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, SALARY FROM HR_EMPLOYEES ORDER BY SALARY DESC FETCH FIRST 10 ROWS ONLY",,0.788,0.153,0.97,36.82,
+32,6,207,hr_2_03,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1264,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING COUNT(e.employee_id) > 600",,1.206,0.062,1.298,37.32,
+32,6,202,hr_3_01,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1367,mismatch,0.0,"SELECT LEVEL AS HIERARCHY_LEVEL, EMPLOYEE_ID, FIRST_NAME, LAST_NAME, MANAGER_ID
+FROM HR_EMPLOYEES
+START WITH MANAGER_ID IS NULL
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID
+AND LEVEL <= 3",,1.469,0.032,1.545,38.13,
+32,4,135,sales_3_08,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1341,mismatch,0.0,"SELECT 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM') AS MONTH,
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS REVENUE,
+    ROUND(((SUM(OI.QUANTITY * OI.UNIT_PRICE) - LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) / LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) * 100, 2) AS PERCENTAGE_CHANGE
+FROM 
+    ORDERS O
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM O.ORDER_DATE) = 2025
+GROUP BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')
+ORDER BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')",,5.087,0.511,5.599,39.31,
+32,6,205,sales_3_03,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1315,mismatch,0.0,"SELECT product_id, product_name, category, unit_price
+FROM (
+    SELECT product_id, product_name, category, unit_price,
+           ROW_NUMBER() OVER (PARTITION BY category ORDER BY unit_price DESC) as rn
+    FROM products
+)
+WHERE rn <= 3",,1.484,0.001,1.487,38.41,
+32,2,64,sales_3_01,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1312,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    r.REGION_NAME, 
+    SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND,
+    RANK() OVER (PARTITION BY r.REGION_NAME ORDER BY SUM(oi.QUANTITY * oi.UNIT_PRICE) DESC) AS SPEND_RANK
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN 
+    ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+JOIN 
+    REGIONS r ON c.REGION_ID = r.REGION_ID
+GROUP BY 
+    c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, r.REGION_NAME
+ORDER BY 
+    r.REGION_NAME, SPEND_RANK",,4.574,4.256,9.065,39.36,
+32,6,209,hr_2_02,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1290,exact_match,1.0,"SELECT j.JOB_TITLE, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_EMPLOYEES e
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+GROUP BY j.JOB_TITLE
+ORDER BY AVG_SALARY DESC",,1.546,0.014,1.581,36.88,
+32,6,214,hr_2_03,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1264,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING COUNT(e.employee_id) > 600",,1.28,0.006,1.296,35.16,
+32,6,198,hr_2_07,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1293,exact_match,1.0,"SELECT j.JOB_TITLE, MIN(e.SALARY) AS MIN_SALARY, MAX(e.SALARY) AS MAX_SALARY, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_JOBS j
+JOIN HR_EMPLOYEES e ON j.JOB_ID = e.JOB_ID
+GROUP BY j.JOB_TITLE",,1.89,0.005,1.896,38.62,
+32,6,210,hr_3_03,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1266,mismatch,0.0,"SELECT e.EMPLOYEE_ID, e.FIRST_NAME, e.LAST_NAME
+FROM HR_EMPLOYEES e
+JOIN HR_EMPLOYEES m ON e.MANAGER_ID = m.EMPLOYEE_ID
+WHERE e.SALARY > m.SALARY",,1.521,0.588,2.164,36.82,
+32,6,215,hr_2_07,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1293,exact_match,1.0,"SELECT j.JOB_TITLE, MIN(e.SALARY) AS MIN_SALARY, MAX(e.SALARY) AS MAX_SALARY, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_JOBS j
+JOIN HR_EMPLOYEES e ON j.JOB_ID = e.JOB_ID
+GROUP BY j.JOB_TITLE",,1.9,0.005,1.905,38.43,
+32,6,206,hr_2_07,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1293,exact_match,1.0,"SELECT j.JOB_TITLE, MIN(e.SALARY) AS MIN_SALARY, MAX(e.SALARY) AS MAX_SALARY, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_JOBS j
+JOIN HR_EMPLOYEES e ON j.JOB_ID = e.JOB_ID
+GROUP BY j.JOB_TITLE",,1.902,0.581,2.484,38.38,
+32,7,224,sales_1_04,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT PRODUCT_NAME, UNIT_PRICE FROM PRODUCTS ORDER BY UNIT_PRICE DESC FETCH FIRST 10 ROWS ONLY",,0.598,0.508,1.106,36.78,
+32,6,203,hr_2_07,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1293,exact_match,1.0,"SELECT j.JOB_TITLE, MIN(e.SALARY) AS MIN_SALARY, MAX(e.SALARY) AS MAX_SALARY, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_JOBS j
+JOIN HR_EMPLOYEES e ON j.JOB_ID = e.JOB_ID
+GROUP BY j.JOB_TITLE",,1.883,0.634,2.519,38.77,
+32,7,226,hr_1_09,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1259,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, HIRE_DATE FROM HR_EMPLOYEES ORDER BY HIRE_DATE DESC FETCH FIRST 5 ROWS ONLY",,0.807,1.358,2.165,37.16,
+32,6,223,hr_3_04,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1295,mismatch,0.0,"SELECT department_id, first_name, last_name, salary
+FROM (
+    SELECT department_id, first_name, last_name, salary,
+           DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) as rank
+    FROM hr_employees
+)
+WHERE rank <= 3",,1.558,0.682,2.24,38.51,
+32,7,232,sales_1_04,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT PRODUCT_NAME, UNIT_PRICE FROM PRODUCTS ORDER BY UNIT_PRICE DESC FETCH FIRST 10 ROWS ONLY",,0.599,0.659,1.259,36.7,
+32,5,186,sales_3_12,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1328,exact_match,1.0,"SELECT 
+    ORDER_DATE, 
+    SUM(QUANTITY * UNIT_PRICE) AS DAILY_REVENUE,
+    SUM(SUM(QUANTITY * UNIT_PRICE)) OVER (ORDER BY ORDER_DATE) AS CUMULATIVE_REVENUE
+FROM 
+    ORDER_ITEMS
+JOIN 
+    ORDERS ON ORDER_ITEMS.ORDER_ID = ORDERS.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM ORDERS.ORDER_DATE) = 2025 AND EXTRACT(MONTH FROM ORDERS.ORDER_DATE) = 1
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,3.134,1.788,4.923,38.93,
+32,7,225,hr_2_03,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1264,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING COUNT(e.employee_id) > 600",,1.191,1.054,2.246,37.79,
+32,7,235,sales_1_11,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1296,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'PLATINUM' ORDER BY SIGNUP_DATE,,0.62,0.602,1.292,37.07,
+32,7,230,sales_2_05,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1307,exact_match,1.0,"SELECT c.CUSTOMER_TIER, COUNT(o.ORDER_ID) AS NUMBER_OF_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_TIER",,1.302,0.722,2.029,38.4,
+32,7,234,sales_1_04,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT PRODUCT_NAME, UNIT_PRICE FROM PRODUCTS ORDER BY UNIT_PRICE DESC FETCH FIRST 10 ROWS ONLY",,0.598,0.699,1.396,36.8,
+32,6,219,hr_3_04,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1295,mismatch,0.0,"SELECT department_id, first_name, last_name, salary
+FROM (
+    SELECT department_id, first_name, last_name, salary,
+           DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) as rank
+    FROM hr_employees
+)
+WHERE rank <= 3",,1.559,1.143,2.802,38.5,
+32,6,195,sales_2_08,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1301,exact_match,1.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM REGIONS R
+JOIN ORDERS O ON R.REGION_ID = O.REGION_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+GROUP BY R.REGION_NAME",,1.734,2.769,4.701,38.65,
+32,6,222,hr_2_09,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT EXTRACT(YEAR FROM HIRE_DATE) AS YEAR_HIRED, COUNT(*) AS NUMBER_OF_EMPLOYEES
+FROM HR_EMPLOYEES
+GROUP BY EXTRACT(YEAR FROM HIRE_DATE)
+ORDER BY YEAR_HIRED",,1.376,1.119,2.695,37.79,
+32,6,192,sales_2_08,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1301,exact_match,1.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM REGIONS R
+JOIN ORDERS O ON R.REGION_ID = O.REGION_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+GROUP BY R.REGION_NAME",,1.731,3.171,4.907,38.71,
+32,7,233,hr_2_04,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1274,mismatch,0.0,"SELECT hl.CITY, COUNT(hd.DEPARTMENT_ID) AS TOTAL_DEPARTMENTS
+FROM HR_LOCATIONS hl
+JOIN HR_DEPARTMENTS hd ON hl.LOCATION_ID = hd.LOCATION_ID
+GROUP BY hl.CITY",,1.249,0.297,1.644,39.22,
+32,7,236,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.177,0.419,1.598,39.08,
+32,7,227,hr_2_05,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1301,mismatch,0.0,"SELECT manager_id, COUNT(employee_id) AS direct_reports_count
+FROM HR_EMPLOYEES
+WHERE manager_id IS NOT NULL
+GROUP BY manager_id
+ORDER BY direct_reports_count DESC
+FETCH FIRST 10 ROWS ONLY",,1.266,1.349,3.409,37.91,
+32,7,240,sales_1_07,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1268,mismatch,0.0,SELECT * FROM REGIONS WHERE COUNTRY = 'Europe',,0.367,0.029,1.193,35.42,
+32,7,243,hr_1_07,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1244,exact_match,1.0,SELECT DISTINCT department_name FROM hr_departments,,0.274,0.828,1.102,32.88,
+32,7,237,sales_2_06,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1282,exact_match,1.0,"SELECT PRODUCT_ID, PRODUCT_NAME FROM PRODUCTS WHERE PRODUCT_ID NOT IN (SELECT PRODUCT_ID FROM ORDER_ITEMS)",,0.589,0.786,1.376,37.33,
+32,7,231,hr_3_11,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1336,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, 
+       SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE) AS SALARY_DIFFERENCE
+FROM HR_EMPLOYEES
+ORDER BY HIRE_DATE",,1.369,1.866,3.274,38.71,
+32,7,247,hr_1_09,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1259,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, HIRE_DATE FROM HR_EMPLOYEES ORDER BY HIRE_DATE DESC FETCH FIRST 5 ROWS ONLY",,0.78,0.328,1.119,38.45,
+32,6,218,sales_3_05,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1329,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+FROM CUSTOMERS c
+JOIN (
+    SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+    FROM ORDERS
+    GROUP BY CUSTOMER_ID
+    HAVING COUNT(*) > (
+        SELECT AVG(ORDER_COUNT) 
+        FROM (
+            SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+            FROM ORDERS
+            GROUP BY CUSTOMER_ID
+        )
+    )
+) o ON c.CUSTOMER_ID = o.CUSTOMER_ID",,2.776,1.225,4.097,39.26,
+32,7,241,sales_3_11,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1319,mismatch,0.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > (SELECT MAX(UNIT_PRICE) FROM PRODUCTS WHERE CATEGORY = 'Garden'),,0.656,0.801,1.468,38.13,
+32,5,180,sales_3_08,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1341,mismatch,0.0,"SELECT 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM') AS MONTH,
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS REVENUE,
+    ROUND(((SUM(OI.QUANTITY * OI.UNIT_PRICE) - LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) / LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) * 100, 2) AS PERCENTAGE_CHANGE
+FROM 
+    ORDERS O
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM O.ORDER_DATE) = 2025
+GROUP BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')
+ORDER BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')",,5.084,1.858,6.967,39.34,
+32,7,246,hr_1_07,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1244,exact_match,1.0,SELECT DISTINCT department_name FROM hr_departments,,0.272,0.936,1.211,33.14,
+32,6,221,sales_3_12,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1328,exact_match,1.0,"SELECT 
+    ORDER_DATE, 
+    SUM(QUANTITY * UNIT_PRICE) AS DAILY_REVENUE,
+    SUM(SUM(QUANTITY * UNIT_PRICE)) OVER (ORDER BY ORDER_DATE) AS CUMULATIVE_REVENUE
+FROM 
+    ORDER_ITEMS
+JOIN 
+    ORDERS ON ORDER_ITEMS.ORDER_ID = ORDERS.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM ORDERS.ORDER_DATE) = 2025 AND EXTRACT(MONTH FROM ORDERS.ORDER_DATE) = 1
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,3.078,0.913,3.995,39.64,
+32,7,239,sales_2_12,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1308,error,0.0,"SELECT p.PRODUCT_ID, p.PRODUCT_NAME, COUNT(DISTINCT oi.CUSTOMER_ID) AS DISTINCT_CUSTOMERS
+FROM PRODUCTS p
+JOIN ORDER_ITEMS oi ON p.PRODUCT_ID = oi.PRODUCT_ID
+GROUP BY p.PRODUCT_ID, p.PRODUCT_NAME","ORA-00904: ""OI"".""CUSTOMER_ID"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",1.435,0.134,1.661,39.73,
+32,7,242,hr_2_02,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1290,exact_match,1.0,"SELECT j.JOB_TITLE, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_EMPLOYEES e
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+GROUP BY j.JOB_TITLE
+ORDER BY AVG_SALARY DESC",,1.423,0.086,1.575,40.06,
+32,5,185,sales_3_08,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1341,mismatch,0.0,"SELECT 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM') AS MONTH,
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS REVENUE,
+    ROUND(((SUM(OI.QUANTITY * OI.UNIT_PRICE) - LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) / LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) * 100, 2) AS PERCENTAGE_CHANGE
+FROM 
+    ORDERS O
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM O.ORDER_DATE) = 2025
+GROUP BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')
+ORDER BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')",,5.089,1.581,6.671,39.3,
+32,6,216,hr_3_11,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1336,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, 
+       SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE) AS SALARY_DIFFERENCE
+FROM HR_EMPLOYEES
+ORDER BY HIRE_DATE",,1.392,3.18,4.743,38.06,
+32,7,254,sales_1_03,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1288,exact_match,1.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > 500,,0.364,0.042,0.414,35.75,
+32,7,249,hr_1_01,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1261,exact_match,1.0,"SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,0.848,0.477,1.369,38.91,
+32,6,201,hr_3_12,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1331,mismatch,0.0,"SELECT jh.employee_id, j.job_title
+FROM (
+    SELECT jh.employee_id, jh.job_id, 
+           ROW_NUMBER() OVER (PARTITION BY jh.employee_id ORDER BY jh.end_date DESC NULLS LAST) as rn
+    FROM hr_job_history jh
+) jh
+JOIN hr_jobs j ON jh.job_id = j.job_id
+WHERE jh.rn = 1",,2.24,3.327,5.588,38.84,
+32,7,248,hr_2_02,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1290,exact_match,1.0,"SELECT j.JOB_TITLE, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_EMPLOYEES e
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+GROUP BY j.JOB_TITLE
+ORDER BY AVG_SALARY DESC",,1.469,0.024,1.494,38.8,
+32,8,256,sales_1_07,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1268,mismatch,0.0,SELECT * FROM REGIONS WHERE COUNTRY = 'Europe',,0.382,0.678,1.061,34.07,
+32,8,257,hr_1_10,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1259,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE JOB_TITLE LIKE '%Manager%',,0.417,0.613,1.046,35.94,
+32,8,261,sales_1_04,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT PRODUCT_NAME, UNIT_PRICE FROM PRODUCTS ORDER BY UNIT_PRICE DESC FETCH FIRST 10 ROWS ONLY",,0.607,0.389,1.016,36.22,
+32,8,264,sales_1_03,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1288,exact_match,1.0,SELECT * FROM PRODUCTS WHERE UNIT_PRICE > 500,,0.391,0.456,0.943,33.21,
+32,7,245,hr_2_12,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1305,mismatch,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(jh.job_id) AS job_history_count
+FROM hr_employees e
+JOIN hr_job_history jh ON e.employee_id = jh.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(jh.job_id) > 1",,1.821,0.501,2.425,39.53,
+32,8,259,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.367,0.662,1.175,35.38,
+32,7,238,hr_3_01,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1367,mismatch,0.0,"SELECT LEVEL AS HIERARCHY_LEVEL, EMPLOYEE_ID, FIRST_NAME, LAST_NAME, MANAGER_ID
+FROM HR_EMPLOYEES
+START WITH MANAGER_ID IS NULL
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID
+AND LEVEL <= 3",,1.413,1.171,2.734,39.63,
+32,7,253,hr_3_02,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, DEPARTMENT_ID, SALARY, RANK() OVER (PARTITION BY DEPARTMENT_ID ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES",,1.205,0.152,1.627,39.02,
+32,7,250,hr_2_07,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1293,exact_match,1.0,"SELECT j.JOB_TITLE, MIN(e.SALARY) AS MIN_SALARY, MAX(e.SALARY) AS MAX_SALARY, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_JOBS j
+JOIN HR_EMPLOYEES e ON j.JOB_ID = e.JOB_ID
+GROUP BY j.JOB_TITLE",,1.836,0.606,2.453,39.76,
+32,7,252,sales_1_11,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1296,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'PLATINUM' ORDER BY SIGNUP_DATE,,0.617,0.752,1.674,37.25,
+32,8,260,sales_1_06,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1276,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE EXTRACT(YEAR FROM SIGNUP_DATE) = 2024,,0.586,0.471,1.389,37.55,
+32,7,229,hr_3_01,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1367,mismatch,0.0,"SELECT LEVEL AS HIERARCHY_LEVEL, EMPLOYEE_ID, FIRST_NAME, LAST_NAME, MANAGER_ID
+FROM HR_EMPLOYEES
+START WITH MANAGER_ID IS NULL
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID
+AND LEVEL <= 3",,1.45,3.389,4.908,38.62,
+32,6,217,hr_3_12,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1331,mismatch,0.0,"SELECT jh.employee_id, j.job_title
+FROM (
+    SELECT jh.employee_id, jh.job_id, 
+           ROW_NUMBER() OVER (PARTITION BY jh.employee_id ORDER BY jh.end_date DESC NULLS LAST) as rn
+    FROM hr_job_history jh
+) jh
+JOIN hr_jobs j ON jh.job_id = j.job_id
+WHERE jh.rn = 1",,2.228,3.399,5.653,39.05,
+32,6,220,sales_3_05,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1329,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+FROM CUSTOMERS c
+JOIN (
+    SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+    FROM ORDERS
+    GROUP BY CUSTOMER_ID
+    HAVING COUNT(*) > (
+        SELECT AVG(ORDER_COUNT) 
+        FROM (
+            SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+            FROM ORDERS
+            GROUP BY CUSTOMER_ID
+        )
+    )
+) o ON c.CUSTOMER_ID = o.CUSTOMER_ID",,2.766,2.774,5.646,39.41,
+32,8,267,sales_2_05,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1307,exact_match,1.0,"SELECT c.CUSTOMER_TIER, COUNT(o.ORDER_ID) AS NUMBER_OF_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_TIER",,1.331,0.106,1.454,37.56,
+32,8,263,sales_3_02,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1314,exact_match,1.0,"SELECT p.PRODUCT_ID, p.PRODUCT_NAME, p.CATEGORY, p.UNIT_PRICE
+FROM PRODUCTS p
+WHERE p.UNIT_PRICE > (
+    SELECT AVG(p2.UNIT_PRICE)
+    FROM PRODUCTS p2
+    WHERE p2.CATEGORY = p.CATEGORY
+)",,1.533,0.044,1.599,38.5,
+32,2,89,sales_3_01,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1312,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    r.REGION_NAME, 
+    SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND,
+    RANK() OVER (PARTITION BY r.REGION_NAME ORDER BY SUM(oi.QUANTITY * oi.UNIT_PRICE) DESC) AS SPEND_RANK
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN 
+    ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+JOIN 
+    REGIONS r ON c.REGION_ID = r.REGION_ID
+GROUP BY 
+    c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, r.REGION_NAME
+ORDER BY 
+    r.REGION_NAME, SPEND_RANK",,4.576,8.383,13.215,39.33,
+32,8,280,hr_1_05,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1248,exact_match,1.0,SELECT * FROM HR_LOCATIONS WHERE COUNTRY = 'USA',,0.514,0.008,0.532,27.26,
+32,8,268,hr_3_02,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, DEPARTMENT_ID, SALARY, RANK() OVER (PARTITION BY DEPARTMENT_ID ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES",,1.214,0.411,1.711,38.7,
+32,8,277,hr_1_05,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1248,exact_match,1.0,SELECT * FROM HR_LOCATIONS WHERE COUNTRY = 'USA',,0.573,0.035,0.907,24.44,
+32,7,255,hr_3_12,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1331,mismatch,0.0,"SELECT jh.employee_id, j.job_title
+FROM (
+    SELECT jh.employee_id, jh.job_id, 
+           ROW_NUMBER() OVER (PARTITION BY jh.employee_id ORDER BY jh.end_date DESC NULLS LAST) as rn
+    FROM hr_job_history jh
+) jh
+JOIN hr_jobs j ON jh.job_id = j.job_id
+WHERE jh.rn = 1",,2.212,0.215,2.445,39.33,
+32,8,279,sales_1_04,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1279,mismatch,0.0,"SELECT PRODUCT_NAME, UNIT_PRICE FROM PRODUCTS ORDER BY UNIT_PRICE DESC FETCH FIRST 10 ROWS ONLY",,0.622,0.302,0.93,35.38,
+32,8,273,hr_2_01,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1268,exact_match,1.0,"SELECT d.department_name, COUNT(e.employee_id) AS number_of_employees
+FROM hr_departments d
+LEFT JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name",,1.178,0.007,1.186,37.34,
+32,8,284,sales_1_10,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1269,mismatch,0.2,SELECT * FROM ORDERS ORDER BY ORDER_DATE DESC FETCH FIRST 5 ROWS ONLY,,0.518,0.092,0.61,34.78,
+32,9,288,sales_2_04,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1287,exact_match,1.0,"SELECT STATUS, COUNT(*) FROM ORDERS GROUP BY STATUS",,0.337,0.03,0.367,35.64,
+32,8,262,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.83,0.454,2.289,38.8,
+32,8,269,sales_2_03,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1290,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, COUNT(o.ORDER_ID) AS TOTAL_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+ORDER BY TOTAL_ORDERS DESC
+FETCH FIRST 5 ROWS ONLY",,2.101,0.183,2.284,39.04,
+32,8,271,hr_3_01,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1367,mismatch,0.0,"SELECT LEVEL AS HIERARCHY_LEVEL, EMPLOYEE_ID, FIRST_NAME, LAST_NAME, MANAGER_ID
+FROM HR_EMPLOYEES
+START WITH MANAGER_ID IS NULL
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID
+AND LEVEL <= 3",,1.476,0.05,1.579,37.95,
+32,4,147,sales_3_01,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1312,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    r.REGION_NAME, 
+    SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND,
+    RANK() OVER (PARTITION BY r.REGION_NAME ORDER BY SUM(oi.QUANTITY * oi.UNIT_PRICE) DESC) AS SPEND_RANK
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN 
+    ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+JOIN 
+    REGIONS r ON c.REGION_ID = r.REGION_ID
+GROUP BY 
+    c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, r.REGION_NAME
+ORDER BY 
+    r.REGION_NAME, SPEND_RANK",,4.583,6.863,11.705,39.28,
+32,9,290,hr_1_10,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1259,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE JOB_TITLE LIKE '%Manager%',,0.439,0.682,1.226,34.16,
+32,9,292,hr_2_08,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1275,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+HAVING AVG(e.salary) > 120000",,1.183,0.04,1.224,38.88,
+32,8,281,hr_2_02,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1290,exact_match,1.0,"SELECT j.JOB_TITLE, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_EMPLOYEES e
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+GROUP BY j.JOB_TITLE
+ORDER BY AVG_SALARY DESC",,1.496,0.631,2.128,38.09,
+32,8,276,sales_2_09,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1293,mismatch,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS ORDER_MONTH, COUNT(*) AS NUMBER_OF_ORDERS
+FROM ORDERS
+WHERE EXTRACT(YEAR FROM ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY ORDER_MONTH",,1.664,0.766,2.433,36.65,
+32,8,283,sales_3_02,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1314,exact_match,1.0,"SELECT p.PRODUCT_ID, p.PRODUCT_NAME, p.CATEGORY, p.UNIT_PRICE
+FROM PRODUCTS p
+WHERE p.UNIT_PRICE > (
+    SELECT AVG(p2.UNIT_PRICE)
+    FROM PRODUCTS p2
+    WHERE p2.CATEGORY = p.CATEGORY
+)",,1.538,0.414,1.954,38.36,
+32,9,296,hr_1_09,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1259,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, HIRE_DATE FROM HR_EMPLOYEES ORDER BY HIRE_DATE DESC FETCH FIRST 5 ROWS ONLY",,0.81,0.234,1.045,37.02,
+32,8,282,hr_2_04,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1274,mismatch,0.0,"SELECT hl.CITY, COUNT(hd.DEPARTMENT_ID) AS TOTAL_DEPARTMENTS
+FROM HR_LOCATIONS hl
+JOIN HR_DEPARTMENTS hd ON hl.LOCATION_ID = hd.LOCATION_ID
+GROUP BY hl.CITY",,1.321,0.789,2.112,37.09,
+32,8,275,sales_2_03,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1290,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, COUNT(o.ORDER_ID) AS TOTAL_ORDERS
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+ORDER BY TOTAL_ORDERS DESC
+FETCH FIRST 5 ROWS ONLY",,2.315,0.152,2.467,35.42,
+32,9,295,hr_3_06,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1306,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, DENSE_RANK() OVER (ORDER BY SALARY DESC) AS SALARY_RANK
+FROM HR_EMPLOYEES
+ORDER BY SALARY_RANK
+FETCH FIRST 10 ROWS ONLY",,1.357,0.047,1.513,39.06,
+32,8,287,hr_1_04,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1257,mismatch,0.0,"SELECT FIRST_NAME, LAST_NAME, SALARY FROM HR_EMPLOYEES ORDER BY SALARY DESC FETCH FIRST 10 ROWS ONLY",,0.912,1.056,2.004,31.8,
+32,3,111,sales_3_01,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1312,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    r.REGION_NAME, 
+    SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND,
+    RANK() OVER (PARTITION BY r.REGION_NAME ORDER BY SUM(oi.QUANTITY * oi.UNIT_PRICE) DESC) AS SPEND_RANK
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN 
+    ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+JOIN 
+    REGIONS r ON c.REGION_ID = r.REGION_ID
+GROUP BY 
+    c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, r.REGION_NAME
+ORDER BY 
+    r.REGION_NAME, SPEND_RANK",,4.578,9.543,14.388,39.32,
+32,9,293,hr_2_01,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1268,exact_match,1.0,"SELECT d.department_name, COUNT(e.employee_id) AS number_of_employees
+FROM hr_departments d
+LEFT JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name",,1.131,0.479,1.61,38.9,
+32,8,265,sales_2_08,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1301,exact_match,1.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM REGIONS R
+JOIN ORDERS O ON R.REGION_ID = O.REGION_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+GROUP BY R.REGION_NAME",,1.725,2.066,3.798,38.84,
+32,9,294,sales_1_09,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1286,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE LAST_NAME LIKE 'A%',,0.469,1.138,1.641,27.74,
+32,8,285,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.98,0.264,2.254,35.85,
+32,8,258,sales_3_05,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1329,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+FROM CUSTOMERS c
+JOIN (
+    SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+    FROM ORDERS
+    GROUP BY CUSTOMER_ID
+    HAVING COUNT(*) > (
+        SELECT AVG(ORDER_COUNT) 
+        FROM (
+            SELECT CUSTOMER_ID, COUNT(*) AS ORDER_COUNT
+            FROM ORDERS
+            GROUP BY CUSTOMER_ID
+        )
+    )
+) o ON c.CUSTOMER_ID = o.CUSTOMER_ID",,2.864,1.199,4.153,38.06,
+32,9,297,sales_1_02,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1277,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE CUSTOMER_TIER = 'GOLD',,0.448,1.078,1.576,35.69,
+32,9,289,sales_1_06,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1276,exact_match,1.0,SELECT * FROM CUSTOMERS WHERE EXTRACT(YEAR FROM SIGNUP_DATE) = 2024,,0.621,1.932,2.626,35.42,
+32,9,314,hr_1_07,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1244,exact_match,1.0,SELECT DISTINCT department_name FROM hr_departments,,0.305,0.397,0.969,29.5,
+32,9,306,sales_2_11,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1329,exact_match,1.0,"SELECT CATEGORY, AVG(UNIT_PRICE) AS AVERAGE_UNIT_PRICE
+FROM PRODUCTS
+GROUP BY CATEGORY
+ORDER BY AVERAGE_UNIT_PRICE DESC",,0.769,0.445,1.658,37.72,
+32,9,298,hr_2_07,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1293,exact_match,1.0,"SELECT j.JOB_TITLE, MIN(e.SALARY) AS MIN_SALARY, MAX(e.SALARY) AS MAX_SALARY, AVG(e.SALARY) AS AVG_SALARY
+FROM HR_JOBS j
+JOIN HR_EMPLOYEES e ON j.JOB_ID = e.JOB_ID
+GROUP BY j.JOB_TITLE",,1.854,0.138,2.422,39.38,
+32,9,305,hr_2_09,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT EXTRACT(YEAR FROM HIRE_DATE) AS YEAR_HIRED, COUNT(*) AS NUMBER_OF_EMPLOYEES
+FROM HR_EMPLOYEES
+GROUP BY EXTRACT(YEAR FROM HIRE_DATE)
+ORDER BY YEAR_HIRED",,1.347,0.327,2.447,38.6,
+32,9,291,hr_3_11,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1336,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, 
+       SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE) AS SALARY_DIFFERENCE
+FROM HR_EMPLOYEES
+ORDER BY HIRE_DATE",,1.357,1.654,3.831,39.04,
+32,9,307,hr_3_09,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1270,mismatch,0.0,"SELECT d.department_name
+FROM hr_departments d
+JOIN hr_employees e ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY AVG(e.salary) DESC
+FETCH FIRST 1 ROW ONLY",,1.252,0.926,2.237,37.53,
+32,9,316,sales_1_12,sales,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.03,1297,exact_match,1.0,SELECT PRODUCT_NAME FROM PRODUCTS WHERE CATEGORY = 'Books' AND UNIT_PRICE < 20,,0.501,0.746,1.266,37.92,
+32,9,317,hr_1_01,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.03,1261,exact_match,1.0,"SELECT * FROM HR_EMPLOYEES WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,0.851,0.192,1.066,38.78,
+32,9,303,hr_2_12,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1305,mismatch,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(jh.job_id) AS job_history_count
+FROM hr_employees e
+JOIN hr_job_history jh ON e.employee_id = jh.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(jh.job_id) > 1",,1.832,0.73,2.573,39.29,
+32,9,301,hr_2_09,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT EXTRACT(YEAR FROM HIRE_DATE) AS YEAR_HIRED, COUNT(*) AS NUMBER_OF_EMPLOYEES
+FROM HR_EMPLOYEES
+GROUP BY EXTRACT(YEAR FROM HIRE_DATE)
+ORDER BY YEAR_HIRED",,1.347,1.299,2.646,38.61,
+32,9,299,hr_3_04,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1295,mismatch,0.0,"SELECT department_id, first_name, last_name, salary
+FROM (
+    SELECT department_id, first_name, last_name, salary,
+           DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) as rank
+    FROM hr_employees
+)
+WHERE rank <= 3",,1.528,1.202,2.73,39.27,
+32,9,312,hr_2_09,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1280,exact_match,1.0,"SELECT EXTRACT(YEAR FROM HIRE_DATE) AS YEAR_HIRED, COUNT(*) AS NUMBER_OF_EMPLOYEES
+FROM HR_EMPLOYEES
+GROUP BY EXTRACT(YEAR FROM HIRE_DATE)
+ORDER BY YEAR_HIRED",,1.332,0.962,2.294,39.05,
+32,9,311,hr_3_01,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1367,mismatch,0.0,"SELECT LEVEL AS HIERARCHY_LEVEL, EMPLOYEE_ID, FIRST_NAME, LAST_NAME, MANAGER_ID
+FROM HR_EMPLOYEES
+START WITH MANAGER_ID IS NULL
+CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID
+AND LEVEL <= 3",,1.43,1.098,2.581,39.17,
+32,8,266,sales_3_08,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1341,mismatch,0.0,"SELECT 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM') AS MONTH,
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS REVENUE,
+    ROUND(((SUM(OI.QUANTITY * OI.UNIT_PRICE) - LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) / LAG(SUM(OI.QUANTITY * OI.UNIT_PRICE)) OVER (ORDER BY TO_CHAR(O.ORDER_DATE, 'YYYY-MM'))) * 100, 2) AS PERCENTAGE_CHANGE
+FROM 
+    ORDERS O
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM O.ORDER_DATE) = 2025
+GROUP BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')
+ORDER BY 
+    TO_CHAR(O.ORDER_DATE, 'YYYY-MM')",,5.029,1.293,7.124,39.77,
+32,9,315,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.796,0.604,3.17,39.53,
+32,9,310,hr_3_03,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1266,mismatch,0.0,"SELECT e.EMPLOYEE_ID, e.FIRST_NAME, e.LAST_NAME
+FROM HR_EMPLOYEES e
+JOIN HR_EMPLOYEES m ON e.MANAGER_ID = m.EMPLOYEE_ID
+WHERE e.SALARY > m.SALARY",,1.429,1.244,3.475,39.2,
+32,9,302,hr_1_12,hr,1,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1289,exact_match,1.0,SELECT * FROM HR_EMPLOYEES WHERE SALARY BETWEEN 80000 AND 120000 ORDER BY SALARY,,0.828,2.144,3.82,37.45,
+32,9,308,sales_3_12,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1328,exact_match,1.0,"SELECT 
+    ORDER_DATE, 
+    SUM(QUANTITY * UNIT_PRICE) AS DAILY_REVENUE,
+    SUM(SUM(QUANTITY * UNIT_PRICE)) OVER (ORDER BY ORDER_DATE) AS CUMULATIVE_REVENUE
+FROM 
+    ORDER_ITEMS
+JOIN 
+    ORDERS ON ORDER_ITEMS.ORDER_ID = ORDERS.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM ORDERS.ORDER_DATE) = 2025 AND EXTRACT(MONTH FROM ORDERS.ORDER_DATE) = 1
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,3.025,0.506,3.531,40.33,
+32,9,313,sales_3_12,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1328,exact_match,1.0,"SELECT 
+    ORDER_DATE, 
+    SUM(QUANTITY * UNIT_PRICE) AS DAILY_REVENUE,
+    SUM(SUM(QUANTITY * UNIT_PRICE)) OVER (ORDER BY ORDER_DATE) AS CUMULATIVE_REVENUE
+FROM 
+    ORDER_ITEMS
+JOIN 
+    ORDERS ON ORDER_ITEMS.ORDER_ID = ORDERS.ORDER_ID
+WHERE 
+    EXTRACT(YEAR FROM ORDERS.ORDER_DATE) = 2025 AND EXTRACT(MONTH FROM ORDERS.ORDER_DATE) = 1
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,3.006,0.472,3.479,40.59,
+32,4,129,sales_2_10,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1317,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+HAVING SUM(oi.QUANTITY * oi.UNIT_PRICE) > 5000",,2.771,14.398,17.414,38.97,
+32,9,318,hr_2_11,hr,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.03,1315,mismatch,0.0,"SELECT e.FIRST_NAME, e.LAST_NAME, d.DEPARTMENT_NAME, j.JOB_TITLE
+FROM HR_EMPLOYEES e
+JOIN HR_DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID
+JOIN HR_JOBS j ON e.JOB_ID = j.JOB_ID
+WHERE d.DEPARTMENT_NAME = 'Sales'",,1.964,0.643,2.611,40.73,
+32,8,278,sales_2_02,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1307,exact_match,1.0,"SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_REVENUE
+FROM ORDER_ITEMS oi
+JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID
+GROUP BY p.CATEGORY",,1.299,5.257,6.563,36.94,
+32,9,319,sales_3_09,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.03,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE, 
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE RANGE BETWEEN INTERVAL '3' MONTH PRECEDING AND CURRENT ROW) AS MOVING_AVG_3_MONTHS
+FROM 
+    ORDERS
+GROUP BY 
+    ORDER_DATE
+ORDER BY 
+    ORDER_DATE",,1.75,1.523,3.276,40.58,
+32,9,309,hr_3_11,hr,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1336,mismatch,0.0,"SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, 
+       SALARY - LAG(SALARY) OVER (ORDER BY HIRE_DATE) AS SALARY_DIFFERENCE
+FROM HR_EMPLOYEES
+ORDER BY HIRE_DATE",,1.359,3.282,4.681,39.0,
+32,8,286,sales_2_02,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1307,exact_match,1.0,"SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_REVENUE
+FROM ORDER_ITEMS oi
+JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID
+GROUP BY p.CATEGORY",,1.294,5.484,6.778,37.11,
+32,9,300,sales_2_02,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1307,exact_match,1.0,"SELECT p.CATEGORY, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_REVENUE
+FROM ORDER_ITEMS oi
+JOIN PRODUCTS p ON oi.PRODUCT_ID = p.PRODUCT_ID
+GROUP BY p.CATEGORY",,1.228,4.321,5.554,39.08,
+32,9,304,sales_2_08,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1301,exact_match,1.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM REGIONS R
+JOIN ORDERS O ON R.REGION_ID = O.REGION_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+GROUP BY R.REGION_NAME",,1.696,4.587,6.294,39.5,
+32,3,126,sales_3_04,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1343,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    o.ORDER_DATE, 
+    COUNT(o.ORDER_ID) OVER (PARTITION BY c.CUSTOMER_ID ORDER BY o.ORDER_DATE) AS RUNNING_ORDER_COUNT,
+    MAX(o.ORDER_DATE) OVER (PARTITION BY c.CUSTOMER_ID) AS MOST_RECENT_ORDER_DATE
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+ORDER BY 
+    c.CUSTOMER_ID, 
+    o.ORDER_DATE",,3.171,15.358,20.488,39.11,
+32,7,251,sales_3_10,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1318,mismatch,0.0,"SELECT customer_id, first_name, last_name, region_id, total_spend
+FROM (
+    SELECT c.customer_id, c.first_name, c.last_name, c.region_id,
+           SUM(oi.quantity * oi.unit_price) AS total_spend,
+           RANK() OVER (PARTITION BY c.region_id ORDER BY SUM(oi.quantity * oi.unit_price) DESC) as rank
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    JOIN order_items oi ON o.order_id = oi.order_id
+    GROUP BY c.customer_id, c.first_name, c.last_name, c.region_id
+)
+WHERE rank <= 3",,3.498,7.929,11.429,39.45,
+32,7,228,sales_2_10,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1317,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+HAVING SUM(oi.QUANTITY * oi.UNIT_PRICE) > 5000",,2.717,11.903,14.869,39.75,
+32,8,272,sales_3_10,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1318,mismatch,0.0,"SELECT customer_id, first_name, last_name, region_id, total_spend
+FROM (
+    SELECT c.customer_id, c.first_name, c.last_name, c.region_id,
+           SUM(oi.quantity * oi.unit_price) AS total_spend,
+           RANK() OVER (PARTITION BY c.region_id ORDER BY SUM(oi.quantity * oi.unit_price) DESC) as rank
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    JOIN order_items oi ON o.order_id = oi.order_id
+    GROUP BY c.customer_id, c.first_name, c.last_name, c.region_id
+)
+WHERE rank <= 3",,3.512,7.026,10.544,39.3,
+32,8,274,sales_2_10,sales,2,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1317,mismatch,0.0,"SELECT c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, SUM(oi.QUANTITY * oi.UNIT_PRICE) AS TOTAL_SPEND
+FROM CUSTOMERS c
+JOIN ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+JOIN ORDER_ITEMS oi ON o.ORDER_ID = oi.ORDER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME
+HAVING SUM(oi.QUANTITY * oi.UNIT_PRICE) > 5000",,2.8,7.589,10.629,38.58,
+32,7,244,sales_3_04,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1343,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    o.ORDER_DATE, 
+    COUNT(o.ORDER_ID) OVER (PARTITION BY c.CUSTOMER_ID ORDER BY o.ORDER_DATE) AS RUNNING_ORDER_COUNT,
+    MAX(o.ORDER_DATE) OVER (PARTITION BY c.CUSTOMER_ID) AS MOST_RECENT_ORDER_DATE
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+ORDER BY 
+    c.CUSTOMER_ID, 
+    o.ORDER_DATE",,3.233,10.841,16.072,38.35,
+32,6,196,sales_3_04,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1343,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    o.ORDER_DATE, 
+    COUNT(o.ORDER_ID) OVER (PARTITION BY c.CUSTOMER_ID ORDER BY o.ORDER_DATE) AS RUNNING_ORDER_COUNT,
+    MAX(o.ORDER_DATE) OVER (PARTITION BY c.CUSTOMER_ID) AS MOST_RECENT_ORDER_DATE
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+ORDER BY 
+    c.CUSTOMER_ID, 
+    o.ORDER_DATE",,3.182,17.529,24.149,38.96,
+32,8,270,sales_3_04,sales,3,Qwen/Qwen2.5-Coder-32B-Instruct,static,0.029,1343,mismatch,0.0,"SELECT 
+    c.CUSTOMER_ID, 
+    c.FIRST_NAME, 
+    c.LAST_NAME, 
+    o.ORDER_DATE, 
+    COUNT(o.ORDER_ID) OVER (PARTITION BY c.CUSTOMER_ID ORDER BY o.ORDER_DATE) AS RUNNING_ORDER_COUNT,
+    MAX(o.ORDER_DATE) OVER (PARTITION BY c.CUSTOMER_ID) AS MOST_RECENT_ORDER_DATE
+FROM 
+    CUSTOMERS c
+JOIN 
+    ORDERS o ON c.CUSTOMER_ID = o.CUSTOMER_ID
+ORDER BY 
+    c.CUSTOMER_ID, 
+    o.ORDER_DATE",,3.201,10.636,17.669,38.73,

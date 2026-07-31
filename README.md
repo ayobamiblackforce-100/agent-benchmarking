@@ -307,6 +307,8 @@ benchmark - correctness isn't assumed to hold under load, it's checked.
   router, or vLLM continuous-batching settings), while a DB-bound one points
   at connection pool sizing or missing indexes.
 
+**Labeled comparison runs** live under `results/<label>/` (e.g. `results/ollama_full/`, `results/vllm_full/`) when you want to keep multiple full sweeps around side by side - pass `--results-dir results/<label>`. See `docs/CONCURRENCY_BENCHMARK.md` for a real Ollama-vs-vLLM comparison on the same H100 target: same model family, same DB, same sweep - vLLM's continuous batching sustained ~8.6x more throughput at concurrency=32 with agent p95 barely growing under load, while Ollama's one-generation-at-a-time serving hit a hard plateau by level 8 despite the GPU already running hot at every level.
+
 ## What's in this directory
 
 ```

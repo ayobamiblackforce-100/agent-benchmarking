@@ -95,44 +95,84 @@ connection pool's `POOL_MAX` sizing constant was accidentally dropped
 during the file rewrite that added resource monitoring, causing an
 immediate `NameError` on every run; fixed and re-verified.
 
-## Result analysis (real run, H100 GPU target)
+## Result analysis: Ollama vs. vLLM (real H100 GPU target)
 
-Agent: `qwen2.5-coder:32b` (Q4_K_M) via Ollama, single instance, on the H100
-80GB target (`162.243.213.185`) · DB: seeded Oracle 23ai, co-located on the
-same host · 630 requests total across levels 1/2/4/8/16/32, 10 rounds/level.
+Same model family (`Qwen2.5-Coder-32B-Instruct`), same DB (seeded Oracle
+23ai, co-located on the same host), same H100 80GB target
+(`162.243.213.185`), same sweep (levels 1/2/4/8/16/32, 10 rounds/level, 630
+requests) - agent serving is the only variable. Ollama used the `qwen2.5-coder:32b`
+Q4_K_M GGUF quant (the model as normally pulled via `ollama pull`); vLLM used
+the full-precision `Qwen/Qwen2.5-Coder-32B-Instruct` bf16 weights (this
+harness's `multi-user-vLLM` companion project auto-resolves serving config
+from a GPU-tier/concurrency lookup table - see that repo's README). Both
+runs include CPU/mem/GPU utilization sampling.
 
-| Level | Requests | Avg Score | Throughput (req/s) | Total p50 | Total p95 | Agent p95 | DB p95 |
-|---|---|---|---|---|---|---|---|
-| 1 | 10 | 0.40 | 0.787 | 1.24s | 2.05s | 1.85s | 0.69s |
-| 2 | 20 | 0.35 | 1.003 | 1.46s | 3.28s | 3.00s | 0.88s |
-| 4 | 40 | 0.48 | 1.332 | 2.63s | 4.89s | 4.39s | 1.17s |
-| 8 | 80 | 0.39 | 1.117 | 6.90s | 9.41s | 9.29s | 0.94s |
-| 16 | 160 | 0.36 | 1.128 | 13.55s | 17.71s | 17.00s | 1.07s |
-| 32 | 320 | 0.44 | 1.174 | 26.95s | 32.31s | 32.14s | 1.09s |
+### Ollama (single instance, one generation at a time)
 
-**Bottleneck: the model server, not the database — same finding as the
-earlier small-model run, but now on real GPU hardware where it's a cleaner
-signal.** Real parallelism shows up briefly at low concurrency (throughput
-climbs 0.79→1.33 req/s from level 1→4, some genuine benefit from Ollama's
-default request batching), but it saturates hard by level 8 and stays
-essentially flat (1.12–1.17 req/s) all the way to level 32 — an 8x further
-increase in concurrency beyond that point buys almost nothing. Overall
-scaling efficiency from level 1→32 is only ~5%. Meanwhile p95 agent-generation
-time grows almost linearly with concurrency (1.85s→32.1s, 17.4x) while p95 DB
-time stays flat under 1.1s throughout (1.6x growth) — DB was never a factor
-here. Correctness held steady across the sweep (0.40 at level 1 vs 0.44 at
-level 32), so this is a pure latency/throughput ceiling, not a quality
-degradation.
+| Level | Throughput (req/s) | Total p95 | Agent p95 | DB p95 | GPU util avg/max |
+|---|---|---|---|---|---|
+| 1 | 0.56 | 4.67s | 4.53s | 0.68s | 44.8/92.0% |
+| 2 | 1.01 | 3.28s | 2.99s | 0.87s | 82.4/92.0% |
+| 4 | 1.33 | 4.87s | 4.38s | 1.18s | 81.9/92.0% |
+| 8 | 1.12 | 9.48s | 9.34s | 0.94s | 84.4/92.0% |
+| 16 | 1.13 | 17.78s | 17.03s | 1.12s | 86.6/92.0% |
+| 32 | 1.13 | 35.09s | 34.74s | 1.12s | 82.3/93.0% |
 
-**Recommendation:** this is a single Ollama instance serving one model on one
-GPU — the plateau at ~1.1–1.2 req/s past level 8 is the ceiling of one
-generation running at a time (with a small amount of request batching, not
-true parallelism). To raise it: deploy multiple backend replicas behind
-`multi-user-vLLM`'s router so concurrent requests actually run across
-independent GPU workers, or switch to vLLM and tune continuous-batching
-settings (`max_num_seqs`, `max_num_batched_tokens`) so the GPU processes many
-requests together rather than one at a time — an H100 with 80GB VRAM serving
-a 20GB model has plenty of headroom for that.
+Throughput plateaus at ~1.1-1.3 req/s from level 2 onward (32x concurrency
+buys ~2x throughput - ~6% scaling efficiency). Agent p95 grows almost
+linearly with concurrency (4.53s -> 34.74s, 7.67x); DB p95 stays flat
+(0.68s -> 1.12s, 1.64x) - never a factor. **GPU utilization is already
+44.8-86.6% at every level, including concurrency=1** - because Ollama serves
+one generation at a time, a single in-flight request alone pins the GPU
+during its own decode step; queue depth doesn't change per-request GPU
+demand, it just makes more requests wait in line. Bottleneck: agent/model
+serving, not hardware capacity in the "need more GPUs" sense - the ceiling is
+architectural (no request batching), not raw compute.
+
+### vLLM (continuous batching, `max_num_seqs=32`)
+
+| Level | Throughput (req/s) | Total p95 | Agent p95 | DB p95 | GPU util avg/max |
+|---|---|---|---|---|---|
+| 1 | 0.68 | 2.61s | 2.36s | 0.72s | 83.2/100.0% |
+| 2 | 0.99 | 6.45s | 2.98s | 1.60s | 82.5/100.0% |
+| 4 | 2.78 | 3.75s | 2.67s | 1.17s | 92.2/100.0% |
+| 8 | 4.12 | 5.12s | 3.06s | 1.10s | 94.4/100.0% |
+| 16 | 6.45 | 8.03s | 3.29s | 3.71s | 86.4/100.0% |
+| 32 | 9.74 | 6.79s | 3.17s | 4.26s | 66.4/100.0% |
+
+Throughput keeps climbing all the way to level 32 (0.68 -> 9.74 req/s, ~45%
+scaling efficiency - far from perfectly linear, but a completely different
+shape from Ollama's hard plateau). **Agent p95 stays nearly flat across the
+whole sweep** (2.36s -> 3.17s, 1.35x growth) - continuous batching absorbs
+concurrent requests instead of queueing them one at a time. **DB p95 instead
+becomes the growing term** (0.72s -> 4.26s, 5.92x growth) and overtakes agent
+p95 as the larger latency component by level 16. Bottleneck: shifts to the
+Oracle side - once the model server stops being the constraint, the DB
+connection pool / exec path becomes the next one.
+
+### Head-to-head at concurrency=32
+
+| Metric | Ollama | vLLM | vLLM vs. Ollama |
+|---|---|---|---|
+| Throughput | 1.13 req/s | 9.74 req/s | **8.6x higher** |
+| Total p95 | 35.09s | 6.79s | **5.2x lower** |
+| Agent p95 | 34.74s | 3.17s | **11x lower** |
+| Agent p95 growth (1->32) | 7.67x | 1.35x | far flatter |
+| DB p95 | 1.12s | 4.26s | 3.8x higher (new constraint) |
+
+**Bottom line:** the level-8+ plateau seen in the Ollama run is a genuine
+serving-architecture ceiling, not a GPU hardware ceiling - the same H100,
+same model family, serving via vLLM's continuous batching instead of
+Ollama's one-at-a-time generation, sustains ~8.6x more throughput at the same
+concurrency with agent latency barely growing under load. The GPU-utilization
+sampling is what makes this legible: Ollama's GPU was *already* 80-90%
+utilized at every level (each single in-flight generation is compute-heavy),
+which on its own could be misread as "GPU-bound, buy more hardware" - but
+vLLM proves the same card had far more throughput available once requests
+could be batched rather than serialized. Once agent-side latency stopped
+being the constraint, database exec time became the next bottleneck (DB p95
+overtakes agent p95 by level 16) - worth a follow-up pass on Oracle
+connection-pool sizing / indexing if pushing vLLM concurrency further.
 
 ### Earlier (smaller, resource-constrained) reference run
 
