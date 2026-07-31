@@ -1,0 +1,1092 @@
+concurrency_level,round,request_idx,test_case_id,schema,tier,model,context_strategy,req_start_offset_s,prompt_chars,status,score,generated_sql,sql_error,agent_wall_time_s,db_exec_time_s,total_time_s,tokens_per_sec,error
+1,0,0,sales_2_03,sales,2,qwen2.5-coder:1.5b,static,0.0,1290,mismatch,0.0,"SELECT c.customer_id, c.first_name, c.last_name, COUNT(o.order_id) AS total_orders
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name
+ORDER BY total_orders DESC
+FETCH FIRST 5 ROWS ONLY",,5.636,0.208,5.874,15.16,
+1,1,1,sales_1_04,sales,1,qwen2.5-coder:1.5b,static,0.002,1279,error,0.0,"SELECT P.PRODUCT_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM PRODUCTS P
+JOIN ORDER_ITEMS OI ON P.PRODUCT_ID = OI.PRODUCT_ID
+GROUP BY P.PRODUCT_NAME
+ORDER BY TOTAL_REVENUE DESC
+LIMIT 10","ORA-03049: SQL keyword 'LIMIT' is not syntactically valid following '...ORDER BY TOTAL_REVENUE DESC
+'
+Help: https://docs.oracle.com/error-help/db/ora-03049/",5.415,0.094,5.539,14.34,
+1,2,2,hr_1_01,hr,1,qwen2.5-coder:1.5b,static,0.002,1261,exact_match,1.0,"SELECT *
+FROM HR_EMPLOYEES
+WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,3.02,1.014,4.142,15.41,
+1,3,3,sales_3_09,sales,3,qwen2.5-coder:1.5b,static,0.002,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE,
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS MA_3_MONTHS
+FROM 
+    ORDERS
+WHERE 
+    ORDER_DATE >= SYSDATE - INTERVAL '3' MONTH
+GROUP BY 
+    ORDER_DATE",,5.789,0.099,5.917,14.94,
+1,4,4,sales_3_05,sales,3,qwen2.5-coder:1.5b,static,0.002,1329,error,0.0,"SELECT c.*
+FROM customers c
+WHERE c.customer_id IN (
+    SELECT customer_id
+    FROM orders
+    GROUP BY customer_id
+    HAVING COUNT(*) > (
+        SELECT AVG(count(*))
+        FROM orders
+    )
+)","ORA-00978: nested group function without GROUP BY
+Help: https://docs.oracle.com/error-help/db/ora-00978/",4.16,0.091,4.28,14.89,
+1,5,5,sales_2_06,sales,2,qwen2.5-coder:1.5b,static,0.002,1282,exact_match,1.0,"SELECT p.*
+FROM products p
+WHERE p.product_id NOT IN (
+    SELECT oi.product_id
+    FROM order_items oi
+)",,2.763,0.072,2.865,14.14,
+1,6,6,sales_2_02,sales,2,qwen2.5-coder:1.5b,static,0.002,1307,exact_match,1.0,"SELECT p.category, SUM(oi.quantity * oi.unit_price) AS total_revenue
+FROM products p
+JOIN order_items oi ON p.product_id = oi.product_id
+GROUP BY p.category",,3.598,1.196,4.823,14.83,
+1,7,7,hr_3_12,hr,3,qwen2.5-coder:1.5b,static,0.002,1331,error,0.0,"SELECT e.employee_id, e.first_name, e.last_name, j.job_title
+FROM hr.employees e
+JOIN (
+    SELECT employee_id, MAX(start_date) AS max_start_date
+    FROM hr.job_history
+    GROUP BY employee_id
+) max_job_history ON e.employee_id = max_job_history.employee_id AND e.hire_date <= max_job_history.max_start_date
+JOIN hr.job_history j ON e.employee_id = j.employee_id AND e.hire_date >= j.start_date","ORA-00942: table or view ""HR"".""JOB_HISTORY"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",8.679,0.091,8.8,13.68,
+1,8,8,sales_1_12,sales,1,qwen2.5-coder:1.5b,static,0.002,1297,exact_match,1.0,"SELECT product_name 
+FROM products 
+WHERE category = 'Books' AND unit_price < 20",,2.454,0.064,2.546,14.75,
+1,9,9,hr_2_08,hr,2,qwen2.5-coder:1.5b,static,0.002,1275,mismatch,0.0,"SELECT department_name
+FROM hr_departments
+WHERE department_id IN (
+    SELECT department_id
+    FROM (
+        SELECT department_id, AVG(salary) as avg_salary
+        FROM hr_employees
+        GROUP BY department_id
+    ) subquery
+    WHERE avg_salary > 120000
+)",,5.796,0.107,5.931,13.83,
+2,0,1,sales_1_04,sales,1,qwen2.5-coder:1.5b,static,0.001,1279,error,0.0,"SELECT P.PRODUCT_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM PRODUCTS P
+JOIN ORDER_ITEMS OI ON P.PRODUCT_ID = OI.PRODUCT_ID
+GROUP BY P.PRODUCT_NAME
+ORDER BY TOTAL_REVENUE DESC
+LIMIT 10","ORA-03049: SQL keyword 'LIMIT' is not syntactically valid following '...ORDER BY TOTAL_REVENUE DESC
+'
+Help: https://docs.oracle.com/error-help/db/ora-03049/",7.199,0.087,7.315,14.1,
+2,1,2,sales_1_12,sales,1,qwen2.5-coder:1.5b,static,0.001,1297,exact_match,1.0,SELECT product_name FROM products WHERE category = 'Books' AND unit_price < 20,,2.483,0.058,2.57,13.14,
+2,0,0,sales_1_05,sales,1,qwen2.5-coder:1.5b,static,0.0,1279,exact_match,1.0,"SELECT *
+FROM ORDERS
+WHERE STATUS = 'CANCELLED'",,1.85,13.241,16.036,14.84,
+2,1,3,sales_3_04,sales,3,qwen2.5-coder:1.5b,static,0.001,1343,error,0.0,"SELECT 
+    c.customer_id,
+    c.first_name,
+    c.last_name,
+    o.order_date,
+    SUM(o.quantity) OVER (PARTITION BY c.customer_id ORDER BY o.order_date DESC) AS running_total
+FROM 
+    customers c
+JOIN 
+    orders o ON c.customer_id = o.customer_id
+ORDER BY 
+    c.customer_id, o.order_date DESC","ORA-00904: ""O"".""QUANTITY"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",6.764,0.094,6.886,14.03,
+2,2,4,sales_3_07,sales,3,qwen2.5-coder:1.5b,static,0.001,1319,mismatch,0.0,"SELECT p.PRODUCT_NAME, p.CATEGORY, MAX(p.UNIT_PRICE) OVER (PARTITION BY p.CATEGORY ORDER BY p.UNIT_PRICE DESC) AS SECOND_HIGHEST_PRICE
+FROM PRODUCTS p
+ORDER BY p.CATEGORY",,4.981,0.204,5.218,13.86,
+2,2,5,hr_3_06,hr,3,qwen2.5-coder:1.5b,static,0.001,1306,error,0.0,"SELECT 
+    e.employee_id,
+    e.first_name,
+    e.last_name,
+    e.salary,
+    d.department_name,
+    j.job_title,
+    h.start_date,
+    h.end_date,
+    RANK() OVER (ORDER BY e.salary DESC) AS salary_rank
+FROM 
+    hr.employees e
+JOIN 
+    hr.job_history h ON e.employee_id = h.employee_id
+JOIN 
+    hr.jobs j ON h.job_id = j.job_id
+JOIN 
+    hr.departments d ON e.department_id = d.department_id
+WHERE 
+    e.salary IS NOT NULL
+ORDER BY 
+    salary_rank","ORA-00942: table or view ""HR"".""DEPARTMENTS"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",16.584,0.095,16.709,11.36,
+2,3,6,sales_1_04,sales,1,qwen2.5-coder:1.5b,static,0.001,1279,error,0.0,"SELECT P.PRODUCT_NAME, SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_REVENUE
+FROM PRODUCTS P
+JOIN ORDER_ITEMS OI ON P.PRODUCT_ID = OI.PRODUCT_ID
+GROUP BY P.PRODUCT_NAME
+ORDER BY TOTAL_REVENUE DESC
+LIMIT 10","ORA-03049: SQL keyword 'LIMIT' is not syntactically valid following '...ORDER BY TOTAL_REVENUE DESC
+'
+Help: https://docs.oracle.com/error-help/db/ora-03049/",19.882,0.095,20.006,9.98,
+2,3,7,sales_3_02,sales,3,qwen2.5-coder:1.5b,static,0.001,1314,mismatch,0.0,"SELECT p.*
+FROM products p
+WHERE p.unit_price > (
+    SELECT AVG(unit_price)
+    FROM products
+    WHERE category = p.category
+)",,12.529,0.164,12.731,8.95,
+2,4,8,hr_3_12,hr,3,qwen2.5-coder:1.5b,static,0.001,1331,error,0.0,"SELECT e.employee_id, e.first_name, e.last_name, j.job_title
+FROM hr.employees e
+JOIN (
+    SELECT employee_id, MAX(start_date) AS max_start_date
+    FROM hr.job_history
+    GROUP BY employee_id
+) max_job_history ON e.employee_id = max_job_history.employee_id AND e.hire_date <= max_job_history.max_start_date
+JOIN hr.job_history j ON e.employee_id = j.employee_id AND e.hire_date >= j.start_date","ORA-00942: table or view ""HR"".""JOB_HISTORY"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",17.137,0.088,17.253,9.68,
+2,4,9,hr_2_07,hr,2,qwen2.5-coder:1.5b,static,0.001,1293,exact_match,1.0,"SELECT 
+    T1.JOB_TITLE,
+    MIN(T2.SALARY) AS MIN_SALARY,
+    MAX(T2.SALARY) AS MAX_SALARY,
+    AVG(T2.SALARY) AS AVERAGE_SALARY
+FROM 
+    HR_JOBS T1
+JOIN 
+    HR_EMPLOYEES T2 ON T1.JOB_ID = T2.JOB_ID
+GROUP BY 
+    T1.JOB_TITLE",,22.498,0.112,22.638,10.33,
+2,5,10,sales_3_05,sales,3,qwen2.5-coder:1.5b,static,0.001,1329,error,0.0,"SELECT c.*
+FROM customers c
+WHERE c.customer_id IN (
+    SELECT customer_id
+    FROM orders
+    GROUP BY customer_id
+    HAVING COUNT(*) > (
+        SELECT AVG(count(*))
+        FROM orders
+    )
+)","ORA-00978: nested group function without GROUP BY
+Help: https://docs.oracle.com/error-help/db/ora-00978/",15.928,0.092,16.048,10.72,
+2,5,11,hr_2_11,hr,2,qwen2.5-coder:1.5b,static,0.001,1315,exact_match,1.0,"SELECT e.employee_id, e.first_name, e.last_name, d.department_name, j.job_title
+FROM hr_employees e
+JOIN hr_departments d ON e.department_id = d.department_id
+JOIN hr_jobs j ON e.job_id = j.job_id
+WHERE d.department_name = 'Sales'",,12.535,0.278,12.856,11.0,
+2,6,12,hr_1_01,hr,1,qwen2.5-coder:1.5b,static,0.001,1261,exact_match,1.0,"SELECT *
+FROM HR_EMPLOYEES
+WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,10.818,0.984,11.961,11.15,
+2,6,13,sales_1_01,sales,1,qwen2.5-coder:1.5b,static,0.002,1287,mismatch,0.0,SELECT product_name FROM products WHERE category = 'Electronics',,5.647,0.092,5.769,11.21,
+2,7,14,sales_2_09,sales,2,qwen2.5-coder:1.5b,static,0.002,1293,error,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS MONTH, COUNT(*) AS ORDER_COUNT
+FROM ORDERS
+WHERE YEAR(ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')","ORA-00904: ""YEAR"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",6.626,0.093,6.748,10.57,
+2,7,15,hr_2_08,hr,2,qwen2.5-coder:1.5b,static,0.002,1275,mismatch,0.0,"SELECT department_name
+FROM hr_departments
+WHERE department_id IN (
+    SELECT department_id
+    FROM (
+        SELECT department_id, AVG(salary) as avg_salary
+        FROM hr_employees
+        GROUP BY department_id
+    ) subquery
+    WHERE avg_salary > 120000
+)",,12.711,0.095,12.837,11.17,
+2,8,16,hr_1_09,hr,1,qwen2.5-coder:1.5b,static,0.002,1259,exact_match,1.0,"SELECT e.*
+FROM hr_employees e
+ORDER BY e.hire_date DESC
+FETCH FIRST 5 ROWS ONLY",,10.292,0.1,10.425,10.27,
+2,8,17,hr_1_01,hr,1,qwen2.5-coder:1.5b,static,0.002,1261,exact_match,1.0,"SELECT *
+FROM HR_EMPLOYEES
+WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,8.057,1.048,9.27,9.17,
+2,9,18,sales_2_08,sales,2,qwen2.5-coder:1.5b,static,0.002,1301,mismatch,0.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * PI.UNIT_PRICE) AS TOTAL_ORDER_REVENUE
+FROM REGIONS R
+JOIN CUSTOMERS C ON R.REGION_ID = C.REGION_ID
+JOIN ORDERS O ON C.CUSTOMER_ID = O.CUSTOMER_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+JOIN PRODUCTS PI ON OI.PRODUCT_ID = PI.PRODUCT_ID
+GROUP BY R.REGION_NAME",,15.039,2.453,17.523,10.6,
+2,9,19,sales_3_04,sales,3,qwen2.5-coder:1.5b,static,0.002,1343,error,0.0,"SELECT 
+    c.customer_id,
+    c.first_name,
+    c.last_name,
+    o.order_date,
+    SUM(o.quantity) OVER (PARTITION BY c.customer_id ORDER BY o.order_date DESC ROWS UNBOUNDED PRECEDING) AS running_total_orders
+FROM 
+    customers c
+JOIN 
+    orders o ON c.customer_id = o.customer_id
+ORDER BY 
+    c.customer_id, o.order_date DESC","ORA-00904: ""O"".""QUANTITY"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",15.996,0.093,16.123,14.91,
+4,0,0,hr_1_09,hr,1,qwen2.5-coder:1.5b,static,0.0,1259,error,0.0,"SELECT e.*
+FROM hr_employees e
+ORDER BY e.hire_date DESC
+LIMIT 5","ORA-03049: SQL keyword 'LIMIT' is not syntactically valid following '...e
+ORDER BY e.hire_date DESC
+'
+Help: https://docs.oracle.com/error-help/db/ora-03049/",2.352,0.086,2.469,16.19,
+4,0,2,sales_1_12,sales,1,qwen2.5-coder:1.5b,static,0.002,1297,exact_match,1.0,"SELECT product_name 
+FROM products 
+WHERE category = 'Books' AND unit_price < 20",,4.462,0.062,4.553,15.97,
+4,0,3,hr_2_02,hr,2,qwen2.5-coder:1.5b,static,0.003,1290,exact_match,1.0,"SELECT T2.JOB_TITLE, AVG(T1.SALARY) AS AVERAGE_SALARY
+FROM HR_EMPLOYEES T1
+JOIN HR_JOBS T2 ON T1.JOB_ID = T2.JOB_ID
+GROUP BY T2.JOB_TITLE
+ORDER BY AVERAGE_SALARY DESC",,9.439,0.108,9.575,15.46,
+4,0,1,sales_2_02,sales,2,qwen2.5-coder:1.5b,static,0.001,1307,exact_match,1.0,"SELECT p.category, SUM(oi.quantity * oi.unit_price) AS total_revenue
+FROM products p
+JOIN order_items oi ON p.product_id = oi.product_id
+GROUP BY p.category",,12.685,1.179,13.895,15.79,
+4,1,4,sales_2_01,sales,2,qwen2.5-coder:1.5b,static,0.004,1291,exact_match,1.0,"SELECT R.REGION_NAME, COUNT(C.CUSTOMER_ID) AS TOTAL_CUSTOMERS
+FROM REGIONS R
+JOIN CUSTOMERS C ON R.REGION_ID = C.REGION_ID
+GROUP BY R.REGION_NAME",,13.86,0.098,13.986,14.95,
+4,1,5,hr_1_11,hr,1,qwen2.5-coder:1.5b,static,0.004,1280,exact_match,1.0,"SELECT e.*
+FROM HR_EMPLOYEES e
+WHERE e.MANAGER_ID IS NULL",,13.977,0.218,14.24,13.52,
+4,1,6,hr_1_10,hr,1,qwen2.5-coder:1.5b,static,0.004,1259,mismatch,0.0,SELECT job_title FROM hr_jobs WHERE job_title LIKE '%Manager%',,10.852,0.094,10.976,12.02,
+4,1,7,sales_3_11,sales,3,qwen2.5-coder:1.5b,static,0.004,1319,mismatch,0.0,"SELECT p.*
+FROM PRODUCTS p
+WHERE p.category = 'Garden'
+AND p.unit_price > (
+    SELECT MAX(unit_price)
+    FROM PRODUCTS
+    WHERE category = 'Garden'
+)",,10.104,0.065,10.198,14.61,
+4,2,8,sales_1_06,sales,1,qwen2.5-coder:1.5b,static,0.004,1276,mismatch,0.0,"SELECT customer_id, first_name, last_name, email
+FROM customers
+WHERE signup_date BETWEEN TO_DATE('2024-01-01', 'YYYY-MM-DD') AND TO_DATE('2024-12-31', 'YYYY-MM-DD')",,12.332,2.867,15.372,14.25,
+4,2,9,hr_2_12,hr,2,qwen2.5-coder:1.5b,static,0.004,1305,error,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(h.job_history_id) AS history_count
+FROM hr.employees e
+JOIN hr.job_history h ON e.employee_id = h.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(h.job_history_id) > 1","ORA-00942: table or view ""HR"".""JOB_HISTORY"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",15.595,0.09,15.713,14.37,
+4,2,10,hr_3_11,hr,3,qwen2.5-coder:1.5b,static,0.004,1336,error,0.0,"SELECT 
+    e.employee_id,
+    e.first_name,
+    e.last_name,
+    e.hire_date,
+    e.salary,
+    e.job_id,
+    e.department_id,
+    e.manager_id,
+    e.job_history_id,
+    e.start_date,
+    e.end_date,
+    e.salary - LAG(e.salary) OVER (PARTITION BY e.employee_id ORDER BY e.hire_date) AS salary_difference
+FROM 
+    hr.employees e
+ORDER BY 
+    e.hire_date","ORA-00942: table or view ""HR"".""EMPLOYEES"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",24.505,0.096,24.631,12.34,
+4,2,11,sales_2_04,sales,2,qwen2.5-coder:1.5b,static,0.004,1287,exact_match,1.0,"SELECT STATUS, COUNT(*) AS ORDER_COUNT
+FROM ORDERS
+GROUP BY STATUS",,22.66,0.113,22.802,15.94,
+4,3,12,hr_2_02,hr,2,qwen2.5-coder:1.5b,static,0.004,1290,exact_match,1.0,"SELECT T1.JOB_TITLE, AVG(T2.SALARY) AS AVERAGE_SALARY
+FROM HR_JOBS T1
+JOIN HR_EMPLOYEES T2 ON T1.JOB_ID = T2.JOB_ID
+GROUP BY T1.JOB_TITLE
+ORDER BY AVERAGE_SALARY DESC",,19.757,0.098,19.883,15.88,
+4,3,14,hr_1_03,hr,1,qwen2.5-coder:1.5b,static,0.004,1269,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE MAX_SALARY > 200000,,11.467,0.125,11.622,16.43,
+4,3,13,sales_1_11,sales,1,qwen2.5-coder:1.5b,static,0.004,1296,exact_match,1.0,"SELECT c.*
+FROM CUSTOMERS c
+JOIN REGIONS r ON c.region_id = r.region_id
+WHERE c.customer_tier = 'PLATINUM'
+ORDER BY c.signup_date",,20.189,2.251,22.696,16.1,
+4,3,15,hr_1_12,hr,1,qwen2.5-coder:1.5b,static,0.004,1289,exact_match,1.0,"SELECT *
+FROM HR_EMPLOYEES
+WHERE SALARY BETWEEN 80000 AND 120000
+ORDER BY SALARY",,12.814,1.023,13.952,15.31,
+4,4,17,sales_1_09,sales,1,qwen2.5-coder:1.5b,static,0.004,1286,mismatch,0.0,"SELECT customer_id, first_name, last_name, email, region_id
+FROM customers
+WHERE last_name LIKE 'A%'",,15.772,0.586,16.413,14.16,
+4,4,18,sales_1_06,sales,1,qwen2.5-coder:1.5b,static,0.004,1276,mismatch,0.0,"SELECT customer_id, first_name, last_name, email
+FROM customers
+WHERE signup_date BETWEEN TO_DATE('2024-01-01', 'YYYY-MM-DD') AND TO_DATE('2024-12-31', 'YYYY-MM-DD')",,19.713,2.722,22.61,15.64,
+4,4,19,sales_3_07,sales,3,qwen2.5-coder:1.5b,static,0.004,1319,mismatch,0.0,"SELECT p.PRODUCT_NAME, p.CATEGORY, MAX(p.UNIT_PRICE) OVER (PARTITION BY p.CATEGORY ORDER BY p.UNIT_PRICE DESC) AS SECOND_HIGHEST_PRICE
+FROM PRODUCTS p
+ORDER BY p.CATEGORY",,19.807,0.199,20.038,15.75,
+4,5,20,hr_1_03,hr,1,qwen2.5-coder:1.5b,static,0.004,1269,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE MAX_SALARY > 200000,,9.46,0.086,9.575,16.17,
+4,4,16,sales_3_01,sales,3,qwen2.5-coder:1.5b,static,0.004,1312,mismatch,0.0,"SELECT 
+    C.CUSTOMER_ID,
+    C.FIRST_NAME,
+    C.LAST_NAME,
+    C.EMAIL,
+    R.REGION_NAME,
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_SPEND
+FROM 
+    CUSTOMERS C
+JOIN 
+    ORDERS O ON C.CUSTOMER_ID = O.CUSTOMER_ID
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+JOIN 
+    REGIONS R ON C.REGION_ID = R.REGION_ID
+GROUP BY 
+    C.CUSTOMER_ID,
+    C.FIRST_NAME,
+    C.LAST_NAME,
+    C.EMAIL,
+    R.REGION_NAME
+ORDER BY 
+    TOTAL_SPEND DESC",,18.435,17.556,36.68,15.42,
+4,5,21,sales_1_11,sales,1,qwen2.5-coder:1.5b,static,0.004,1296,exact_match,1.0,"SELECT C.*
+FROM CUSTOMERS C
+JOIN REGIONS R ON C.REGION_ID = R.REGION_ID
+WHERE C.CUSTOMER_TIER = 'PLATINUM'
+ORDER BY C.SIGNUP_DATE",,6.337,2.546,9.108,16.1,
+4,5,22,sales_3_07,sales,3,qwen2.5-coder:1.5b,static,0.004,1319,error,0.0,"SELECT p.*
+FROM (
+    SELECT p.*, RANK() OVER (PARTITION BY p.category ORDER BY p.unit_price DESC) AS rank
+    FROM products p
+) subquery
+WHERE subquery.rank = 2","ORA-00904: ""P"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",8.927,0.095,9.05,15.13,
+4,5,23,sales_2_01,sales,2,qwen2.5-coder:1.5b,static,0.004,1291,exact_match,1.0,"SELECT R.REGION_NAME, COUNT(C.CUSTOMER_ID) AS TOTAL_CUSTOMERS
+FROM REGIONS R
+JOIN CUSTOMERS C ON R.REGION_ID = C.REGION_ID
+GROUP BY R.REGION_NAME",,10.497,0.097,10.624,15.78,
+4,6,24,hr_2_02,hr,2,qwen2.5-coder:1.5b,static,0.004,1290,exact_match,1.0,"SELECT T2.JOB_TITLE, AVG(T1.SALARY) AS AVERAGE_SALARY
+FROM HR_EMPLOYEES T1
+JOIN HR_JOBS T2 ON T1.JOB_ID = T2.JOB_ID
+GROUP BY T2.JOB_TITLE
+ORDER BY AVERAGE_SALARY DESC",,10.392,0.099,10.521,13.77,
+4,6,25,hr_1_01,hr,1,qwen2.5-coder:1.5b,static,0.004,1261,exact_match,1.0,"SELECT *
+FROM HR_EMPLOYEES
+WHERE HIRE_DATE > TO_DATE('2023-01-01', 'YYYY-MM-DD')",,13.077,1.004,14.191,14.07,
+4,6,26,hr_2_12,hr,2,qwen2.5-coder:1.5b,static,0.004,1305,error,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(h.job_history_id) AS history_count
+FROM hr.employees e
+JOIN hr.job_history h ON e.employee_id = h.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(h.job_history_id) > 1","ORA-00942: table or view ""HR"".""JOB_HISTORY"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",19.676,0.091,19.796,10.28,
+4,6,27,hr_1_12,hr,1,qwen2.5-coder:1.5b,static,0.004,1289,exact_match,1.0,"SELECT *
+FROM HR_EMPLOYEES
+WHERE SALARY BETWEEN 80000 AND 120000
+ORDER BY SALARY",,19.491,1.028,20.706,14.41,
+4,7,28,sales_2_09,sales,2,qwen2.5-coder:1.5b,static,0.004,1293,error,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS MONTH, COUNT(*) AS ORDER_COUNT
+FROM ORDERS
+WHERE YEAR(ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')","ORA-00904: ""YEAR"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",18.42,0.086,18.536,13.31,
+4,7,29,hr_2_01,hr,2,qwen2.5-coder:1.5b,static,0.004,1268,error,0.0,"SELECT department_id, COUNT(*) AS num_employees
+FROM hr.employees
+GROUP BY department_id","ORA-00942: table or view ""HR"".""EMPLOYEES"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",17.108,0.103,17.243,12.94,
+4,7,30,hr_1_11,hr,1,qwen2.5-coder:1.5b,static,0.004,1280,exact_match,1.0,"SELECT e.*
+FROM HR_EMPLOYEES e
+WHERE e.MANAGER_ID IS NULL",,12.978,0.222,13.269,13.14,
+4,7,31,sales_3_03,sales,3,qwen2.5-coder:1.5b,static,0.004,1315,error,0.0,"SELECT p.PRODUCT_NAME, p.CATEGORY, p.UNIT_PRICE
+FROM (
+    SELECT p.*, ROW_NUMBER() OVER (PARTITION BY p.CATEGORY ORDER BY p.UNIT_PRICE DESC) AS rn
+    FROM PRODUCTS p
+) top_products
+WHERE rn <= 3","ORA-00904: ""P"".""UNIT_PRICE"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",14.888,0.094,15.01,11.19,
+4,8,32,sales_3_12,sales,3,qwen2.5-coder:1.5b,static,0.004,1328,error,0.0,"SELECT 
+    TO_CHAR(ORDER_DATE, 'YYYY-MM-DD') AS DATE,
+    SUM(QUANTITY * UNIT_PRICE) OVER (ORDER BY ORDER_DATE ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS CUMULATIVE_REVENUE
+FROM 
+    ORDER_ITEMS
+WHERE 
+    ORDER_DATE >= TO_DATE('2025-01-01', 'YYYY-MM-DD')
+GROUP BY 
+    DATE
+ORDER BY 
+    DATE","ORA-00923: FROM keyword not found where expected
+Help: https://docs.oracle.com/error-help/db/ora-00923/",18.812,0.093,18.933,15.27,
+4,8,33,sales_1_10,sales,1,qwen2.5-coder:1.5b,static,0.004,1269,error,0.0,"SELECT *
+FROM ORDERS
+ORDER BY ORDER_DATE DESC
+LIMIT 5","ORA-03049: SQL keyword 'LIMIT' is not syntactically valid following '...ORDER BY ORDER_DATE DESC
+'
+Help: https://docs.oracle.com/error-help/db/ora-03049/",17.572,0.093,17.694,15.54,
+4,8,35,hr_3_11,hr,3,qwen2.5-coder:1.5b,static,0.004,1336,error,0.0,"SELECT 
+    e.employee_id,
+    e.first_name,
+    e.last_name,
+    e.hire_date,
+    e.salary,
+    (e.salary - LAG(e.salary) OVER (ORDER BY e.hire_date)) AS salary_difference
+FROM 
+    hr.employees e
+ORDER BY 
+    e.hire_date","ORA-00942: table or view ""HR"".""EMPLOYEES"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",22.244,0.113,22.386,15.32,
+4,9,36,sales_3_09,sales,3,qwen2.5-coder:1.5b,static,0.004,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE,
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS MA_3_MONTHS
+FROM 
+    ORDERS
+WHERE 
+    ORDER_DATE >= SYSDATE - INTERVAL '3' MONTH
+GROUP BY 
+    ORDER_DATE",,20.689,0.087,20.808,14.88,
+4,9,37,sales_2_09,sales,2,qwen2.5-coder:1.5b,static,0.004,1293,error,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS MONTH, COUNT(*) AS ORDER_COUNT
+FROM ORDERS
+WHERE YEAR(ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')","ORA-00904: ""YEAR"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",23.227,0.085,23.341,14.48,
+4,8,34,sales_2_10,sales,2,qwen2.5-coder:1.5b,static,0.004,1317,mismatch,0.0,"SELECT c.customer_id, SUM(p.unit_price * oi.quantity) AS total_spend
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+JOIN order_items oi ON o.order_id = oi.order_id
+JOIN products p ON oi.product_id = p.product_id
+WHERE c.customer_tier IN ('STANDARD', 'SILVER', 'GOLD', 'PLATINUM')
+GROUP BY c.customer_id
+HAVING SUM(p.unit_price * oi.quantity) > 5000",,23.182,17.126,41.058,14.44,
+4,9,38,hr_3_01,hr,3,qwen2.5-coder:1.5b,static,0.004,1367,error,0.0,"SELECT 
+    LEVEL AS HIERARCHY_LEVEL,
+    EMPLOYEE_ID,
+    FIRST_NAME,
+    LAST_NAME,
+    EMAIL,
+    HIRE_DATE,
+    JOB_TITLE,
+    SALARY,
+    DEPARTMENT_ID,
+    MANAGER_ID
+FROM 
+    HR_EMPLOYEES
+START WITH 
+    MANAGER_ID IS NULL
+CONNECT BY 
+    PRIOR EMPLOYEE_ID = MANAGER_ID","ORA-00904: ""JOB_TITLE"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",16.21,0.092,16.335,15.2,
+4,9,39,hr_2_02,hr,2,qwen2.5-coder:1.5b,static,0.004,1290,exact_match,1.0,"SELECT T1.JOB_TITLE, AVG(T2.SALARY) AS AVERAGE_SALARY
+FROM HR_JOBS T1
+JOIN HR_EMPLOYEES T2 ON T1.JOB_ID = T2.JOB_ID
+GROUP BY T1.JOB_TITLE
+ORDER BY AVERAGE_SALARY DESC",,15.276,0.097,15.402,16.03,
+8,0,0,sales_3_12,sales,3,qwen2.5-coder:1.5b,static,0.001,1328,error,0.0,"SELECT 
+    TO_CHAR(ORDER_DATE, 'YYYY-MM-DD') AS DATE,
+    SUM(QUANTITY * UNIT_PRICE) OVER (ORDER BY ORDER_DATE ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS CUMULATIVE_REVENUE
+FROM 
+    ORDER_ITEMS
+WHERE 
+    ORDER_DATE >= TO_DATE('2025-01-01', 'YYYY-MM-DD')
+GROUP BY 
+    DATE
+ORDER BY 
+    DATE","ORA-00923: FROM keyword not found where expected
+Help: https://docs.oracle.com/error-help/db/ora-00923/",8.521,0.096,8.645,14.86,
+8,0,6,hr_1_06,hr,1,qwen2.5-coder:1.5b,static,0.011,1264,exact_match,1.0,"SELECT *
+FROM HR_EMPLOYEES
+WHERE LAST_NAME LIKE '%son%'",,10.234,0.367,10.656,15.14,
+8,0,3,sales_1_08,sales,1,qwen2.5-coder:1.5b,static,0.005,1314,exact_match,1.0,"SELECT product_id, product_name, category, unit_price, stock_qty
+FROM products
+WHERE stock_qty < 50
+ORDER BY stock_qty ASC",,13.042,0.089,13.16,15.24,
+8,0,1,sales_3_05,sales,3,qwen2.5-coder:1.5b,static,0.003,1329,error,0.0,"SELECT c.*
+FROM customers c
+WHERE c.customer_id IN (
+    SELECT customer_id
+    FROM orders
+    GROUP BY customer_id
+    HAVING COUNT(*) > (
+        SELECT AVG(count(*))
+        FROM orders
+    )
+)","ORA-00978: nested group function without GROUP BY
+Help: https://docs.oracle.com/error-help/db/ora-00978/",17.0,0.1,17.128,14.99,
+8,0,2,hr_1_07,hr,1,qwen2.5-coder:1.5b,static,0.004,1244,exact_match,1.0,SELECT DISTINCT department_name FROM hr_departments,,18.167,0.093,18.288,15.42,
+8,0,7,hr_2_05,hr,2,qwen2.5-coder:1.5b,static,0.013,1301,error,0.0,"SELECT 
+    e.MANAGER_ID,
+    COUNT(e.EMPLOYEE_ID) AS DIRECT_REPORTS_COUNT
+FROM 
+    HR_EMPLOYEES e
+JOIN 
+    HR_JOB_HISTORY j ON e.EMPLOYEE_ID = j.EMPLOYEE_ID
+GROUP BY 
+    e.MANAGER_ID
+ORDER BY 
+    COUNT(e.EMPLOYEE_ID) DESC
+LIMIT 10","ORA-03049: SQL keyword 'LIMIT' is not syntactically valid following '...COUNT(e.EMPLOYEE_ID) DESC
+'
+Help: https://docs.oracle.com/error-help/db/ora-03049/",24.297,0.094,24.422,15.29,
+8,0,4,sales_3_07,sales,3,qwen2.5-coder:1.5b,static,0.008,1319,mismatch,0.0,"SELECT p.PRODUCT_NAME, p.CATEGORY, MAX(p.UNIT_PRICE) OVER (PARTITION BY p.CATEGORY ORDER BY p.UNIT_PRICE DESC) AS SECOND_HIGHEST_PRICE
+FROM PRODUCTS p
+ORDER BY p.CATEGORY",,29.601,0.202,29.836,15.2,
+8,1,8,sales_3_12,sales,3,qwen2.5-coder:1.5b,static,0.014,1328,error,0.0,"SELECT 
+    TO_CHAR(ORDER_DATE, 'YYYY-MM-DD') AS DATE,
+    SUM(QUANTITY * UNIT_PRICE) OVER (ORDER BY ORDER_DATE ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS CUMULATIVE_REVENUE
+FROM 
+    ORDER_ITEMS
+WHERE 
+    ORDER_DATE >= TO_DATE('2025-01-01', 'YYYY-MM-DD')
+GROUP BY 
+    DATE
+ORDER BY 
+    DATE","ORA-00923: FROM keyword not found where expected
+Help: https://docs.oracle.com/error-help/db/ora-00923/",28.756,0.086,28.871,14.77,
+8,0,5,sales_1_05,sales,1,qwen2.5-coder:1.5b,static,0.01,1279,exact_match,1.0,"SELECT *
+FROM ORDERS
+WHERE STATUS = 'CANCELLED'",,25.719,13.46,39.983,15.9,
+8,1,9,sales_1_09,sales,1,qwen2.5-coder:1.5b,static,0.014,1286,mismatch,0.0,"SELECT customer_id, first_name, last_name, email, region_id
+FROM customers
+WHERE last_name LIKE 'A%'",,29.079,0.68,29.826,14.98,
+8,1,10,sales_3_04,sales,3,qwen2.5-coder:1.5b,static,0.014,1343,error,0.0,"SELECT 
+    c.customer_id,
+    c.first_name,
+    c.last_name,
+    o.order_date,
+    SUM(o.quantity) OVER (PARTITION BY c.customer_id ORDER BY o.order_date DESC) AS running_total
+FROM 
+    customers c
+JOIN 
+    orders o ON c.customer_id = o.customer_id
+ORDER BY 
+    c.customer_id, o.order_date DESC","ORA-00904: ""O"".""QUANTITY"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",33.441,0.093,33.563,13.32,
+8,1,11,hr_1_06,hr,1,qwen2.5-coder:1.5b,static,0.014,1264,exact_match,1.0,"SELECT *
+FROM HR_EMPLOYEES
+WHERE LAST_NAME LIKE '%son%'",,31.294,0.365,31.712,14.8,
+8,1,12,sales_3_04,sales,3,qwen2.5-coder:1.5b,static,0.014,1343,error,0.0,"SELECT 
+    c.customer_id,
+    o.order_date,
+    SUM(o.quantity) OVER (PARTITION BY c.customer_id ORDER BY o.order_date DESC ROWS UNBOUNDED PRECEDING) AS running_total
+FROM 
+    customers c
+JOIN 
+    orders o ON c.customer_id = o.customer_id
+ORDER BY 
+    c.customer_id, o.order_date DESC","ORA-00904: ""O"".""QUANTITY"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",35.555,0.086,35.668,15.52,
+8,1,13,hr_3_05,hr,3,qwen2.5-coder:1.5b,static,0.014,1298,mismatch,0.0,"SELECT e.*
+FROM hr_employees e
+WHERE e.salary > (
+    SELECT AVG(salary)
+    FROM hr_employees se
+    WHERE se.department_id = e.department_id
+)",,32.512,1.31,33.945,15.78,
+8,1,14,hr_2_04,hr,2,qwen2.5-coder:1.5b,static,0.014,1274,error,0.0,"SELECT LOCATION_ID, COUNT(DISTINCT DEPARTMENT_ID) AS TOTAL_DEPARTMENTS
+FROM HR_LOCATIONS
+GROUP BY LOCATION_ID","ORA-00904: ""DEPARTMENT_ID"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",29.566,0.086,29.681,15.12,
+8,1,15,hr_2_12,hr,2,qwen2.5-coder:1.5b,static,0.014,1305,error,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(h.job_history_id) AS history_count
+FROM hr.employees e
+JOIN hr.job_history h ON e.employee_id = h.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(h.job_history_id) > 1","ORA-00942: table or view ""HR"".""JOB_HISTORY"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",27.147,0.105,27.281,15.48,
+8,2,16,sales_2_07,sales,2,qwen2.5-coder:1.5b,static,0.014,1333,mismatch,0.0,"SELECT p.PRODUCT_NAME, SUM(oi.QUANTITY) AS TOTAL_QUANTITY
+FROM PRODUCTS p
+JOIN ORDER_ITEMS oi ON p.PRODUCT_ID = oi.PRODUCT_ID
+GROUP BY p.PRODUCT_NAME
+HAVING SUM(oi.QUANTITY) > 1000",,29.425,1.308,30.768,15.34,
+8,2,17,sales_3_11,sales,3,qwen2.5-coder:1.5b,static,0.014,1319,mismatch,0.0,"SELECT p.*
+FROM PRODUCTS p
+WHERE p.category = 'Garden'
+AND p.unit_price > (
+    SELECT MAX(unit_price)
+    FROM PRODUCTS
+    WHERE category = 'Garden'
+)",,32.29,0.063,32.382,15.12,
+8,2,18,sales_2_06,sales,2,qwen2.5-coder:1.5b,static,0.014,1282,exact_match,1.0,"SELECT p.*
+FROM PRODUCTS p
+WHERE p.PRODUCT_ID NOT IN (
+    SELECT oi.PRODUCT_ID
+    FROM ORDER_ITEMS oi
+)",,28.672,0.068,28.771,14.95,
+8,2,19,sales_3_09,sales,3,qwen2.5-coder:1.5b,static,0.014,1312,mismatch,0.0,"SELECT 
+    ORDER_DATE,
+    COUNT(*) AS ORDER_COUNT,
+    AVG(COUNT(*)) OVER (ORDER BY ORDER_DATE ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS MA_3_MONTHS
+FROM 
+    ORDERS
+WHERE 
+    ORDER_DATE >= SYSDATE - INTERVAL '3' MONTH
+GROUP BY 
+    ORDER_DATE",,32.125,0.095,32.25,15.12,
+8,2,20,hr_3_11,hr,3,qwen2.5-coder:1.5b,static,0.014,1336,error,0.0,"SELECT 
+    e.employee_id,
+    e.first_name,
+    e.last_name,
+    e.hire_date,
+    e.salary,
+    e.job_id,
+    e.department_id,
+    e.manager_id,
+    e.job_history_id,
+    e.start_date,
+    e.end_date,
+    e.salary - LAG(e.salary) OVER (PARTITION BY e.employee_id ORDER BY e.hire_date) AS salary_difference
+FROM 
+    hr.employees e
+ORDER BY 
+    e.hire_date","ORA-00942: table or view ""HR"".""EMPLOYEES"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",34.809,0.085,34.924,14.99,
+8,2,21,sales_3_11,sales,3,qwen2.5-coder:1.5b,static,0.015,1319,mismatch,0.0,"SELECT p.*
+FROM PRODUCTS p
+WHERE p.category = 'Garden'
+AND p.unit_price > (
+    SELECT MAX(unit_price)
+    FROM PRODUCTS
+    WHERE category = 'Garden'
+)",,33.755,0.06,33.845,15.43,
+8,2,22,hr_2_08,hr,2,qwen2.5-coder:1.5b,static,0.015,1275,mismatch,0.0,"SELECT department_name
+FROM hr_departments
+WHERE department_id IN (
+    SELECT department_id
+    FROM (
+        SELECT department_id, AVG(salary) as avg_salary
+        FROM hr_employees
+        GROUP BY department_id
+    ) subquery
+    WHERE avg_salary > 120000
+)",,37.707,0.109,37.845,15.13,
+8,2,23,hr_2_05,hr,2,qwen2.5-coder:1.5b,static,0.015,1301,error,0.0,"SELECT 
+    e.manager_id,
+    COUNT(e.employee_id) AS direct_reports
+FROM 
+    hr_employees e
+JOIN 
+    hr_job_history jh ON e.employee_id = jh.employee_id
+GROUP BY 
+    e.manager_id
+ORDER BY 
+    direct_reports DESC
+LIMIT 10","ORA-03049: SQL keyword 'LIMIT' is not syntactically valid following '...BY 
+    direct_reports DESC
+'
+Help: https://docs.oracle.com/error-help/db/ora-03049/",37.254,0.09,37.374,15.84,
+8,3,24,hr_1_12,hr,1,qwen2.5-coder:1.5b,static,0.015,1289,exact_match,1.0,"SELECT *
+FROM HR_EMPLOYEES
+WHERE SALARY BETWEEN 80000 AND 120000
+ORDER BY SALARY",,34.676,1.026,35.958,13.42,
+8,3,25,sales_3_05,sales,3,qwen2.5-coder:1.5b,static,0.015,1329,error,0.0,"SELECT c.*
+FROM customers c
+WHERE c.customer_id IN (
+    SELECT customer_id
+    FROM orders
+    GROUP BY customer_id
+    HAVING COUNT(*) > (
+        SELECT AVG(count(*))
+        FROM orders
+    )
+)","ORA-00978: nested group function without GROUP BY
+Help: https://docs.oracle.com/error-help/db/ora-00978/",36.663,0.092,36.784,14.82,
+8,3,26,sales_2_06,sales,2,qwen2.5-coder:1.5b,static,0.015,1282,exact_match,1.0,"SELECT p.*
+FROM products p
+WHERE p.product_id NOT IN (
+    SELECT oi.product_id
+    FROM order_items oi
+)",,36.457,0.064,36.549,14.97,
+8,3,27,hr_3_07,hr,3,qwen2.5-coder:1.5b,static,0.015,1304,mismatch,0.0,"SELECT 
+    e.HIRE_DATE,
+    SUM(e.SALARY) OVER (ORDER BY e.HIRE_DATE) AS TOTAL_SALARY
+FROM 
+    HR_EMPLOYEES e
+WHERE 
+    EXTRACT(YEAR FROM e.HIRE_DATE) = 2015",,35.686,0.332,36.063,15.28,
+8,3,28,hr_3_05,hr,3,qwen2.5-coder:1.5b,static,0.015,1298,mismatch,0.0,"SELECT e.*
+FROM hr_employees e
+WHERE e.salary > (
+    SELECT AVG(salary)
+    FROM hr_employees se
+    WHERE se.department_id = e.department_id
+)",,31.189,1.28,32.589,14.72,
+8,3,29,sales_1_12,sales,1,qwen2.5-coder:1.5b,static,0.015,1297,exact_match,1.0,SELECT product_name FROM products WHERE category = 'Books' AND unit_price < 20,,29.82,0.066,29.914,14.93,
+8,3,30,sales_1_07,sales,1,qwen2.5-coder:1.5b,static,0.015,1268,mismatch,0.0,SELECT region_name FROM REGIONS WHERE country = 'Europe',,26.099,0.06,26.188,15.22,
+8,3,31,sales_2_03,sales,2,qwen2.5-coder:1.5b,static,0.015,1290,error,0.0,"SELECT c.customer_id, c.first_name, c.last_name, COUNT(o.order_id) AS total_orders
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name
+ORDER BY total_orders DESC
+LIMIT 5","ORA-03049: SQL keyword 'LIMIT' is not syntactically valid following '...ORDER BY total_orders DESC
+'
+Help: https://docs.oracle.com/error-help/db/ora-03049/",26.007,0.1,26.137,15.38,
+8,4,32,sales_2_08,sales,2,qwen2.5-coder:1.5b,static,0.015,1301,mismatch,0.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * PI.UNIT_PRICE) AS TOTAL_ORDER_REVENUE
+FROM REGIONS R
+JOIN CUSTOMERS C ON R.REGION_ID = C.REGION_ID
+JOIN ORDERS O ON C.CUSTOMER_ID = O.CUSTOMER_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+JOIN PRODUCTS PI ON OI.PRODUCT_ID = PI.PRODUCT_ID
+GROUP BY R.REGION_NAME",,28.597,2.466,31.092,15.27,
+8,4,33,sales_2_09,sales,2,qwen2.5-coder:1.5b,static,0.015,1293,error,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS MONTH, COUNT(*) AS ORDER_COUNT
+FROM ORDERS
+WHERE YEAR(ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')","ORA-00904: ""YEAR"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",30.09,0.091,30.21,13.28,
+8,4,34,hr_2_08,hr,2,qwen2.5-coder:1.5b,static,0.015,1275,mismatch,0.0,"SELECT department_name
+FROM hr_departments
+WHERE department_id IN (
+    SELECT department_id
+    FROM (
+        SELECT department_id, AVG(salary) as avg_salary
+        FROM hr_employees
+        GROUP BY department_id
+    ) subquery
+    WHERE avg_salary > 120000
+)",,33.17,0.099,33.298,14.07,
+8,4,35,sales_1_09,sales,1,qwen2.5-coder:1.5b,static,0.015,1286,mismatch,0.0,"SELECT customer_id, first_name, last_name, email, region_id
+FROM customers
+WHERE last_name LIKE 'A%'",,30.301,0.571,30.931,16.01,
+8,4,36,hr_2_03,hr,2,qwen2.5-coder:1.5b,static,0.015,1264,mismatch,0.0,"SELECT department_name 
+FROM hr_departments 
+WHERE department_id IN (
+    SELECT department_id 
+    FROM hr_employees 
+    GROUP BY department_id 
+    HAVING COUNT(*) > 600
+)",,30.683,0.105,30.827,10.97,
+8,4,37,hr_2_02,hr,2,qwen2.5-coder:1.5b,static,0.015,1290,exact_match,1.0,"SELECT T2.JOB_TITLE, AVG(T1.SALARY) AS AVERAGE_SALARY
+FROM HR_EMPLOYEES T1
+JOIN HR_JOBS T2 ON T1.JOB_ID = T2.JOB_ID
+GROUP BY T2.JOB_TITLE
+ORDER BY AVERAGE_SALARY DESC",,38.625,0.091,38.745,9.19,
+8,4,38,hr_3_01,hr,3,qwen2.5-coder:1.5b,static,0.015,1367,error,0.0,"SELECT 
+    LEVEL AS HIERARCHY_LEVEL,
+    EMPLOYEE_ID,
+    FIRST_NAME,
+    LAST_NAME,
+    EMAIL,
+    HIRE_DATE,
+    JOB_TITLE,
+    SALARY,
+    DEPARTMENT_ID,
+    MANAGER_ID
+FROM 
+    HR_EMPLOYEES
+START WITH 
+    MANAGER_ID IS NULL
+CONNECT BY 
+    PRIOR EMPLOYEE_ID = MANAGER_ID","ORA-00904: ""JOB_TITLE"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",45.014,0.096,45.138,13.38,
+8,4,39,hr_3_10,hr,3,qwen2.5-coder:1.5b,static,0.015,1334,error,0.0,"SELECT 
+    LEVEL AS HIERARCHY_LEVEL,
+    E.EMPLOYEE_ID,
+    E.FIRST_NAME,
+    E.LAST_NAME,
+    E.HIRE_DATE,
+    J.JOB_TITLE,
+    D.DEPARTMENT_NAME
+FROM 
+    HR_EMPLOYEES E
+START WITH 
+    E.EMPLOYEE_ID = 3600
+CONNECT BY 
+    PRIOR E.EMPLOYEE_ID = E.MANAGER_ID","ORA-00904: ""D"".""DEPARTMENT_NAME"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",48.974,0.086,49.089,12.65,
+8,5,40,sales_3_10,sales,3,qwen2.5-coder:1.5b,static,0.015,1318,mismatch,0.0,"SELECT 
+    R.REGION_NAME,
+    C.CUSTOMER_ID,
+    SUM(OI.QUANTITY * OI.UNIT_PRICE) AS TOTAL_SPEND
+FROM 
+    REGIONS R
+JOIN 
+    CUSTOMERS C ON R.REGION_ID = C.REGION_ID
+JOIN 
+    ORDERS O ON C.CUSTOMER_ID = O.CUSTOMER_ID
+JOIN 
+    ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+GROUP BY 
+    R.REGION_NAME, C.CUSTOMER_ID
+ORDER BY 
+    TOTAL_SPEND DESC
+FETCH FIRST 3 ROWS ONLY",,55.201,2.479,57.711,8.93,
+8,5,41,sales_1_02,sales,1,qwen2.5-coder:1.5b,static,0.015,1277,exact_match,1.0,"SELECT *
+FROM CUSTOMERS
+WHERE CUSTOMER_TIER = 'GOLD'",,55.017,2.247,57.565,14.61,
+8,5,42,sales_2_03,sales,2,qwen2.5-coder:1.5b,static,0.015,1290,error,0.0,"SELECT c.customer_id, c.first_name, c.last_name, COUNT(o.order_id) AS total_orders
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name
+ORDER BY total_orders DESC
+LIMIT 5","ORA-03049: SQL keyword 'LIMIT' is not syntactically valid following '...ORDER BY total_orders DESC
+'
+Help: https://docs.oracle.com/error-help/db/ora-03049/",55.406,0.087,55.522,12.14,
+8,5,43,hr_3_11,hr,3,qwen2.5-coder:1.5b,static,0.015,1336,error,0.0,"SELECT 
+    e.employee_id,
+    e.first_name,
+    e.last_name,
+    e.hire_date,
+    e.salary,
+    e.job_id,
+    e.department_id,
+    e.manager_id,
+    e.job_history_id,
+    e.start_date,
+    e.end_date,
+    e.salary - LAG(e.salary) OVER (PARTITION BY e.employee_id ORDER BY e.hire_date) AS salary_difference
+FROM 
+    hr.employees e
+ORDER BY 
+    e.hire_date","ORA-00942: table or view ""HR"".""EMPLOYEES"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",62.61,0.088,62.726,11.68,
+8,5,44,sales_3_12,sales,3,qwen2.5-coder:1.5b,static,0.015,1328,error,0.0,"SELECT 
+    TO_CHAR(ORDER_DATE, 'YYYY-MM-DD') AS DATE,
+    SUM(QUANTITY * UNIT_PRICE) OVER (ORDER BY ORDER_DATE ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS CUMULATIVE_REVENUE
+FROM 
+    ORDER_ITEMS
+WHERE 
+    ORDER_DATE >= TO_DATE('2025-01-01', 'YYYY-MM-DD')
+GROUP BY 
+    DATE
+ORDER BY 
+    DATE","ORA-00923: FROM keyword not found where expected
+Help: https://docs.oracle.com/error-help/db/ora-00923/",66.17,0.093,66.292,14.64,
+8,5,45,hr_1_09,hr,1,qwen2.5-coder:1.5b,static,0.015,1259,exact_match,1.0,"SELECT e.*
+FROM hr_employees e
+ORDER BY e.hire_date DESC
+FETCH FIRST 5 ROWS ONLY",,60.088,0.096,60.214,13.79,
+8,5,46,sales_2_03,sales,2,qwen2.5-coder:1.5b,static,0.015,1290,error,0.0,"SELECT c.customer_id, c.first_name, c.last_name, COUNT(o.order_id) AS total_orders
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name
+ORDER BY total_orders DESC
+LIMIT 5","ORA-03049: SQL keyword 'LIMIT' is not syntactically valid following '...ORDER BY total_orders DESC
+'
+Help: https://docs.oracle.com/error-help/db/ora-03049/",57.393,0.089,57.51,14.24,
+8,5,47,hr_1_03,hr,1,qwen2.5-coder:1.5b,static,0.015,1269,mismatch,0.0,SELECT JOB_TITLE FROM HR_JOBS WHERE MAX_SALARY > 200000,,50.822,0.091,50.942,15.35,
+8,6,48,hr_2_09,hr,2,qwen2.5-coder:1.5b,static,0.015,1280,exact_match,1.0,"SELECT TO_CHAR(hire_date, 'YYYY') AS YEAR, COUNT(*) AS EMPLOYEES_HIRRED
+FROM HR_EMPLOYEES
+GROUP BY TO_CHAR(hire_date, 'YYYY')
+ORDER BY YEAR",,37.394,0.092,37.514,11.73,
+8,6,49,sales_2_09,sales,2,qwen2.5-coder:1.5b,static,0.015,1293,error,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS MONTH, COUNT(*) AS ORDER_COUNT
+FROM ORDERS
+WHERE YEAR(ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')","ORA-00904: ""YEAR"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",39.624,0.092,39.75,14.39,
+8,6,50,hr_2_12,hr,2,qwen2.5-coder:1.5b,static,0.015,1305,error,0.0,"SELECT e.employee_id, e.first_name, e.last_name, COUNT(h.job_history_id) AS history_count
+FROM hr.employees e
+JOIN hr.job_history h ON e.employee_id = h.employee_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING COUNT(h.job_history_id) > 1","ORA-00942: table or view ""HR"".""JOB_HISTORY"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",41.869,0.107,42.006,14.24,
+8,6,51,sales_1_01,sales,1,qwen2.5-coder:1.5b,static,0.015,1287,mismatch,0.0,SELECT product_name FROM products WHERE category = 'Electronics',,33.303,0.088,33.42,15.72,
+8,6,52,sales_3_11,sales,3,qwen2.5-coder:1.5b,static,0.015,1319,mismatch,0.0,"SELECT p.*
+FROM PRODUCTS p
+WHERE p.category = 'Garden'
+AND p.unit_price > (
+    SELECT MAX(unit_price)
+    FROM PRODUCTS
+    WHERE category = 'Garden'
+)",,29.218,0.056,29.303,13.97,
+8,6,53,hr_3_06,hr,3,qwen2.5-coder:1.5b,static,0.015,1306,error,0.0,"SELECT 
+    e.employee_id,
+    e.first_name,
+    e.last_name,
+    e.salary,
+    d.department_name,
+    j.job_title,
+    h.start_date,
+    h.end_date,
+    RANK() OVER (ORDER BY e.salary DESC) AS salary_rank
+FROM 
+    hr.employees e
+JOIN 
+    hr.job_history h ON e.employee_id = h.employee_id
+JOIN 
+    hr.jobs j ON h.job_id = j.job_id
+JOIN 
+    hr.departments d ON e.department_id = d.department_id
+WHERE 
+    e.salary IS NOT NULL
+ORDER BY 
+    salary_rank","ORA-00942: table or view ""HR"".""DEPARTMENTS"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",36.646,0.091,36.766,14.21,
+8,6,54,sales_2_11,sales,2,qwen2.5-coder:1.5b,static,0.015,1329,mismatch,0.0,"SELECT p.category, AVG(pi.unit_price) as avg_unit_price
+FROM products p
+JOIN order_items pi ON p.product_id = pi.product_id
+GROUP BY p.category
+ORDER BY avg_unit_price DESC",,35.418,1.205,36.653,14.08,
+8,6,55,hr_3_06,hr,3,qwen2.5-coder:1.5b,static,0.015,1306,mismatch,0.0,"SELECT 
+    e.EMPLOYEE_ID,
+    e.FIRST_NAME,
+    e.LAST_NAME,
+    e.SALARY,
+    DENSE_RANK() OVER (ORDER BY e.SALARY DESC) AS salary_rank
+FROM 
+    HR_EMPLOYEES e
+WHERE 
+    e.SALARY IS NOT NULL
+ORDER BY 
+    salary_rank",,38.77,3.101,42.035,14.6,
+8,7,56,sales_2_02,sales,2,qwen2.5-coder:1.5b,static,0.015,1307,exact_match,1.0,"SELECT p.category, SUM(oi.quantity * oi.unit_price) AS total_revenue
+FROM products p
+JOIN order_items oi ON p.product_id = oi.product_id
+GROUP BY p.category",,37.396,1.183,38.608,15.1,
+8,7,57,hr_1_04,hr,1,qwen2.5-coder:1.5b,static,0.015,1257,error,0.0,"SELECT e.FIRST_NAME, e.LAST_NAME, e.SALARY
+FROM HR_EMPLOYEES e
+ORDER BY e.SALARY DESC
+LIMIT 10","ORA-03049: SQL keyword 'LIMIT' is not syntactically valid following '...e
+ORDER BY e.SALARY DESC
+'
+Help: https://docs.oracle.com/error-help/db/ora-03049/",36.446,0.085,36.56,14.79,
+8,7,58,hr_3_06,hr,3,qwen2.5-coder:1.5b,static,0.015,1306,error,0.0,"SELECT 
+    e.employee_id,
+    e.first_name,
+    e.last_name,
+    e.salary,
+    d.department_name,
+    j.job_title,
+    h.start_date,
+    h.end_date,
+    RANK() OVER (ORDER BY e.salary DESC) AS salary_rank
+FROM 
+    hr.employees e
+JOIN 
+    hr.job_history h ON e.employee_id = h.employee_id
+JOIN 
+    hr.jobs j ON h.job_id = j.job_id
+JOIN 
+    hr.departments d ON e.department_id = d.department_id
+WHERE 
+    e.salary IS NOT NULL
+ORDER BY 
+    salary_rank","ORA-00942: table or view ""HR"".""DEPARTMENTS"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",39.866,0.091,39.986,15.51,
+8,7,59,sales_3_02,sales,3,qwen2.5-coder:1.5b,static,0.015,1314,mismatch,0.0,"SELECT p.*
+FROM products p
+WHERE p.unit_price > (
+    SELECT AVG(unit_price)
+    FROM products
+    WHERE category = p.category
+)",,41.115,0.144,41.294,15.91,
+8,7,61,hr_2_01,hr,2,qwen2.5-coder:1.5b,static,0.015,1268,error,0.0,"SELECT department_id, COUNT(*) AS num_employees
+FROM hr.employees
+GROUP BY department_id","ORA-00942: table or view ""HR"".""EMPLOYEES"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",36.925,0.122,37.076,14.59,
+8,7,60,sales_2_08,sales,2,qwen2.5-coder:1.5b,static,0.015,1301,mismatch,0.0,"SELECT R.REGION_NAME, SUM(OI.QUANTITY * PI.UNIT_PRICE) AS TOTAL_ORDER_REVENUE
+FROM REGIONS R
+JOIN CUSTOMERS C ON R.REGION_ID = C.REGION_ID
+JOIN ORDERS O ON C.CUSTOMER_ID = O.CUSTOMER_ID
+JOIN ORDER_ITEMS OI ON O.ORDER_ID = OI.ORDER_ID
+JOIN PRODUCTS PI ON OI.PRODUCT_ID = PI.PRODUCT_ID
+GROUP BY R.REGION_NAME",,44.771,2.409,47.209,14.84,
+8,7,62,sales_2_09,sales,2,qwen2.5-coder:1.5b,static,0.015,1293,error,0.0,"SELECT TO_CHAR(ORDER_DATE, 'YYYY-MM') AS MONTH, COUNT(*) AS ORDER_COUNT
+FROM ORDERS
+WHERE YEAR(ORDER_DATE) = 2025
+GROUP BY TO_CHAR(ORDER_DATE, 'YYYY-MM')","ORA-00904: ""YEAR"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",36.239,0.102,36.376,13.96,
+8,7,63,hr_3_12,hr,3,qwen2.5-coder:1.5b,static,0.015,1331,error,0.0,"SELECT e.employee_id,
+       e.first_name,
+       e.last_name,
+       j.job_title AS current_job_title
+FROM hr.employees e
+JOIN (
+    SELECT employee_id,
+           MAX(start_date) OVER (PARTITION BY employee_id ORDER BY start_date DESC) AS max_start_date
+    FROM hr.job_history
+) j ON e.employee_id = j.employee_id AND e.hire_date <= j.max_start_date","ORA-00942: table or view ""HR"".""JOB_HISTORY"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",36.407,0.095,36.531,13.06,
+8,8,64,hr_3_10,hr,3,qwen2.5-coder:1.5b,static,0.015,1334,error,0.0,"SELECT 
+    LEVEL AS HIERARCHY_LEVEL,
+    E.EMPLOYEE_ID,
+    E.FIRST_NAME,
+    E.LAST_NAME,
+    E.HIRE_DATE,
+    J.JOB_TITLE,
+    D.DEPARTMENT_NAME
+FROM 
+    HR_EMPLOYEES E
+START WITH 
+    E.EMPLOYEE_ID = 3600
+CONNECT BY 
+    PRIOR E.EMPLOYEE_ID = E.MANAGER_ID","ORA-00904: ""D"".""DEPARTMENT_NAME"": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/",42.288,0.085,42.401,15.36,
+8,8,65,sales_1_01,sales,1,qwen2.5-coder:1.5b,static,0.015,1287,mismatch,0.0,SELECT product_name FROM products WHERE category = 'Electronics',,41.561,0.123,41.713,16.25,
+8,8,66,hr_1_07,hr,1,qwen2.5-coder:1.5b,static,0.015,1244,exact_match,1.0,SELECT DISTINCT department_name FROM hr_departments,,33.573,0.091,33.693,15.88,
+8,8,68,sales_1_03,sales,1,qwen2.5-coder:1.5b,static,0.015,1288,exact_match,1.0,"SELECT product_id, product_name, category, unit_price, stock_qty
+FROM products
+WHERE unit_price > 500",,29.536,0.177,29.751,15.94,
+8,8,67,hr_3_04,hr,3,qwen2.5-coder:1.5b,static,0.015,1295,mismatch,0.0,"SELECT 
+    e.employee_id,
+    e.first_name,
+    e.last_name,
+    e.salary,
+    d.department_name,
+    RANK() OVER (PARTITION BY d.department_name ORDER BY e.salary DESC) AS rank
+FROM 
+    hr_employees e
+JOIN 
+    hr_departments d ON e.department_id = d.department_id
+ORDER BY 
+    rank",,36.634,3.007,39.804,15.39,
+8,8,69,sales_2_03,sales,2,qwen2.5-coder:1.5b,static,0.015,1290,error,0.0,"SELECT c.customer_id, c.first_name, c.last_name, COUNT(o.order_id) AS total_orders
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name
+ORDER BY total_orders DESC
+LIMIT 5","ORA-03049: SQL keyword 'LIMIT' is not syntactically valid following '...ORDER BY total_orders DESC
+'
+Help: https://docs.oracle.com/error-help/db/ora-03049/",34.212,0.087,34.33,14.76,
+8,8,70,hr_1_12,hr,1,qwen2.5-coder:1.5b,static,0.015,1289,exact_match,1.0,"SELECT *
+FROM HR_EMPLOYEES
+WHERE SALARY BETWEEN 80000 AND 120000
+ORDER BY SALARY",,33.095,1.047,34.275,15.71,
+8,8,71,hr_1_05,hr,1,qwen2.5-coder:1.5b,static,0.015,1248,exact_match,1.0,"SELECT LOCATION_ID, CITY, COUNTRY FROM HR_LOCATIONS WHERE COUNTRY = 'USA'",,27.184,0.094,27.308,15.72,
+8,9,72,sales_3_08,sales,3,qwen2.5-coder:1.5b,static,0.015,1341,error,0.0,"SELECT 
+    TO_CHAR(ORDER_DATE, 'YYYY-MM') AS MONTH,
+    SUM(QUANTITY * UNIT_PRICE) AS REVENUE,
+    (SUM(QUANTITY * UNIT_PRICE) - LAG(SUM(QUANTITY * UNIT_PRICE)) OVER (ORDER BY ORDER_DATE ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)) / LAG(SUM(QUANTITY * UNIT_PRICE)) OVER (ORDER BY ORDER_DATE ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) * 100 AS PERCENTAGE_CHANGE
+FROM 
+    ORDER_ITEMS
+WHERE 
+    YEAR(ORDER_DATE) = 2025
+GROUP BY 
+    TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY 
+    MONTH","ORA-30483: window  functions are not allowed here
+Help: https://docs.oracle.com/error-help/db/ora-30483/",30.731,0.09,30.849,15.56,
+8,9,73,sales_1_08,sales,1,qwen2.5-coder:1.5b,static,0.015,1314,exact_match,1.0,"SELECT product_id, product_name, category, unit_price, stock_qty
+FROM products
+WHERE stock_qty < 50
+ORDER BY stock_qty ASC",,32.013,0.088,32.134,15.83,
+8,9,74,sales_3_08,sales,3,qwen2.5-coder:1.5b,static,0.015,1341,error,0.0,"SELECT 
+    TO_CHAR(ORDER_DATE, 'YYYY-MM') AS MONTH,
+    SUM(QUANTITY * UNIT_PRICE) AS REVENUE,
+    (SUM(QUANTITY * UNIT_PRICE) - LAG(SUM(QUANTITY * UNIT_PRICE)) OVER (ORDER BY ORDER_DATE ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)) / LAG(SUM(QUANTITY * UNIT_PRICE)) OVER (ORDER BY ORDER_DATE ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) * 100 AS PERCENTAGE_CHANGE
+FROM 
+    ORDER_ITEMS
+WHERE 
+    YEAR(ORDER_DATE) = 2025
+GROUP BY 
+    TO_CHAR(ORDER_DATE, 'YYYY-MM')
+ORDER BY 
+    MONTH","ORA-30483: window  functions are not allowed here
+Help: https://docs.oracle.com/error-help/db/ora-30483/",41.747,0.092,41.867,15.36,
+8,9,75,sales_1_11,sales,1,qwen2.5-coder:1.5b,static,0.015,1296,exact_match,1.0,"SELECT c.*
+FROM CUSTOMERS c
+JOIN REGIONS r ON c.region_id = r.region_id
+WHERE c.customer_tier = 'PLATINUM'
+ORDER BY c.signup_date",,36.724,2.19,39.144,15.7,
+8,9,76,sales_1_11,sales,1,qwen2.5-coder:1.5b,static,0.015,1296,exact_match,1.0,"SELECT c.*
+FROM CUSTOMERS c
+JOIN REGIONS r ON c.region_id = r.region_id
+WHERE c.customer_tier = 'PLATINUM'
+ORDER BY c.signup_date",,38.896,2.19,41.271,16.0,
+8,9,78,sales_1_09,sales,1,qwen2.5-coder:1.5b,static,0.015,1286,mismatch,0.0,"SELECT customer_id, first_name, last_name, email, region_id
+FROM customers
+WHERE last_name LIKE 'A%'",,38.688,0.549,39.295,16.11,
+8,9,77,hr_3_04,hr,3,qwen2.5-coder:1.5b,static,0.015,1295,mismatch,0.0,"SELECT 
+    e.employee_id,
+    e.first_name,
+    e.last_name,
+    e.salary,
+    d.department_name,
+    RANK() OVER (PARTITION BY d.department_name ORDER BY e.salary DESC) AS rank
+FROM 
+    hr_employees e
+JOIN 
+    hr_departments d ON e.department_id = d.department_id
+ORDER BY 
+    rank",,40.561,2.926,43.648,15.13,
+8,9,79,hr_3_11,hr,3,qwen2.5-coder:1.5b,static,0.016,1336,error,0.0,"SELECT 
+    e.employee_id,
+    e.first_name,
+    e.last_name,
+    e.hire_date,
+    e.salary,
+    (e.salary - LAG(e.salary) OVER (ORDER BY e.hire_date)) AS salary_difference
+FROM 
+    hr.employees e
+ORDER BY 
+    e.hire_date","ORA-00942: table or view ""HR"".""EMPLOYEES"" does not exist
+Help: https://docs.oracle.com/error-help/db/ora-00942/",43.064,0.084,43.177,15.45,

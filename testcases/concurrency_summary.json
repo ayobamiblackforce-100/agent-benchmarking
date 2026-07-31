@@ -1,0 +1,110 @@
+[
+  {
+    "concurrency_level": 1,
+    "n_requests": 10,
+    "n_errors": 0,
+    "error_rate": 0.0,
+    "avg_score": 0.4,
+    "exact_match_rate": 0.4,
+    "throughput_req_s": 0.197,
+    "level_wall_time_s": 50.718,
+    "total_time_s": {
+      "mean": 5.072,
+      "p50": 5.181,
+      "p95": 7.509,
+      "p99": 8.542,
+      "max": 8.8
+    },
+    "agent_wall_time_s": {
+      "mean": 4.731,
+      "p50": 4.787,
+      "p95": 7.382
+    },
+    "db_exec_time_s": {
+      "mean": 0.304,
+      "p50": 0.097,
+      "p95": 1.114
+    }
+  },
+  {
+    "concurrency_level": 2,
+    "n_requests": 20,
+    "n_errors": 0,
+    "error_rate": 0.0,
+    "avg_score": 0.35,
+    "exact_match_rate": 0.35,
+    "throughput_req_s": 0.159,
+    "level_wall_time_s": 125.709,
+    "total_time_s": {
+      "mean": 12.346,
+      "p50": 12.784,
+      "p95": 20.138,
+      "p99": 22.138,
+      "max": 22.638
+    },
+    "agent_wall_time_s": {
+      "mean": 11.278,
+      "p50": 11.674,
+      "p95": 20.013
+    },
+    "db_exec_time_s": {
+      "mean": 0.978,
+      "p50": 0.095,
+      "p95": 2.992
+    }
+  },
+  {
+    "concurrency_level": 4,
+    "n_requests": 40,
+    "n_errors": 0,
+    "error_rate": 0.0,
+    "avg_score": 0.4,
+    "exact_match_rate": 0.4,
+    "throughput_req_s": 0.232,
+    "level_wall_time_s": 172.608,
+    "total_time_s": {
+      "mean": 16.647,
+      "p50": 15.557,
+      "p95": 25.233,
+      "p99": 39.351,
+      "max": 41.058
+    },
+    "agent_wall_time_s": {
+      "mean": 15.231,
+      "p50": 15.436,
+      "p95": 23.184
+    },
+    "db_exec_time_s": {
+      "mean": 1.324,
+      "p50": 0.099,
+      "p95": 3.58
+    }
+  },
+  {
+    "concurrency_level": 8,
+    "n_requests": 80,
+    "n_errors": 0,
+    "error_rate": 0.0,
+    "avg_score": 0.263,
+    "exact_match_rate": 0.263,
+    "throughput_req_s": 0.212,
+    "level_wall_time_s": 377.395,
+    "total_time_s": {
+      "mean": 36.307,
+      "p50": 36.011,
+      "p95": 57.572,
+      "p99": 63.475,
+      "max": 66.292
+    },
+    "agent_wall_time_s": {
+      "mean": 35.583,
+      "p50": 35.114,
+      "p95": 55.505
+    },
+    "db_exec_time_s": {
+      "mean": 0.663,
+      "p50": 0.095,
+      "p95": 2.501
+    }
+  }
+]
