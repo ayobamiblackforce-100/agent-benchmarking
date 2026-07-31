@@ -3,8 +3,10 @@
 ## Standing Config (always use)
 - Access to local terminal = bash-terminal MCP tools (run_command/write_file/read_file) — ONLY these reach the real filesystem; Claude's native sandbox tools (str_replace, create_file) do not.
 - Project directory (local) = /Users/ayobamishittu/Downloads/projects/agent-benchmarking
-- Related projects: ../ollama-rag (Oracle NL→SQL benchmark harness, DB schema/data), ../multi-user-vLLM (router)
+- Related projects: ../ollama-rag (Oracle NL→SQL benchmark harness, DB schema/data), ../multi-user-vLLM (router, host-setup.sh)
 - This repo is the coordination home for cross-project benchmarking work.
+- **GPU target: `162.243.213.185` — real H100 80GB HBM3.** IMPORTANT CORRECTION (see log below): this box was initially assumed to be a plain disposable Docker-only droplet with no GPU, based on `nvidia-smi`/driver checks coming back empty. That was wrong — the GPU hardware was present the whole time, just unclaimed (no driver installed). Confirmed via `lspci` (`3D controller: NVIDIA Corporation GH100 [H100 SXM5 80GB]`) and, after driver install, `nvidia-smi`. Lesson: absence of a driver/software stack is NOT evidence of absence of hardware — check `lspci` before concluding a box has no GPU.
+- Original primary target `162.243.121.249`: unreachable as of the last two sessions. Not currently in use.
 
 ## Log
 
@@ -32,3 +34,27 @@
 - **bash-terminal MCP tools only** reach the real machine; Claude's sandbox `create_file`/`str_replace` silently write to an isolated container instead — always verify a "file created" claim by reading it back via `bash-terminal:read_file` or `grep` over ssh/bash-terminal, especially right after switching tool families mid-conversation.
 - **Sanity-check first-level results against an independent manual probe** before trusting a full concurrency/load-test sweep — tool/connector interruptions (MCP crash, laptop sleep) produce numbers that look superficially plausible (JSON parses fine) but are wall-clock garbage.
 - **DB and agent-under-test don't need to be co-located** — `--db-dsn` on the concurrency harness works fine pointed at a different host than the agent, useful when the local machine can't run both.
+
+
+### GPU stack installed on 162.243.213.185 + real concurrency benchmark run
+- Tool used: bash-terminal MCP (run_command/write_file) for all remote work via `ssh root@162.243.213.185`; scp/rsync for file transfer; git for version control (agent-benchmarking repo).
+- Directories touched: multi-user-vLLM (source of host-setup.sh, unmodified this session), agent-benchmarking (docs/CONCURRENCY_BENCHMARK.md, testcases/concurrency_*, scripts/concurrency_benchmark.py bugfix).
+- **Corrected a wrong conclusion from earlier in this session** (see Standing Config note above): user pushed back on "no GPU" claim; `lspci` confirmed a real H100 SXM5 80GB card, just without a driver.
+- Ran `multi-user-vLLM/scripts/host-setup.sh --yes` against `162.243.213.185` (Ubuntu 26.04): NVIDIA driver 580-open, CUDA 13.1, Docker 29.1.3, nvidia-container-toolkit 1.19.1, Ollama 0.32.5 — all installed cleanly in ~2.5 min, **no reboot required** (native distro apt repos had everything needed, matching the codename-aware fallback logic added to this script in an earlier session). Verified via `nvidia-smi`: NVIDIA H100 80GB HBM3, 81559 MiB, idle.
+- Pulled `qwen2.5-coder:32b` (Q4_K_M, 19.85GB). Sanity-checked latency before the real run: cold generate ~57s (model load into VRAM), warm ~1.2s — consistent with real GPU inference, not CPU fallback.
+- Started the seeded Oracle DB image + synced agent-benchmarking onto the GPU box itself (DB + agent + harness co-located this time, unlike the earlier cross-host laptop run).
+- **Ran the full concurrency sweep for real**: levels 1/2/4/8/16/32, 10 rounds/level, static context strategy, 630 requests total. Results:
+  - Throughput: 0.79 req/s (level 1) → climbs to 1.33 req/s (level 4, real parallel benefit) → plateaus hard at ~1.1-1.2 req/s from level 8 through level 32. Overall 1→32 scaling efficiency ~5%.
+  - p95 agent-generation time grows almost linearly with concurrency: 1.85s (level 1) → 32.1s (level 32), 17.4x growth.
+  - p95 DB exec time stays flat under 1.1s throughout (1.6x growth) — DB never a factor.
+  - Correctness held steady across the whole sweep (0.40 → 0.44 avg score) — this is a pure latency/throughput ceiling, not a quality/correctness problem.
+  - **Conclusion: single-instance Ollama serialization is the bottleneck**, exactly as expected for one model on one GPU instance with no batching/replica strategy. Confirms the multi-user-vLLM router (multiple backend replicas) or vLLM continuous-batching tuning is the right next step to raise this ceiling.
+- **Found and fixed a real bug in `analyze_bottlenecks()`** while reviewing this run's auto-generated report: it initially said "neither stage clearly dominates," which was wrong — agent p95 (32.1s) was ~29x DB p95 (1.1s), an obvious agent-bound bottleneck. Root cause: the growth-vs-ideal-ratio threshold (`agent_growth >= ideal_ratio * 0.6`) was calibrated for narrow sweeps (e.g. 1→8) and became too strict for a wide 1→32 sweep, requiring near-fully-linear degradation to trigger. Fixed with a capped `growth_bar` (`max(3.0, min(ideal_ratio*0.6, ideal_ratio*0.3+2))`) so wide sweeps don't need near-perfect linear growth to flag a real, dominant bottleneck. Verified against both this run (now correctly flags agent-bound) and the two earlier runs (no regression — both still trigger correctly). Regenerated `concurrency_report.md` from the already-saved `concurrency_summary.json` (no need to re-run the sweep) using a small one-off script that imports the fixed `analyze_bottlenecks()`/`write_report()`.
+- Updated `docs/CONCURRENCY_BENCHMARK.md` with the real GPU results as the primary analysis, keeping the earlier resource-constrained laptop run as a secondary reference point (same bottleneck shape, much worse absolute numbers, useful as a cross-hardware sanity check on the harness itself).
+- Pulled `concurrency_results.{json,csv}`, `concurrency_summary.{json,csv}`, `concurrency_report.md` back to the local repo via rsync; committed and pushed.
+- Cleanup: `oracle-free` container removed from `162.243.213.185` after pulling results; temp scripts/logs removed. **Left installed and NOT torn down**: NVIDIA driver, CUDA, Docker, Ollama, and the `qwen2.5-coder:32b` model — this box is now a real, reusable GPU target for future sessions, not disposable test infra.
+
+**Server status at end of session:**
+- `162.243.213.185` — real H100 80GB target. GPU stack fully installed (driver/CUDA/Docker/nvidia-container-toolkit/Ollama). `qwen2.5-coder:32b` pulled and resident. No containers currently running (Oracle test container removed after use — re-run `docker run -d --name oracle-free -p 1521:1521 ayobamiblackforce/ollama-rag-oracle23ai-seeded:latest` to bring the DB back for the next run).
+- `162.243.121.249` — original primary target, still unreachable as of this session.
+- Local machine — Ollama running with `qwen2.5-coder:1.5b` and `qwen2.5-coder:14b` pulled (14b unusable locally — insufficient RAM, confirmed via a 180s+ hang).

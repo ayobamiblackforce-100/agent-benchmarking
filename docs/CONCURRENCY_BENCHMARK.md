@@ -52,13 +52,14 @@ Key flags (full list: `--help`):
 | `--context-strategy S` | `static` | `static` or `rag`, held fixed across the sweep |
 | `--db-dsn` / `--db-user` / `--db-pwd` | local defaults | Oracle connection (can point at a remote DB) |
 
-Example (what produced the results below):
+Example (what produced the results below — DB and agent co-located on the
+GPU host, matching how the real deployment would be run):
 
 ```
 ./run_concurrency_benchmark.sh \
-  --agent-type ollama --agent-url http://localhost:11434 --model qwen2.5-coder:1.5b \
-  --db-dsn 162.243.213.185:1521/FREEPDB1 \
-  --levels 1,2,4,8 --rounds 10 --context-strategy static
+  --agent-type ollama --agent-url http://localhost:11434 --model qwen2.5-coder:32b \
+  --db-dsn localhost:1521/FREEPDB1 \
+  --levels 1,2,4,8,16,32 --rounds 10 --context-strategy static
 ```
 
 **Output** (under `testcases/`): `concurrency_results.{json,csv}` (per
@@ -66,31 +67,53 @@ request), `concurrency_summary.{json,csv}` (per level: throughput, latency
 percentiles, error rate, correctness), and `concurrency_report.md` (findings +
 recommendations, generated from the measured numbers, not a static template).
 
-## Result analysis (real run)
+## Result analysis (real run, H100 GPU target)
 
-Agent: `qwen2.5-coder:1.5b` via Ollama (single local instance) · DB: seeded
-Oracle 23ai · 150 requests total across levels 1/2/4/8, 10 rounds/level.
+Agent: `qwen2.5-coder:32b` (Q4_K_M) via Ollama, single instance, on the H100
+80GB target (`162.243.213.185`) · DB: seeded Oracle 23ai, co-located on the
+same host · 630 requests total across levels 1/2/4/8/16/32, 10 rounds/level.
 
 | Level | Requests | Avg Score | Throughput (req/s) | Total p50 | Total p95 | Agent p95 | DB p95 |
 |---|---|---|---|---|---|---|---|
-| 1 | 10 | 0.40 | 0.197 | 5.18s | 7.51s | 7.38s | 1.11s |
-| 2 | 20 | 0.35 | 0.159 | 12.78s | 20.14s | 20.01s | 2.99s |
-| 4 | 40 | 0.40 | 0.232 | 15.56s | 25.23s | 23.18s | 3.58s |
-| 8 | 80 | 0.26 | 0.212 | 36.01s | 57.57s | 55.51s | 2.50s |
+| 1 | 10 | 0.40 | 0.787 | 1.24s | 2.05s | 1.85s | 0.69s |
+| 2 | 20 | 0.35 | 1.003 | 1.46s | 3.28s | 3.00s | 0.88s |
+| 4 | 40 | 0.48 | 1.332 | 2.63s | 4.89s | 4.39s | 1.17s |
+| 8 | 80 | 0.39 | 1.117 | 6.90s | 9.41s | 9.29s | 0.94s |
+| 16 | 160 | 0.36 | 1.128 | 13.55s | 17.71s | 17.00s | 1.07s |
+| 32 | 320 | 0.44 | 1.174 | 26.95s | 32.31s | 32.14s | 1.09s |
 
-**Bottleneck: the model server, not the database.** Going from 1→8 concurrent
-requests is an 8x increase, but throughput only moved 0.197→0.212 req/s
-(~13% scaling efficiency) — the system is serializing work, not parallelizing
-it. p95 agent-generation time grew 7.5x (7.4s→55.5s) while p95 DB time grew
-only 2.25x and stayed under 4s throughout. This is the expected signature of
-a single Ollama instance processing one generation at a time: correctness
-also dropped under load (0.40→0.26 avg score), consistent with a
-resource-starved single worker rather than a healthy system.
+**Bottleneck: the model server, not the database — same finding as the
+earlier small-model run, but now on real GPU hardware where it's a cleaner
+signal.** Real parallelism shows up briefly at low concurrency (throughput
+climbs 0.79→1.33 req/s from level 1→4, some genuine benefit from Ollama's
+default request batching), but it saturates hard by level 8 and stays
+essentially flat (1.12–1.17 req/s) all the way to level 32 — an 8x further
+increase in concurrency beyond that point buys almost nothing. Overall
+scaling efficiency from level 1→32 is only ~5%. Meanwhile p95 agent-generation
+time grows almost linearly with concurrency (1.85s→32.1s, 17.4x) while p95 DB
+time stays flat under 1.1s throughout (1.6x growth) — DB was never a factor
+here. Correctness held steady across the sweep (0.40 at level 1 vs 0.44 at
+level 32), so this is a pure latency/throughput ceiling, not a quality
+degradation.
 
-**Recommendation:** this result reflects one small model on one
-resource-constrained instance — it's a real demonstration of the harness
-working correctly (it flagged a genuine, expected bottleneck), not a verdict
-on the production stack. For a representative read on production hardware,
-re-run against the multi-user-vLLM router or a properly-resourced Ollama/vLLM
-instance, and use a higher `--rounds` (≥20) at each level so the p95/p99
-figures are statistically meaningful rather than tail-of-10-samples noise.
+**Recommendation:** this is a single Ollama instance serving one model on one
+GPU — the plateau at ~1.1–1.2 req/s past level 8 is the ceiling of one
+generation running at a time (with a small amount of request batching, not
+true parallelism). To raise it: deploy multiple backend replicas behind
+`multi-user-vLLM`'s router so concurrent requests actually run across
+independent GPU workers, or switch to vLLM and tune continuous-batching
+settings (`max_num_seqs`, `max_num_batched_tokens`) so the GPU processes many
+requests together rather than one at a time — an H100 with 80GB VRAM serving
+a 20GB model has plenty of headroom for that.
+
+### Earlier (smaller, resource-constrained) reference run
+
+For comparison, an earlier pass on a laptop with only ~1.5GB free RAM running
+`qwen2.5-coder:1.5b` (150 requests, levels 1/2/4/8, 10 rounds/level) showed
+the same *shape* of bottleneck but far worse absolute numbers — throughput
+0.197→0.212 req/s (barely 13% scaling efficiency even at 8x lower peak
+concurrency) and correctness actively degrading under load (0.40→0.26),
+consistent with a genuinely resource-starved host rather than just an
+unparallelized model server. Useful as confirmation the harness generalizes
+across very different hardware, but not representative of the production
+target.

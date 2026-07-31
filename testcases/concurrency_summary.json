@@ -6,24 +6,24 @@
     "error_rate": 0.0,
     "avg_score": 0.4,
     "exact_match_rate": 0.4,
-    "throughput_req_s": 0.197,
-    "level_wall_time_s": 50.718,
+    "throughput_req_s": 0.787,
+    "level_wall_time_s": 12.707,
     "total_time_s": {
-      "mean": 5.072,
-      "p50": 5.181,
-      "p95": 7.509,
-      "p99": 8.542,
-      "max": 8.8
+      "mean": 1.27,
+      "p50": 1.242,
+      "p95": 2.049,
+      "p99": 2.054,
+      "max": 2.055
     },
     "agent_wall_time_s": {
-      "mean": 4.731,
-      "p50": 4.787,
-      "p95": 7.382
+      "mean": 1.106,
+      "p50": 0.97,
+      "p95": 1.85
     },
     "db_exec_time_s": {
-      "mean": 0.304,
-      "p50": 0.097,
-      "p95": 1.114
+      "mean": 0.153,
+      "p50": 0.02,
+      "p95": 0.686
     }
   },
   {
@@ -33,24 +33,24 @@
     "error_rate": 0.0,
     "avg_score": 0.35,
     "exact_match_rate": 0.35,
-    "throughput_req_s": 0.159,
-    "level_wall_time_s": 125.709,
+    "throughput_req_s": 1.003,
+    "level_wall_time_s": 19.945,
     "total_time_s": {
-      "mean": 12.346,
-      "p50": 12.784,
-      "p95": 20.138,
-      "p99": 22.138,
-      "max": 22.638
+      "mean": 1.889,
+      "p50": 1.458,
+      "p95": 3.282,
+      "p99": 3.932,
+      "max": 4.094
     },
     "agent_wall_time_s": {
-      "mean": 11.278,
-      "p50": 11.674,
-      "p95": 20.013
+      "mean": 1.706,
+      "p50": 1.443,
+      "p95": 3.004
     },
     "db_exec_time_s": {
-      "mean": 0.978,
-      "p50": 0.095,
-      "p95": 2.992
+      "mean": 0.152,
+      "p50": 0.007,
+      "p95": 0.877
     }
   },
   {
@@ -58,26 +58,26 @@
     "n_requests": 40,
     "n_errors": 0,
     "error_rate": 0.0,
-    "avg_score": 0.4,
-    "exact_match_rate": 0.4,
-    "throughput_req_s": 0.232,
-    "level_wall_time_s": 172.608,
+    "avg_score": 0.48,
+    "exact_match_rate": 0.475,
+    "throughput_req_s": 1.332,
+    "level_wall_time_s": 30.034,
     "total_time_s": {
-      "mean": 16.647,
-      "p50": 15.557,
-      "p95": 25.233,
-      "p99": 39.351,
-      "max": 41.058
+      "mean": 2.879,
+      "p50": 2.63,
+      "p95": 4.886,
+      "p99": 6.821,
+      "max": 6.949
     },
     "agent_wall_time_s": {
-      "mean": 15.231,
-      "p50": 15.436,
-      "p95": 23.184
+      "mean": 2.693,
+      "p50": 2.616,
+      "p95": 4.393
     },
     "db_exec_time_s": {
-      "mean": 1.324,
-      "p50": 0.099,
-      "p95": 3.58
+      "mean": 0.164,
+      "p50": 0.009,
+      "p95": 1.169
     }
   },
   {
@@ -85,26 +85,80 @@
     "n_requests": 80,
     "n_errors": 0,
     "error_rate": 0.0,
-    "avg_score": 0.263,
-    "exact_match_rate": 0.263,
-    "throughput_req_s": 0.212,
-    "level_wall_time_s": 377.395,
+    "avg_score": 0.388,
+    "exact_match_rate": 0.388,
+    "throughput_req_s": 1.117,
+    "level_wall_time_s": 71.608,
     "total_time_s": {
-      "mean": 36.307,
-      "p50": 36.011,
-      "p95": 57.572,
-      "p99": 63.475,
-      "max": 66.292
+      "mean": 6.891,
+      "p50": 6.896,
+      "p95": 9.408,
+      "p99": 10.002,
+      "max": 10.28
     },
     "agent_wall_time_s": {
-      "mean": 35.583,
-      "p50": 35.114,
-      "p95": 55.505
+      "mean": 6.742,
+      "p50": 6.78,
+      "p95": 9.287
     },
     "db_exec_time_s": {
-      "mean": 0.663,
-      "p50": 0.095,
-      "p95": 2.501
+      "mean": 0.135,
+      "p50": 0.006,
+      "p95": 0.935
+    }
+  },
+  {
+    "concurrency_level": 16,
+    "n_requests": 160,
+    "n_errors": 0,
+    "error_rate": 0.0,
+    "avg_score": 0.362,
+    "exact_match_rate": 0.356,
+    "throughput_req_s": 1.128,
+    "level_wall_time_s": 141.851,
+    "total_time_s": {
+      "mean": 13.544,
+      "p50": 13.55,
+      "p95": 17.714,
+      "p99": 19.424,
+      "max": 20.716
+    },
+    "agent_wall_time_s": {
+      "mean": 13.334,
+      "p50": 13.421,
+      "p95": 16.996
+    },
+    "db_exec_time_s": {
+      "mean": 0.187,
+      "p50": 0.006,
+      "p95": 1.065
+    }
+  },
+  {
+    "concurrency_level": 32,
+    "n_requests": 320,
+    "n_errors": 0,
+    "error_rate": 0.0,
+    "avg_score": 0.44,
+    "exact_match_rate": 0.438,
+    "throughput_req_s": 1.174,
+    "level_wall_time_s": 272.674,
+    "total_time_s": {
+      "mean": 25.891,
+      "p50": 26.954,
+      "p95": 32.31,
+      "p99": 33.942,
+      "max": 35.52
+    },
+    "agent_wall_time_s": {
+      "mean": 25.707,
+      "p50": 26.753,
+      "p95": 32.137
+    },
+    "db_exec_time_s": {
+      "mean": 0.167,
+      "p50": 0.005,
+      "p95": 1.091
     }
   }
 ]

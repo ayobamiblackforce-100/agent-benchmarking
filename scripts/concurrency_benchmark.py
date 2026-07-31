@@ -253,8 +253,16 @@ def analyze_bottlenecks(summaries):
         + (f", {db_growth}x growth." if db_growth else ".")
     )
 
+    # Growth thresholds are scaled to the ratio between the base and top
+    # concurrency level tested (e.g. a 1->32 sweep can show far bigger raw
+    # multipliers than a 1->8 sweep), but capped so a wide sweep doesn't
+    # require near-perfectly-linear degradation to be flagged - a stage that
+    # both dominates total latency AND grows at least a few x with load is
+    # already a real bottleneck well before it hits the "ideal" (fully
+    # serialized) growth rate.
+    growth_bar = max(3.0, min(ideal_ratio * 0.6, ideal_ratio * 0.3 + 2))
     agent_dominant = agent_p95_top >= db_p95_top * 2 if db_p95_top else agent_p95_top > 0
-    if agent_growth and agent_growth >= ideal_ratio * 0.6 and agent_dominant:
+    if agent_growth and agent_growth >= growth_bar and agent_dominant:
         findings.append(
             "Agent generation time is both the larger share of total latency AND growing "
             "roughly in step with concurrency - classic sign of requests queueing behind a "
@@ -272,7 +280,7 @@ def analyze_bottlenecks(summaries):
             "max_num_batched_tokens) - vLLM can batch concurrent requests on one GPU far more "
             "efficiently than one-at-a-time serving, so a low ceiling there will look like this."
         )
-    elif db_growth and db_growth >= ideal_ratio * 0.6 and not agent_dominant:
+    elif db_growth and db_growth >= growth_bar and not agent_dominant:
         findings.append(
             "DB execution time is growing roughly in step with concurrency and is a "
             "comparable-or-larger share of total latency than agent generation time - the "
