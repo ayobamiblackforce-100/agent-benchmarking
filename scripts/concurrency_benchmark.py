@@ -369,14 +369,14 @@ def analyze_bottlenecks(summaries):
         + (f", {db_growth}x growth." if db_growth else ".")
     )
 
-    # Growth thresholds are scaled to the ratio between the base and top
-    # concurrency level tested (e.g. a 1->32 sweep can show far bigger raw
-    # multipliers than a 1->8 sweep), but capped so a wide sweep doesn't
-    # require near-perfectly-linear degradation to be flagged - a stage that
-    # both dominates total latency AND grows at least a few x with load is
-    # already a real bottleneck well before it hits the "ideal" (fully
-    # serialized) growth rate.
-    growth_bar = max(3.0, min(ideal_ratio * 0.6, ideal_ratio * 0.3 + 2))
+    # Growth bar is a flat 3x-6x floor, NOT scaled up toward the fully-linear
+    # "ideal" ratio (that was tried and undercalled real bottlenecks - e.g. a
+    # 1->32 sweep with genuine 7.67x agent-p95 growth and agent p95 ~31x DB p95
+    # still failed an 11.6x bar). A stage that both dominates total latency AND
+    # grows a modest few x with load is already a real, actionable bottleneck;
+    # requiring near-perfect linear degradation just produces false negatives
+    # on wide sweeps.
+    growth_bar = min(6.0, max(3.0, ideal_ratio * 0.25))
     agent_dominant = agent_p95_top >= db_p95_top * 2 if db_p95_top else agent_p95_top > 0
 
     # --- GPU utilization, if we have it: distinguishes "genuinely compute-
