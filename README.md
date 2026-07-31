@@ -273,6 +273,7 @@ Run `./run_concurrency_benchmark.sh --help` for the full option list. Key ones:
 | `--rounds N` | `3` | Requests per worker at each level - total requests at level L = `L * N` |
 | `--context-strategy S` | `static` | `static` or `rag`, held fixed across the whole sweep |
 | `--db-dsn` / `--db-user` / `--db-pwd` | same as above | Oracle connection |
+| `--no-resource-monitor` | *(monitoring on)* | Skip CPU/mem/GPU utilization sampling |
 
 At each level, `L` worker threads run in parallel and together fire `L * N`
 total requests (mirrors how load tools like k6/Locust scale virtual users).
@@ -287,6 +288,15 @@ benchmark - correctness isn't assumed to hold under load, it's checked.
 - `testcases/concurrency_summary.{json,csv}` — one row per concurrency level:
   throughput (req/s), latency percentiles (p50/p95/p99, total + agent-only +
   DB-only), error rate, correctness (avg score, exact-match rate)
+- Resource utilization (CPU/mem/GPU, via `psutil` + `nvidia-smi`) is sampled
+  every 0.5s per level and included in the summary and report **only when
+  the harness runs on the same host as the agent under test** - if
+  `--agent-url` points elsewhere, sampling this host would describe the
+  wrong machine, so it's auto-skipped rather than reported. This is what
+  distinguishes "GPU genuinely saturated, buy more capacity" from "GPU
+  idle, it's a serving-config ceiling (e.g. Ollama's default parallelism)"
+  - the same p95 bottleneck shape can mean either, and utilization is what
+  tells them apart.
 - `testcases/concurrency_report.md` — findings + recommendations, generated
   from the measured summary data: throughput scaling efficiency vs. ideal
   linear scaling, which stage (agent vs. DB) dominates and grows fastest with

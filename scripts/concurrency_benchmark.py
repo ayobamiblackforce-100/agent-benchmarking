@@ -17,12 +17,18 @@ At each concurrency level L (from CONCURRENCY_LEVELS):
     against Oracle via a pooled connection (timed separately from the agent
     call, so we can tell agent-bound vs DB-bound slowdowns apart) -> score
     correctness against gold SQL, same scoring logic as benchmark.py.
+  - a background thread samples CPU/memory/GPU utilization every
+    RESOURCE_SAMPLE_INTERVAL_S seconds for the duration of the level (see
+    ResourceSampler below) - ONLY when the agent-under-test is on localhost,
+    since otherwise the sampled host and the host actually doing the work are
+    different machines and the numbers would be meaningless/misleading.
 
 Outputs (all under RESULTS_DIR, default ./testcases):
   concurrency_results.json / .csv   - one row per request (raw data)
   concurrency_summary.json / .csv   - one row per concurrency level (aggregates:
                                        throughput, latency percentiles, error
-                                       rate, correctness rate)
+                                       rate, correctness rate, resource
+                                       utilization if available)
   concurrency_report.md             - human-readable bottleneck analysis +
                                        recommendations, generated from the
                                        measured summary data (see
@@ -38,10 +44,14 @@ import csv
 import json
 import os
 import random
+import shutil
 import statistics
+import subprocess
 import sys
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from urllib.parse import urlparse
 
 import oracledb
 
@@ -67,6 +77,12 @@ CONCURRENCY_LEVELS = [int(x) for x in os.environ.get("CONCURRENCY_LEVELS", "1,2,
 ROUNDS_PER_LEVEL = int(os.environ.get("ROUNDS_PER_LEVEL", "3"))  # total reqs at level L = L * ROUNDS_PER_LEVEL
 RANDOM_SEED = int(os.environ.get("RANDOM_SEED", "42"))
 
+# DB pool sized to the highest concurrency level we'll test, +2 headroom. Each
+# worker thread acquires its own connection per request and releases it right
+# after - connections are NOT shared across threads (python-oracledb
+# connections aren't safe for concurrent use by multiple threads at once).
+POOL_MAX = max(CONCURRENCY_LEVELS) + 2
+
 DB_USER = os.environ.get("DB_USER", "bench")
 DB_PWD = os.environ.get("DB_PWD", "BenchmarkPwd123")
 DB_DSN = os.environ.get("DB_DSN", "localhost:1521/FREEPDB1")
@@ -75,11 +91,110 @@ TEST_CASES_PATH = os.environ.get("TEST_CASES_PATH", os.path.join(SCRIPTS_DIR, ".
 RAG_CORPUS_PATH = os.environ.get("RAG_CORPUS_PATH", os.path.join(SCRIPTS_DIR, "..", "testcases", "rag_corpus.json"))
 RESULTS_DIR = os.environ.get("RESULTS_DIR", os.path.join(SCRIPTS_DIR, "..", "testcases"))
 
-# DB pool sized to the highest concurrency level we'll test, +2 headroom. Each
-# worker thread acquires its own connection per request and releases it right
-# after - connections are NOT shared across threads (python-oracledb
-# connections aren't safe for concurrent use by multiple threads at once).
-POOL_MAX = max(CONCURRENCY_LEVELS) + 2
+# --- Resource monitoring (CPU / memory / GPU) --------------------------------
+# Only meaningful if the agent-under-test is running on THIS machine - if
+# AGENT_URL points elsewhere, sampling this host's CPU/GPU would describe the
+# wrong machine, so it's disabled automatically in that case (see
+# _agent_is_localhost() and the note printed in main()).
+MONITOR_RESOURCES = os.environ.get("MONITOR_RESOURCES", "1") != "0"
+RESOURCE_SAMPLE_INTERVAL_S = float(os.environ.get("RESOURCE_SAMPLE_INTERVAL_S", "0.5"))
+
+try:
+    import psutil
+    _HAS_PSUTIL = True
+except ImportError:
+    _HAS_PSUTIL = False
+
+_HAS_NVIDIA_SMI = shutil.which("nvidia-smi") is not None
+
+
+def _agent_is_localhost(url):
+    if not url:
+        return False
+    host = urlparse(url).hostname
+    return host in ("localhost", "127.0.0.1", "::1")
+
+
+def _gpu_sample():
+    """Single nvidia-smi poll -> (gpu_util_pct, gpu_mem_used_mb, gpu_mem_total_mb)
+    for GPU 0, or (None, None, None) if nvidia-smi isn't available/fails.
+    Only queries GPU 0 - fine for the single-GPU targets this repo uses; a
+    multi-GPU host would need per-index breakdown, not attempted here."""
+    if not _HAS_NVIDIA_SMI:
+        return None, None, None
+    try:
+        out = subprocess.run(
+            ["nvidia-smi", "--query-gpu=utilization.gpu,memory.used,memory.total",
+             "--format=csv,noheader,nounits", "-i", "0"],
+            capture_output=True, text=True, timeout=5,
+        )
+        util, mem_used, mem_total = [x.strip() for x in out.stdout.strip().split(",")]
+        return float(util), float(mem_used), float(mem_total)
+    except Exception:
+        return None, None, None
+
+
+class ResourceSampler:
+    """Background thread that polls CPU%, system memory%, and GPU util%/VRAM
+    every RESOURCE_SAMPLE_INTERVAL_S seconds while active. Use as:
+        sampler = ResourceSampler()
+        sampler.start()
+        ... do work ...
+        samples = sampler.stop()   # list of per-poll dicts
+    A no-op (returns no samples) if monitoring is disabled, psutil isn't
+    installed, or the agent isn't on localhost - callers don't need to branch
+    on availability, just check whether the returned sample list is empty."""
+
+    def __init__(self, enabled):
+        self.enabled = enabled and _HAS_PSUTIL
+        self._samples = []
+        self._stop_event = threading.Event()
+        self._thread = None
+
+    def _loop(self):
+        # prime psutil's cpu_percent (first call after import returns 0.0/
+        # meaningless until a baseline is set)
+        psutil.cpu_percent(interval=None)
+        while not self._stop_event.is_set():
+            cpu_pct = psutil.cpu_percent(interval=None)
+            mem_pct = psutil.virtual_memory().percent
+            gpu_util, gpu_mem_used, gpu_mem_total = _gpu_sample()
+            self._samples.append({
+                "cpu_pct": cpu_pct, "mem_pct": mem_pct,
+                "gpu_util_pct": gpu_util, "gpu_mem_used_mb": gpu_mem_used,
+                "gpu_mem_total_mb": gpu_mem_total,
+            })
+            self._stop_event.wait(RESOURCE_SAMPLE_INTERVAL_S)
+
+    def start(self):
+        if not self.enabled:
+            return
+        self._samples = []
+        self._stop_event.clear()
+        self._thread = threading.Thread(target=self._loop, daemon=True)
+        self._thread.start()
+
+    def stop(self):
+        if not self.enabled or self._thread is None:
+            return []
+        self._stop_event.set()
+        self._thread.join(timeout=RESOURCE_SAMPLE_INTERVAL_S * 3)
+        return self._samples
+
+
+def _summarize_resource_samples(samples):
+    """Turns a list of per-poll sample dicts into {metric: {mean, max}} - None
+    for any metric with no valid (non-None) readings (e.g. no GPU found)."""
+    if not samples:
+        return None
+    out = {}
+    for metric in ("cpu_pct", "mem_pct", "gpu_util_pct", "gpu_mem_used_mb"):
+        vals = [s[metric] for s in samples if s.get(metric) is not None]
+        out[metric] = {
+            "mean": round(statistics.mean(vals), 1) if vals else None,
+            "max": round(max(vals), 1) if vals else None,
+        }
+    return out
 
 
 def build_prompt_for(tc, corpus):
@@ -166,7 +281,7 @@ def percentile(values, p):
     return round(s[f] + (s[c] - s[f]) * (k - f), 3)
 
 
-def summarize_level(level, rows, level_wall_time):
+def summarize_level(level, rows, level_wall_time, resource_samples=None):
     n = len(rows)
     errors = [r for r in rows if r["status"] in ("model_call_error", "db_error", "prompt_build_error")]
     exact = [r for r in rows if r["status"] == "exact_match"]
@@ -201,6 +316,7 @@ def summarize_level(level, rows, level_wall_time):
             "mean": round(statistics.mean(db_times), 3) if db_times else None,
             "p50": percentile(db_times, 50), "p95": percentile(db_times, 95),
         },
+        "resources": _summarize_resource_samples(resource_samples),
     }
 
 
@@ -262,12 +378,42 @@ def analyze_bottlenecks(summaries):
     # serialized) growth rate.
     growth_bar = max(3.0, min(ideal_ratio * 0.6, ideal_ratio * 0.3 + 2))
     agent_dominant = agent_p95_top >= db_p95_top * 2 if db_p95_top else agent_p95_top > 0
+
+    # --- GPU utilization, if we have it: distinguishes "genuinely compute-
+    # bound" from "server isn't parallelizing despite an idle GPU" - these
+    # need completely different fixes (more GPU capacity vs. a config change),
+    # so this only gets asserted when there's real sampled data to back it.
+    top_gpu = (top.get("resources") or {}).get("gpu_util_pct") or {}
+    gpu_util_top_mean = top_gpu.get("mean")
+    gpu_util_top_max = top_gpu.get("max")
+    gpu_note = None
+    if gpu_util_top_mean is not None:
+        if gpu_util_top_mean >= 80:
+            gpu_note = (
+                f"GPU utilization at concurrency={top['concurrency_level']} averaged "
+                f"{gpu_util_top_mean}% (max {gpu_util_top_max}%) - the GPU itself is genuinely "
+                f"near-saturated, so this is a real hardware capacity ceiling, not just a "
+                f"serving-config limit."
+            )
+        else:
+            gpu_note = (
+                f"GPU utilization at concurrency={top['concurrency_level']} averaged only "
+                f"{gpu_util_top_mean}% (max {gpu_util_top_max}%) DESPITE throughput plateauing - "
+                f"the GPU has spare compute capacity sitting idle. This points at a serving/"
+                f"concurrency-CONFIG ceiling (e.g. Ollama's default of handling one generation "
+                f"at a time per model instance), not a hardware limit - raising it likely won't "
+                f"require more GPUs, just different serving configuration or a batching-capable "
+                f"server (vLLM)."
+            )
+
     if agent_growth and agent_growth >= growth_bar and agent_dominant:
         findings.append(
             "Agent generation time is both the larger share of total latency AND growing "
             "roughly in step with concurrency - classic sign of requests queueing behind a "
             "single (or too few) model-serving worker rather than running in parallel."
         )
+        if gpu_note:
+            findings.append(gpu_note)
         recs.append(
             "Agent/model serving is the primary bottleneck. If serving via Ollama, note it "
             "typically processes one generation at a time per model instance on a single GPU "
@@ -280,6 +426,13 @@ def analyze_bottlenecks(summaries):
             "max_num_batched_tokens) - vLLM can batch concurrent requests on one GPU far more "
             "efficiently than one-at-a-time serving, so a low ceiling there will look like this."
         )
+        if gpu_util_top_mean is not None and gpu_util_top_mean < 80:
+            recs.append(
+                "Since GPU utilization stayed low even at peak concurrency, prioritize serving-"
+                "config changes (Ollama OLLAMA_NUM_PARALLEL / OLLAMA_MAX_LOADED_MODELS, or "
+                "switching to vLLM's batching) over adding GPU hardware - the current GPU isn't "
+                "the limiting resource yet."
+            )
     elif db_growth and db_growth >= growth_bar and not agent_dominant:
         findings.append(
             "DB execution time is growing roughly in step with concurrency and is a "
@@ -300,6 +453,25 @@ def analyze_bottlenecks(summaries):
             "concurrency sweep or more ROUNDS_PER_LEVEL for a cleaner signal; both agent and "
             "DB latency stayed roughly flat or grew sub-linearly, which is the desired outcome."
         )
+        if gpu_note:
+            findings.append(gpu_note)
+
+    # --- 2b. CPU / memory, if we have it --------------------------------------
+    top_cpu = (top.get("resources") or {}).get("cpu_pct") or {}
+    top_mem = (top.get("resources") or {}).get("mem_pct") or {}
+    if top_cpu.get("max") is not None:
+        findings.append(
+            f"Host CPU at concurrency={top['concurrency_level']}: {top_cpu.get('mean')}% avg, "
+            f"{top_cpu.get('max')}% max. Host memory: {top_mem.get('mean')}% avg, "
+            f"{top_mem.get('max')}% max."
+        )
+        if top_cpu.get('max', 0) >= 90:
+            recs.append(
+                "Host CPU came close to saturation at peak concurrency - this can throttle "
+                "request handling/tokenization independently of GPU capacity; worth checking "
+                "CPU allocation isn't the actual limiter before assuming it's purely a GPU/"
+                "serving-config issue."
+            )
 
     # --- 3. Error rate under load ---------------------------------------------
     error_rates = [(s["concurrency_level"], s["error_rate"]) for s in valid if s["error_rate"] is not None]
@@ -345,6 +517,7 @@ def analyze_bottlenecks(summaries):
 
 
 def write_report(summaries, findings, recs, path):
+    has_resources = any(s.get("resources") for s in summaries)
     lines = [
         "# Concurrency Benchmark Report",
         "",
@@ -365,6 +538,26 @@ def write_report(summaries, findings, recs, path):
             f"{s['total_time_s']['p50']} | {s['total_time_s']['p95']} | "
             f"{s['agent_wall_time_s']['p95']} | {s['db_exec_time_s']['p95']} |"
         )
+
+    if has_resources:
+        lines += [
+            "", "## Resource utilization by concurrency level", "",
+            "_Only sampled when the agent-under-test is on localhost - otherwise this table is "
+            "omitted, since sampling the wrong machine would be misleading rather than absent._",
+            "",
+            "| Level | CPU avg/max (%) | Mem avg/max (%) | GPU util avg/max (%) | GPU mem used (MB, max) |",
+            "|---|---|---|---|---|",
+        ]
+        for s in summaries:
+            r = s.get("resources") or {}
+            cpu, mem, gpu, gpu_mem = (r.get("cpu_pct") or {}, r.get("mem_pct") or {},
+                                       r.get("gpu_util_pct") or {}, r.get("gpu_mem_used_mb") or {})
+            lines.append(
+                f"| {s['concurrency_level']} | {cpu.get('mean')}/{cpu.get('max')} | "
+                f"{mem.get('mean')}/{mem.get('max')} | {gpu.get('mean')}/{gpu.get('max')} | "
+                f"{gpu_mem.get('max')} |"
+            )
+
     lines += ["", "## Findings", ""]
     lines += [f"- {f}" for f in findings]
     lines += ["", "## Recommendations", ""]
@@ -387,6 +580,20 @@ def main():
           f"model={MODEL} strategy={CONTEXT_STRATEGY}")
     print(f"Concurrency levels: {CONCURRENCY_LEVELS}  rounds/level: {ROUNDS_PER_LEVEL}  "
           f"(total requests per level = level * rounds)")
+
+    co_located = _agent_is_localhost(AGENT_URL)
+    resource_monitoring_enabled = MONITOR_RESOURCES and co_located
+    if MONITOR_RESOURCES and not co_located:
+        print(f"Note: resource monitoring (CPU/mem/GPU) disabled - agent URL ({AGENT_URL}) is "
+              f"not localhost, so sampling this host would describe the wrong machine. Run this "
+              f"script directly on the agent's host to get utilization data.")
+    elif MONITOR_RESOURCES and not _HAS_PSUTIL:
+        print("Note: resource monitoring disabled - psutil not installed (pip install psutil).")
+        resource_monitoring_enabled = False
+    elif resource_monitoring_enabled:
+        gpu_note = "GPU sampling available (nvidia-smi found)." if _HAS_NVIDIA_SMI else \
+                   "GPU sampling unavailable (no nvidia-smi found) - CPU/mem only."
+        print(f"Resource monitoring enabled (CPU/mem every {RESOURCE_SAMPLE_INTERVAL_S}s). {gpu_note}")
 
     # gold rows computed once, up front, and reused across every concurrency
     # level/request (they don't depend on concurrency - just needed for scoring,
@@ -417,6 +624,9 @@ def main():
         print(f"\n=== Concurrency level {level}: firing {total_reqs} requests "
               f"({ROUNDS_PER_LEVEL} rounds x {level} workers) ===")
 
+        sampler = ResourceSampler(enabled=resource_monitoring_enabled)
+        sampler.start()
+
         level_rows = []
         level_start = time.time()
         with ThreadPoolExecutor(max_workers=level) as executor:
@@ -433,13 +643,20 @@ def main():
                 print(f"  [{len(level_rows)}/{total_reqs}] {row['test_case_id']:14s} "
                       f"{status_flag:16s} total={row.get('total_time_s')}s")
 
-        all_rows.extend(level_rows)
         level_wall_time = time.time() - level_start
-        summary = summarize_level(level, level_rows, level_wall_time)
+        resource_samples = sampler.stop()
+
+        all_rows.extend(level_rows)
+        summary = summarize_level(level, level_rows, level_wall_time, resource_samples)
         summaries.append(summary)
+        res_str = ""
+        if summary["resources"]:
+            r = summary["resources"]
+            res_str = (f"  cpu={r['cpu_pct']['mean']}%  mem={r['mem_pct']['mean']}%  "
+                       f"gpu={r['gpu_util_pct']['mean']}%")
         print(f"  -> throughput={summary['throughput_req_s']} req/s  "
               f"avg_score={summary['avg_score']}  error_rate={summary['error_rate']}  "
-              f"total_p95={summary['total_time_s']['p95']}s")
+              f"total_p95={summary['total_time_s']['p95']}s{res_str}")
 
         # checkpoint after every level in case of interruption
         with open(os.path.join(RESULTS_DIR, "concurrency_results.json"), "w") as f:
@@ -467,11 +684,18 @@ def main():
         with open(os.path.join(RESULTS_DIR, "concurrency_summary.csv"), "w", newline="") as f:
             w = csv.writer(f)
             w.writerow(flat_summary_keys + ["total_p50", "total_p95", "total_p99",
-                                             "agent_p95", "db_p95"])
+                                             "agent_p95", "db_p95", "cpu_pct_mean", "cpu_pct_max",
+                                             "mem_pct_mean", "mem_pct_max", "gpu_util_pct_mean",
+                                             "gpu_util_pct_max", "gpu_mem_used_mb_max"])
             for s in summaries:
+                r = s.get("resources") or {}
+                cpu, mem, gpu, gpu_mem = (r.get("cpu_pct") or {}, r.get("mem_pct") or {},
+                                           r.get("gpu_util_pct") or {}, r.get("gpu_mem_used_mb") or {})
                 w.writerow([s[k] for k in flat_summary_keys] + [
                     s["total_time_s"]["p50"], s["total_time_s"]["p95"], s["total_time_s"]["p99"],
                     s["agent_wall_time_s"]["p95"], s["db_exec_time_s"]["p95"],
+                    cpu.get("mean"), cpu.get("max"), mem.get("mean"), mem.get("max"),
+                    gpu.get("mean"), gpu.get("max"), gpu_mem.get("max"),
                 ])
 
     findings, recs = analyze_bottlenecks(summaries)

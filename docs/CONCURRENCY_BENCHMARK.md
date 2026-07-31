@@ -51,6 +51,7 @@ Key flags (full list: `--help`):
 | `--rounds N` | `3` | Requests per worker per level — total at level `L` = `L * N` |
 | `--context-strategy S` | `static` | `static` or `rag`, held fixed across the sweep |
 | `--db-dsn` / `--db-user` / `--db-pwd` | local defaults | Oracle connection (can point at a remote DB) |
+| `--no-resource-monitor` | *(on by default)* | Skip CPU/mem/GPU utilization sampling |
 
 Example (what produced the results below — DB and agent co-located on the
 GPU host, matching how the real deployment would be run):
@@ -66,6 +67,33 @@ GPU host, matching how the real deployment would be run):
 request), `concurrency_summary.{json,csv}` (per level: throughput, latency
 percentiles, error rate, correctness), and `concurrency_report.md` (findings +
 recommendations, generated from the measured numbers, not a static template).
+
+## Resource utilization (CPU/mem/GPU)
+
+As of this update, the harness samples CPU, memory, and (when `nvidia-smi`
+is present) GPU utilization every 0.5s during each concurrency level, via
+`psutil` + `nvidia-smi`. This closes a real gap: p95 latency alone can show
+"agent generation is the bottleneck," but can't say *why* — whether the
+GPU is genuinely maxed out (a hardware ceiling — the fix is more GPU
+capacity) or sitting idle while the serving stack just isn't parallelizing
+(a config ceiling — e.g. Ollama's default single-worker behavior — fixable
+without new hardware). Utilization is what tells those two apart.
+
+**Co-location requirement:** this only means something if the harness runs
+on the same host as the agent under test. If `--agent-url` points at a
+remote host, local CPU/GPU stats would describe the wrong machine, so the
+harness detects that (`--agent-url` is not localhost) and omits the
+utilization table entirely rather than reporting numbers that look valid
+but are meaningless.
+
+Validated with a small smoke run (levels 1,4; 2 rounds) on the H100 box
+before trusting it for a full sweep: GPU utilization climbed from ~20% avg
+at concurrency=1 to ~91% avg at concurrency=4, with CPU/mem staying low
+throughout (confirms this is GPU-bound work, not a host resource issue) —
+sampling behaved as expected. A bug caught in the process: the DB
+connection pool's `POOL_MAX` sizing constant was accidentally dropped
+during the file rewrite that added resource monitoring, causing an
+immediate `NameError` on every run; fixed and re-verified.
 
 ## Result analysis (real run, H100 GPU target)
 

@@ -30,6 +30,7 @@ CONTEXT_STRATEGY="static"
 CONCURRENCY_LEVELS="1,2,4,8,16,32"
 ROUNDS_PER_LEVEL="3"
 RANDOM_SEED="42"
+MONITOR_RESOURCES="1"
 
 DB_DSN="localhost:1521/FREEPDB1"
 DB_USER="bench"
@@ -71,6 +72,7 @@ Concurrency sweep:
                              level L = L * N (default: 3)
   --context-strategy S      static (default) | rag — held fixed across the whole sweep
   --seed N                  Random seed for reproducible workload sampling (default: 42)
+  --no-resource-monitor     Skip CPU/memory/GPU utilization sampling (on by default)
 
 Database:
   --db-dsn DSN               default: localhost:1521/FREEPDB1
@@ -99,6 +101,11 @@ Outputs (under --results-dir):
                                      latency percentiles, error rate, correctness)
   concurrency_report.md             bottleneck findings + recommendations,
                                      computed from the measured numbers above
+                                     (includes CPU/mem/GPU utilization per
+                                     level when this script runs on the same
+                                     host as the agent - auto-skipped
+                                     otherwise, since sampling the wrong
+                                     machine would be misleading)
 
 Examples:
   # vLLM / router / any OpenAI-compatible server, pinned model, default sweep
@@ -121,6 +128,7 @@ while [[ $# -gt 0 ]]; do
     --rounds) ROUNDS_PER_LEVEL="$2"; shift 2 ;;
     --context-strategy) CONTEXT_STRATEGY="$2"; shift 2 ;;
     --seed) RANDOM_SEED="$2"; shift 2 ;;
+    --no-resource-monitor) MONITOR_RESOURCES="0"; shift ;;
     --db-dsn) DB_DSN="$2"; shift 2 ;;
     --db-user) DB_USER="$2"; shift 2 ;;
     --db-pwd) DB_PWD="$2"; shift 2 ;;
@@ -164,13 +172,14 @@ echo
 
 # ---- 1. venv setup ---------------------------------------------------------------
 if [[ ! -x "$VENV_PATH/bin/python3" ]]; then
-  echo "--- Setting up venv at $VENV_PATH (oracledb, requests) ---"
+  echo "--- Setting up venv at $VENV_PATH (oracledb, requests, psutil) ---"
   python3 -m venv "$VENV_PATH"
   "$VENV_PATH/bin/pip" install --quiet --upgrade pip
-  "$VENV_PATH/bin/pip" install --quiet oracledb requests
+  "$VENV_PATH/bin/pip" install --quiet oracledb requests psutil
 else
   "$VENV_PATH/bin/pip" show oracledb >/dev/null 2>&1 || "$VENV_PATH/bin/pip" install --quiet oracledb
   "$VENV_PATH/bin/pip" show requests >/dev/null 2>&1 || "$VENV_PATH/bin/pip" install --quiet requests
+  "$VENV_PATH/bin/pip" show psutil >/dev/null 2>&1 || "$VENV_PATH/bin/pip" install --quiet psutil
 fi
 PY="$VENV_PATH/bin/python3"
 echo "Using $PY"
@@ -269,7 +278,7 @@ mkdir -p "$RESULTS_DIR"
 DB_DSN="$DB_DSN" DB_USER="$DB_USER" DB_PWD="$DB_PWD" \
 AGENT_TYPE="$AGENT_TYPE" AGENT_URL="$AGENT_URL" AGENT_API_KEY="$AGENT_API_KEY" MODEL="$MODEL" \
 CONTEXT_STRATEGY="$CONTEXT_STRATEGY" CONCURRENCY_LEVELS="$CONCURRENCY_LEVELS" \
-ROUNDS_PER_LEVEL="$ROUNDS_PER_LEVEL" RANDOM_SEED="$RANDOM_SEED" \
+ROUNDS_PER_LEVEL="$ROUNDS_PER_LEVEL" RANDOM_SEED="$RANDOM_SEED" MONITOR_RESOURCES="$MONITOR_RESOURCES" \
 EMBED_AGENT_TYPE="$EMBED_AGENT_TYPE" EMBED_URL="$EMBED_URL" EMBED_MODEL="$EMBED_MODEL" EMBED_API_KEY="$EMBED_API_KEY" \
 TEST_CASES_PATH="$TEST_CASES_PATH" RAG_CORPUS_PATH="$RAG_CORPUS_PATH" RESULTS_DIR="$RESULTS_DIR" \
   "$PY" "$SCRIPT_DIR/scripts/concurrency_benchmark.py"
